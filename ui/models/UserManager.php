@@ -44,7 +44,17 @@ class UserManager extends CI_Model {
             ];
         }
         return [];
-    } 
+    }
 
+	/**
+     * 退出登录,清除SESSION
+	 */
+    public function clearLoginInfo() {
+        setcookie('SZSHUO', '', time()-1, '/');
+        $_SESSION = [];
+        return true;
+    }
 }
+
+
 ?>

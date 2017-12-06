@@ -74,7 +74,7 @@ class BgTakeMoney extends BG_Controller{
 	public function UpInvoicePhoto(){
 		header("Content-Type:application/json");
 		$newName = '/invoice_'.time().mt_rand(100,999).str_replace('image/','.',$_FILES['file']['type']);
-		$newDir = 'Uploads/images/'.date('Ym');
+		$newDir = 'upload/imgs/'.date('Ym');
 		$newPath = FCPATH.$newDir;
 
 		if(!is_dir($newPath)){

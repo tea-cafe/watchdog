@@ -20,6 +20,14 @@ class User extends BG_Controller {
 		}else{
 			return $this->outJson('',ErrCode::ERR_INVALID_PARAMS,'登陆失败');
 		}
-	}
+    }
+
+    public function checkStatus(){
+        if(empty($this->arrUser)){
+            return $this->outJson('',ErrCode::ERR_NOT_LOGIN);
+        }
+
+
+    }
 }
 
