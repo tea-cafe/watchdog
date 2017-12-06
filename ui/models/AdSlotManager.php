@@ -1,5 +1,5 @@
 <?php
-class BgAdSlot extends CI_Model {
+class AdSlotManager extends CI_Model {
 
     public function __construct() {
         parent::__construct();

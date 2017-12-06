@@ -1,5 +1,5 @@
 <?php
-class MediaPreSlotIdManager extends BG_Controller {
+class MediaPreSlotId extends BG_Controller {
 	public function __construct(){
 		parent::__construct();
 	}
@@ -12,7 +12,7 @@ class MediaPreSlotIdManager extends BG_Controller {
         if (empty($strAppId)) {
             return $this->outJson('', ErrCode::ERR_INVALID_PARAMS, 'app_id is empty');
         }
-        $this->load->model('bg/BgAdSlot');
+        $this->load->model('AdSlot');
         $arrData = $this->BgAdSlot->getPreSlotId($strAppId);
         $this->outJson($arrData, ErrCode::OK);
     }

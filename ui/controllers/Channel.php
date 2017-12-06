@@ -4,7 +4,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * 后台 渠道管理
  */
 
-class BgChannel extends MY_Controller {
+class Channel extends BG_Controller {
 	public function __construct(){
 		parent::__construct();
 	}

@@ -4,7 +4,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * 后台 广告位样式 管理控制器 
  */
 
-class AdSlotStyle extends MY_Controller {
+class AdSlotStyle extends BG_Controller {
 
     const VALID_SLOT_TYPE = [
         'sdk', 'api', 'h5', 'public_sign',

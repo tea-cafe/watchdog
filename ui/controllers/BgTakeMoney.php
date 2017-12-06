@@ -3,7 +3,7 @@
  * 提现审核
  */
 
-class BgTakeMoney extends MY_Controller{
+class BgTakeMoney extends BG_Controller{
 	const VALID_INVOICE_INFO_KEY = [
 		'order_number',
 		'money',

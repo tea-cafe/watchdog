@@ -374,13 +374,6 @@ if ( ! is_php('5.4'))
 		require_once APPPATH.'core/'.$CFG->config['subclass_prefix'].'Controller.php';
 	}
 
-    // 后台 controller 基类
-	if (file_exists(APPPATH.'core/BG_Controller.php'))
-	{
-		require_once APPPATH.'core/BG_Controller.php';
-	}
-    
-
 	// Set a mark point for benchmarking
 	$BM->mark('loading_time:_base_classes_end');
 
