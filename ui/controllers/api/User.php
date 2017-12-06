@@ -22,12 +22,24 @@ class User extends BG_Controller {
 		}
     }
 
+    /* 检测登陆状态*/
     public function checkStatus(){
         if(empty($this->arrUser)){
-            return $this->outJson('',ErrCode::ERR_NOT_LOGIN);
+            return $this->outJson('', ErrCode::ERR_NOT_LOGIN);
         }
 
+        $data['bg_email'] = $this->arrUser['email'];
+        return $this->outJson($data,ErrCode::OK, '登录成功');
+    }
 
+    /*退出登陆*/
+    public function logout(){
+        $res = $this->UserManager->clearLoginInfo();
+        if($res){
+            return $this->outJson('',ErrCode::OK,'退出登陆');
+        }else{
+            return $this->outJson('', ErrCode::ERR_INVALID_PARAMS,'退出失败');
+        }
     }
 }
 

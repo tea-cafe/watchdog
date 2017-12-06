@@ -83,13 +83,12 @@ class Channel extends CI_Model{
 	}
 
 	/*修改财务认证*/
-	public function modifyFinanceStatus($account_id,$email,$status,$remark){
+	public function modifyFinanceStatus($email,$status,$remark){
 		$where = array(
 			'check_status' => $status,
 			'remark' => $remark,
-			'where' => 'account_id = '.$account_id.' AND email = "'.$email.'"',
+			'where' => 'email = "'.$email.'"',
 		);	
-		
 		
 		$this->load->library('DbUtil');
 		$res = $this->dbutil->udpAccount($where);

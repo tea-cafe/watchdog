@@ -34,12 +34,24 @@ class PreAdSlot extends BG_Controller {
 
         $arrUpStreamSlotIds = [];
         $arrFormatSlotIds = explode(',', $arrPostParams['pre_slod_ids']);
+        if (empty($arrFormatSlotIds)
+            || !is_array($arrFormatSlotIds)) {
+            return $this->outJson($arrPreAdSlotAfter, ErrCode::ERR_INVALID_PARAMS, 'pre_slod_ids 错误');
+        }
         foreach ($arrFormatSlotIds as $slotid) {
             $arrPreSlitId[$slotid] = 0; 
         }
         $arrUpStreamSlotIds[$arrPostParams['ad_upstream']][$arrPostParams['slot_style']][$arrPostParams['slot_size']] = $arrPreSlitId; 
 
-        $arrPreAdSlotAfter = array_merge($arrUpStreamSlotIds, $arrPreAdSlotBefore);
+        $arrPreAdSlotAfter = [];
+        if (isset($arrPreAdSlotBefore[$arrPostParams['ad_upstream']])) {
+            $arrPreAdSlotAfter[$arrPostParams['ad_upstream']] = 
+                $arrUpStreamSlotIds[$arrPostParams['ad_upstream']]
+                + 
+                $arrPreAdSlotBefore[$arrPostParams['ad_upstream']]; 
+        } else {
+            $arrPreAdSlotAfter = array_merge($arrUpStreamSlotIds, $arrPreAdSlotBefore);
+        }
 
         $bolRes = $this->PreAdSlotManager->insertPreAdSlot($arrPostParams['app_id'], json_encode($arrPreAdSlotAfter));
         if (!$bolRes) {
@@ -52,6 +64,9 @@ class PreAdSlot extends BG_Controller {
         foreach ($arrPreAdSlotAfter as $strUpstream => $arrStyle) {
             foreach ($arrStyle as $intStyleId => $arrSize) {
                 foreach ($arrSize as $intSizeId => $arrSlotIds) {
+                    if (empty($arrStyleMap[$intStyleId])) {
+                        continue;
+                    }
                     $strDisStyle = $arrStyleMap[$intStyleId]['des'];
                     $strDisSize = $arrStyleMap[$intStyleId][$strUpstream]['size'][$intSizeId];
                     $arrPreAdSlotIdsDisplay[$strUpstream][$strDisStyle][$strDisSize] = $arrSlotIds;

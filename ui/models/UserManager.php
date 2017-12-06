@@ -24,9 +24,9 @@ class UserManager extends CI_Model {
 		if(empty($userRes)){
 			return false;
 		}
-		$_SESSION['login_time'] = time();
+		$_SESSION['bg_login_time'] = time();
 		$_SESSION['bg_account_id'] = $userRes[0]['id'];
-		$_SESSION['email'] = $userRes[0]['username'];
+		$_SESSION['bg_email'] = $userRes[0]['username'];
         return true;
 	}
 
@@ -34,13 +34,13 @@ class UserManager extends CI_Model {
      * @return array
 	 */
     public function checkLogin() {
-        if (isset($_SESSION['login_time'])
+        if (isset($_SESSION['bg_login_time'])
             && isset($_SESSION['bg_account_id'])
-            && isset($_SESSION['email'])
+            && isset($_SESSION['bg_email'])
             && (time() - $_SESSION['login_time']) <= self::EXPIRE_SESSION) {
             return [
                 'bg_account_id' => $_SESSION['bg_account_id'],
-                'email' => $_SESSION['email'],
+                'bg_email' => $_SESSION['bg_email'],
             ];
         }
         return [];
@@ -50,7 +50,7 @@ class UserManager extends CI_Model {
      * 退出登录,清除SESSION
 	 */
     public function clearLoginInfo() {
-        setcookie('SZSHUO', '', time()-1, '/');
+        setcookie('BGSZSHUO', '', time()-1, '/');
         $_SESSION = [];
         return true;
     }

@@ -129,4 +129,3 @@ $config['style2platform_map'] = array(
 	)
 );
 ?>
-

@@ -15,7 +15,6 @@ class MediaList extends BG_Controller {
         $total = intval($this->input->get('total'));
         $this->load->model('MediaManager');
         $arrData = $this->MediaManager->getMediaLists($pn, $rn, $total, $condition, $checkstatus);
-        var_dump($arrData);exit;
         $this->outJson($arrData, ErrCode::OK);
     }
 }

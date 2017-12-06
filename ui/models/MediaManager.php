@@ -10,6 +10,18 @@ class MediaManager extends CI_Model {
      * @param array $arrParams
      * @return bool
      */
+    public function updateMediaInfo($arrParams) {
+        $arrRes = $this->dbutil->udpMedia($arrParams);
+        if ($arrRes['code'] !== 0) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * @param array $arrParams
+     * @return bool
+     */
     public function getMediaDetail($strAppId) {
         $arrSelect = [
             'select' => '*',
