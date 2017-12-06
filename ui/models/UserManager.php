@@ -2,7 +2,7 @@
 /**
  * 后台登陆
  */
-class User extends CI_Model {
+class UserManager extends CI_Model {
 
     const EXPIRE_SESSION = 86400;
 

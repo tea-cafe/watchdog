@@ -12,8 +12,8 @@ class User extends BG_Controller {
         $arrPostParam = json_decode(file_get_contents('php://input'), true);
 		$userName = $arrPostParam['username'];
 		$passWord = $arrPostParam['password'];
-		$this->load->model('bg/FunUser');
-		$loginRes = $this->FunUser->doLogin($userName,$passWord);
+		$this->load->model('UserManager');
+		$loginRes = $this->UserManager->doLogin($userName,$passWord);
 		
 		if($loginRes){
 			return $this->outJson('',ErrCode::OK,'登陆成功');

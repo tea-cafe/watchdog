@@ -8,8 +8,8 @@ class BG_Controller extends CI_Controller {
 
     public function __construct() {
         parent::__construct();
-		$this->load->model('bg/FunBgUser');
-        $this->arrUser = $this->FunBgUser->checkLogin();
+		$this->load->model('UserManager');
+        $this->arrUser = $this->UserManager->checkLogin();
     }
 
 

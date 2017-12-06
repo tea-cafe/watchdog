@@ -61,8 +61,8 @@ class Channel extends BG_Controller {
 		
 		}
 
-		$this->load->model('User');
-		$email = $this->User->checkLogin();
+		$this->load->model('UserManager');
+		$email = $this->UserManager->checkLogin();
 		if(empty($account)){
 			$email = '2494591314@qq.com';
 		}else{
