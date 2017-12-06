@@ -12,8 +12,8 @@ class MediaDetail extends BG_Controller {
         if (empty($strAppId)) {
             return $this->outJson('', ErrCode::ERR_INVALID_PARAMS, 'app_id is empty');
         }
-        $this->load->model('bg/BgMedia');
-        $arrData = $this->BgMedia->getMediaDetail($strAppId);
+        $this->load->model('MediaManager');
+        $arrData = $this->MediaManager->getMediaDetail($strAppId);
         $this->outJson($arrData, ErrCode::OK);
     }
 }

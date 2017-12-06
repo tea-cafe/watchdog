@@ -36,7 +36,7 @@ class AdSlotStyle extends BG_Controller {
         }
         
         $sql = substr($sql, 0, -1);
-        $this->load->model('bg/AdSlotManager');
+        $this->load->model('AdSlotManager');
         $this->AdSlotManager->insertAdSlotStyle($sql);
 
           

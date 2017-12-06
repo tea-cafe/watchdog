@@ -20,7 +20,7 @@ class Channel extends BG_Controller {
 			$pageSize = '';
 			$currentPage = '';
 		}
-		$this->load->model('bg/Channel');
+		$this->load->model('ChannelManager');
 		$res = $this->Channel->getList($keyWord,$pageSize,$currentPage,$status);
 		
 		if(empty($res)){
@@ -36,7 +36,7 @@ class Channel extends BG_Controller {
 		if(empty($account_id)){
 			return $this->outJson('',ErrCode::ERR_INVALID_PARAMS,'参数有误');
 		}
-		$this->load->model('bg/Channel');
+		$this->load->model('ChannelManager');
 		$res = $this->Channel->getInfo($account_id);
 		
 		if(empty($res)){
@@ -69,7 +69,7 @@ class Channel extends BG_Controller {
 			$email = $account['email'];
 		}
 
-		$this->load->model('bg/Channel');
+		$this->load->model('ChannelManager');
 		$res = $this->Channel->modifyFinanceStatus($account_id,$email,$status,$remark);
 		if($res){
 			return $this->outJson('',ErrCode::OK,'修改成功');

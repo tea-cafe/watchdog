@@ -23,7 +23,7 @@ class MediaPreSlotId extends BG_Controller {
      */
     public function modify() {
         $jsonPostParams = file_get_contents('php://input');
-        $this->load->model('bg/BgAdSlot');
+        $this->load->model('AdSlotManager');
         $arrData = $this->BgAdSlot->updatePreSlotId($jsonPostParams);
         if (empty($arrData)) {
             return $this->outJson($arrData, ErrCode::ERR_SYSTEM);
