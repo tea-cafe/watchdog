@@ -39,13 +39,12 @@ class Channel extends BG_Controller {
         if(empty($this->arrUser)){
             return $this->outJson('',ErrCode::ERR_NOT_LOGIN);
         }
-        
-        $account_id = $this->input->get('accountid',true);
+        $account_id = $this->input->get('account_id',true);
 		if(empty($account_id)){
 			return $this->outJson('',ErrCode::ERR_INVALID_PARAMS,'参数有误');
 		}
 		$this->load->model('ChannelManager');
-		$res = $this->Channel->getInfo($account_id);
+		$res = $this->ChannelManager->getInfo($account_id);
 		
 		if(empty($res)){
 			return $this->outJson('',ErrCode::ERR_INVALID_PARAMS,'参数错误');
@@ -74,7 +73,7 @@ class Channel extends BG_Controller {
 		}
 
 		$this->load->model('ChannelManager');
-		$res = $this->Channel->modifyFinanceStatus($email,$status,$remark);
+		$res = $this->ChannelManager->modifyFinanceStatus($email,$status,$remark);
 		if($res){
 			return $this->outJson('',ErrCode::OK,'修改成功');
 		}else{

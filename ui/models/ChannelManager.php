@@ -76,11 +76,9 @@ class ChannelManager extends CI_Model{
 
 	/*获取渠道信息*/
 	public function getInfo($account_id){
-		$where = array(
+        $where = array(
 			'select' => '',
 			'where' => 'account_id = '.$account_id,
-			'order_by' => '',
-			'limit' => '',
 		);
 
 		$this->load->library('DbUtil');

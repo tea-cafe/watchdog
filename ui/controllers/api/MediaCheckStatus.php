@@ -21,29 +21,38 @@ class MediaCheckStatus extends BG_Controller {
             return $this->outJson('', ErrCode::ERR_INVALID_PARAMS); 
         }
 
+        // action =0 审核不通过  action = 1 审核通过
         switch (intval($arrPostParams['check_status'])) {
-            case 1: 
-                if ($this->input->get('action') === 0) {
+            case 1: // H5类型，编辑上传app_key文件后，状态由 1 => 0 
+                if (isset($arrPostParams['action'])
+                    && $arrPostParams['action'] === 0) {
                     $intStatus = 4;
+                } else {
+                    $intStatus = 0;
                 }
-                $intStatus = 0;
-            case 2
-                if ($this->input->get('action') === 0) {
+                break;
+            case 2:
+                if (isset($arrPostParams['action'])
+                    && $arrPostParams['action'] === 0) {
                     $intStatus = 4;
+                } else {
+                    $intStatus = 3;
                 }
-                $intStatus = 3;
+                break;
+            default:
+                return $this->outJson('', ErrCode::ERR_INVALID_PARAMS);
         }
 
         $arrUpdate = [
             'check_status' => $intStatus,
-            'where' => "app_id='" . $this->input->post('app_id', true) . "'",
+            'where' => "app_id='" . $arrPostParams['app_id'] . "'",
         ];
 
-        $this->load->model('MediaManaget');
+        $this->load->model('MediaManager');
         $bolRes = $this->MediaManager->updateMediaInfo($arrUpdate);
         if (!$bolRes) {
             return $this->outJson('', ErrCode::ERR_SYSTEM, '操作失败');
         }
-        return $this->outJson('', ErrCode::ERR_OK);
+        return $this->outJson('', ErrCode::OK);
     }
 }

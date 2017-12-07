@@ -2,7 +2,7 @@
 /**
  * 提现审核
  */ 
-class TakeMoney extends CI_Model{
+class TakeMoneyManager extends CI_Model{
 	public function __construct(){
 		parent::__construct();
 	}

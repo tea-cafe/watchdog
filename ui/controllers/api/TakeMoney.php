@@ -3,7 +3,7 @@
  * 提现审核
  */
 
-class BgTakeMoney extends BG_Controller{
+class TakeMoney extends BG_Controller{
 	const VALID_INVOICE_INFO_KEY = [
 		'order_number',
 		'money',
@@ -20,13 +20,13 @@ class BgTakeMoney extends BG_Controller{
 
 	/*获取提现订单信息*/
 	public function index(){
-		$orderNumber = $this->input->post('order_number',true);
+		$orderNumber = $this->input->get('order_number',true);
 		if(empty($orderNumber)){
 			return $this->outJson('', ErrCode::ERR_INVALID_PARAMS);
 		}
 
-		$this->load->model('bg/TakeMoney');
-		$res = $this->TakeMoney->getInfo($orderNumber);
+		$this->load->model('TakeMoneyManager');
+		$res = $this->TakeMoneyManager->getInfo($orderNumber);
 		
 		if(empty($res)){
 			return $this->outJson('', ErrCode::ERR_INVALID_PARAMS);
@@ -60,8 +60,8 @@ class BgTakeMoney extends BG_Controller{
 		$this->config->load('company_invoice_info');
 		$company_invoice_info = $this->config->item('invoice');
 		
-		$this->load->model('bg/TakeMoney');
-		$res = $this->TakeMoney->modifyInfo($data['order_number'],$data,$status,$remark);
+		$this->load->model('TakeMoneyManager');
+		$res = $this->TakeMoneyManager->modifyInfo($data['order_number'],$data,$status,$remark);
 		
 		if($res){
 			return $this->outJson('', ErrCode::OK,'审核通过');
