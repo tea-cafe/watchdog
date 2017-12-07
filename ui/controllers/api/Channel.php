@@ -21,10 +21,10 @@ class Channel extends BG_Controller {
 		$status = $this->input->get('status',true);
 
 		if(empty($pageSize) || empty($currentPage)){
-			$pageSize = 1;
-			$currentPage = 20;
+			$pageSize = 20;
+			$currentPage = 1;
 		}
-		$this->load->model('ChannelManager');
+        $this->load->model('ChannelManager');
 		$res = $this->ChannelManager->getList($keyWord,$pageSize,$currentPage,$status);
 		
 		if(empty($res)){

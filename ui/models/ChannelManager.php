@@ -12,7 +12,7 @@ class ChannelManager extends CI_Model{
         if($currentPage == 1){
             $currentPage = 0;
         }else{
-            $currentPage = $currentPage * $pageSize;
+            $currentPage = ($currentPage - 1) * $pageSize;
         }
 
 		if(empty($keyWord)){
@@ -31,11 +31,15 @@ class ChannelManager extends CI_Model{
 			'where' => $StrKeyWord.$StrStatus,
             'limit' => empty($pageSize) || empty($currentPage) ? '0,20' : $currentPage.','.$pageSize,
         );
-        
+
+        if(empty($listWhere['where'])){
+            unset($listWhere['where']);
+        }
+
         $this->load->library('DbUtil');
 		$res = $this->dbutil->getAccount($listWhere);
-		var_dump($res);exit;
-		if(empty($res)){
+        
+        if(empty($res)){
 			return [];
 		}
 
@@ -50,17 +54,24 @@ class ChannelManager extends CI_Model{
 			$data[$k]['create_time'] = date("Y-m-d H:i:s",$v['create_time']);
 		}
 
-		$total_where = array(
+		$totalWhere = array(
 			'select' => 'count(*)',
 			'where' => $StrKeyWord.$StrStatus,
-		);
-		$totalCount = $this->dbutil->getAccount($total_where);
-		$totalCount = $totalCount[0]['count(*)'];
-		$totalPage = ceil($totalCount / $pageSize);
-		$data['totalCount'] = $totalCount;
-		$data['totalPage'] = $totalPage;
-		
-		return $data;
+        );
+        if(empty($totalWhere['where'])){
+            unset($totalWhere['where']);
+        }
+		$totalCount = $this->dbutil->getAccount($totalWhere);
+
+        $paginAtion = array(
+            'current' => empty($currentPage) ? '1':$currentPage,
+            'pageSize' => $pageSize,
+            'total' => $totalCount[0]['count(*)'],
+        );
+        $result['list'] = $data;
+        $result['pagination'] = $paginAtion;
+        
+		return $result;
 	}
 
 	/*获取渠道信息*/
@@ -91,4 +102,15 @@ class ChannelManager extends CI_Model{
 			'where' => 'email = "'.$email.'"',
 		);	
 		
-		$thi
+		$this->load->library('DbUtil');
+		$res = $this->dbutil->udpAccount($where);
+		
+		if($res['code'] == 0){
+			return true;
+		}else{
+			return false;
+		}
+	}
+}
+
+?>

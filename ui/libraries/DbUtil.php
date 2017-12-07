@@ -123,7 +123,7 @@ class DbUtil {
             $this->CI->db->$act($sqlPart);
         }
         $objRes = $this->CI->db->get($strTabName);
-		echo $this->CI->db->last_query();
+		//echo $this->CI->db->last_query();
 		if (empty($objRes)) {
             return [];
         }
