@@ -113,9 +113,6 @@ class DbUtil {
      * @return array
      */
     private function get($strTabName, $arrParams) {
-        if (empty($arrParams['limit'])) {
-            $arrParams['limit'] = '0,1';
-        }
         foreach ($arrParams as $act => $sqlPart) {
             if ($act === 'limit') {
                 $arrLimit = explode(',', $sqlPart);
@@ -126,7 +123,7 @@ class DbUtil {
             $this->CI->db->$act($sqlPart);
         }
         $objRes = $this->CI->db->get($strTabName);
-		//echo $this->CI->db->last_query();
+		echo $this->CI->db->last_query();
 		if (empty($objRes)) {
             return [];
         }

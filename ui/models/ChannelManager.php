@@ -2,38 +2,39 @@
 /**
  * 渠道信息列表
  */
-class Channel extends CI_Model{
+class ChannelManager extends CI_Model{
 	public function __construct(){
 		parent::__construct();
 	}
 
 	/*获取渠道列表*/
 	public function getList($keyWord,$pageSize,$currentPage,$status){
-		if($currentPage == 1){
-			$currentPage = 0;
-		}
+        if($currentPage == 1){
+            $currentPage = 0;
+        }else{
+            $currentPage = $currentPage * $pageSize;
+        }
 
 		if(empty($keyWord)){
 			$StrKeyWord = '';
 		}else{
 			$StrKeyWord = 'company like "%'.$keyWord.'%" OR contact_person like "%'.$keyWord.'%"';
 		}
-
 		if(empty($status)){
 			$StrStatus = '';
 		}else{
 			$StrStatus = ' AND check_status = '.$status;
 		}
 		
-		$where = array(
+		$listWhere = array(
 			'select' => 'account_id,company,contact_person,financial_object,phone,email,create_time,check_status',
 			'where' => $StrKeyWord.$StrStatus,
-			'order_by' => '',
-			'limit' => $currentPage.','.$pageSize,
-		);
-		$this->load->library('DbUtil');
-		$res = $this->dbutil->getAccount($where);
-		
+            'limit' => empty($pageSize) || empty($currentPage) ? '0,20' : $currentPage.','.$pageSize,
+        );
+        
+        $this->load->library('DbUtil');
+		$res = $this->dbutil->getAccount($listWhere);
+		var_dump($res);exit;
 		if(empty($res)){
 			return [];
 		}
@@ -90,15 +91,4 @@ class Channel extends CI_Model{
 			'where' => 'email = "'.$email.'"',
 		);	
 		
-		$this->load->library('DbUtil');
-		$res = $this->dbutil->udpAccount($where);
-		
-		if($res['code'] == 0){
-			return true;
-		}else{
-			return false;
-		}
-	}
-}
-
-?>
+		$thi

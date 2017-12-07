@@ -21,11 +21,11 @@ class Channel extends BG_Controller {
 		$status = $this->input->get('status',true);
 
 		if(empty($pageSize) || empty($currentPage)){
-			$pageSize = '';
-			$currentPage = '';
+			$pageSize = 1;
+			$currentPage = 20;
 		}
 		$this->load->model('ChannelManager');
-		$res = $this->Channel->getList($keyWord,$pageSize,$currentPage,$status);
+		$res = $this->ChannelManager->getList($keyWord,$pageSize,$currentPage,$status);
 		
 		if(empty($res)){
 			return $this->outJson('',ErrCode::ERR_INVALID_PARAMS,'渠道列表查询失败');

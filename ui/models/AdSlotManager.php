@@ -7,6 +7,41 @@ class AdSlotManager extends CI_Model {
     }
 
     /**
+     *
+     */
+    public function getAdSlotLists($strAppId, $pn = 1, $rn = 10, $intCount = 0) {
+        $this->load->library('DbUtil');
+        if ($intCount === 0) {
+            $arrSelect = [
+                'select' => 'count(*) as total',
+                'where' => "app_id='" . $strAppId . "'",
+            ];
+            $arrRes = $this->dbutil->getAdSlot($arrSelect);
+            $intCount = $arrRes[0]['total'];
+        }
+        $arrSelect = [
+            'select' => 'slot_id,app_id,media_name,media_platform,slot_name,slot_type,slot_style,slot_size,upstream_adslots,,switch,create_time',
+            'where' => "app_id='" . $strAppId . "'",
+            'order_by' => 'create_time DESC',
+            'limit' => $rn*($pn-1) . ',' . $rn,
+        ];
+        if (!empty($condition)) {
+            $arrSelect['where'] .= " AND media_name like '%" . $strSlotName . "%'"; 
+        }
+        $arrRes = $this->dbutil->getAdSlot($arrSelect);
+        return [
+            'list' => $arrRes,
+            'pagination' => [
+                'total' => $intCount,
+                'pageSize' => $rn,
+                'current' => $pn,
+            ],
+        ];
+
+    }
+
+
+    /**
      * @param array $arrParams
      * @return bool
      */

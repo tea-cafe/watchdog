@@ -15,8 +15,6 @@ class UserManager extends CI_Model {
 		$params = array(
 			'select' => '',
 			'where' => 'username = "'.$userName.'"'.' AND password = "'.md5($passWord).'"',
-			'order_by' => '',
-			'limit' => '',
 		);
 		$this->load->library('DbUtil');
 		$userRes = $this->dbutil->getBgUser($params);
@@ -37,7 +35,10 @@ class UserManager extends CI_Model {
         if (isset($_SESSION['bg_login_time'])
             && isset($_SESSION['bg_account_id'])
             && isset($_SESSION['bg_email'])
-            && (time() - $_SESSION['login_time']) <= self::EXPIRE_SESSION) {
+            && (time() - $_SESSION['bg_login_time']) <= self::EXPIRE_SESSION) {
+            /* 更新session时间 */
+            $_SESSION['bg_login_time'] = time();
+            
             return [
                 'bg_account_id' => $_SESSION['bg_account_id'],
                 'bg_email' => $_SESSION['bg_email'],
