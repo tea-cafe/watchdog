@@ -95,14 +95,12 @@ class MediaManager extends CI_Model {
     } 
 
     /**
-     *
+     * industry id 2 文字
      */
     private function industryMap($arrData) {
         $this->config->load('industry');
         $arrIndustryMap = $this->config->item('industry');
         foreach ($arrData as &$val) {
-            // TODO
-            $val['industry'] = '2438-2613';
             $idTmp = explode('-', $val['industry']);
             $val['industry'] = empty($arrIndustryMap[$idTmp[0]][$idTmp[1]]) ? '' : $arrIndustryMap[$idTmp[0]][$idTmp[1]]['sub'] . '-' . $arrIndustryMap[$idTmp[0]][$idTmp[1]]['text']; 
         }

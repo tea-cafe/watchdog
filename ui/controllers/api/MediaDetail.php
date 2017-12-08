@@ -47,12 +47,23 @@ class MediaDetail extends BG_Controller {
 
         // app_id_map
         $arrAppIdMap = [];
+        $strAppSecret = '';
         foreach ($arrPostParams as $key => &$val) {
             if(!in_array($key, self::VALID_PARAMS_KEY)) {
                 return $this->outJson('', ErrCode::ERR_INVALID_PARAMS);
             }
             $val = $this->security->xss_clean($val);
             if (in_array($key, array_keys(self::APP_ID_MAP))) {
+                if (empty($val)) {
+                    continue;
+                }
+                if (in_array('7', $arrPostParams['default_valid_style']) !== false
+                    && $key === 'app_id_map_ta') {
+                    $arrTmp = explode('|', $val);
+                    $arrAppIdMap[self::APP_ID_MAP[$key]] = $arrTmp[0];
+                    $strAppSecret = $arrTmp[1];
+                    continue;
+                 }
                 $arrAppIdMap[self::APP_ID_MAP[$key]] = $val;
             }
         }
@@ -67,12 +78,15 @@ class MediaDetail extends BG_Controller {
         }
         $strValidStyle = substr($strValidStyle, 0, -1);
 
+
+
         $intProportion = intval($arrPostParams['proportion']);
         $this->load->library('DbUtil');
         $arrUpdate = [
             'default_valid_style'   => $strValidStyle,
             'proportion'            => $intProportion,
             'app_id_map'            => json_encode($arrAppIdMap),
+            'app_secret'            => $strAppSecret,
             'where'                 => "app_id='" . $strAppId . "'",
         ];
         $arrRes = $this->dbutil->udpMedia($arrUpdate);

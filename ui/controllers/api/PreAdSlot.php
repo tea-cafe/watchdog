@@ -14,26 +14,47 @@ class PreAdSlot extends BG_Controller {
         "pre_slod_ids",
     ];
 
-	/**
+    /**
      *
-	 */
-	public function index() {
-        $arrPostParams = json_decode(file_get_contents('php://input'), true);
+     *
+     */
+    public function getList() {
         if (empty($this->arrUser)) {
             return $this->outJson('', ErrCode::ERR_NOT_LOGIN);
         }
-        foreach ($arrPostParams as $key => &$val) {
-            if(!in_array($key, self::VALID_PRESLOT_KEY)) {
-                return $this->outJson('', ErrCode::ERR_INVALID_PARAMS); 
-            }
-            $val = $this->security->xss_clean($val);
+        $strAppId = $this->input->get('app_id');
+        if (empty($strAppId)) {
+            return $this->outJson('', ErrCode::ERR_INVALID_PARAMS, 'app_id error');
         }
-        
+        $pn = empty($this->input->get('currentPage')) ? 1 : intval($this->input->get('currentPage'));
+        $rn = empty($this->input->get('pageSize')) ? 10 : intval($this->input->get('pageSize'));
         $this->load->model('PreAdSlotManager');
-        $arrPreAdSlotBefore = $this->PreAdSlotManager->getPreAdSlot($arrPostParams);
+        $arrData = $this->PreAdSlotManager->getPreSlotIdList($strAppId, $pn, $rn);
+        $this->outJson($arrData, ErrCode::OK);
+    }
+
+	/**
+     *
+	 */
+	public function add() {
+        if (empty($this->arrUser)) {
+            return $this->outJson('', ErrCode::ERR_NOT_LOGIN);
+        }
+        $arrPostParams = json_decode(file_get_contents('php://input'), true);
+        if (empty($arrPostParams['app_id'])
+            || empty($arrPostParams['slotmap_list'])
+            || empty($arrPostParams['slotmap_list'])) {
+            return $this->outJson('', ErrCode::ERR_INVALID_PARAMS);
+        }
+        $app_id = $arrPostParams['app_id'];
+        $pre_slod_ids = $arrPostParams['slotmap_list'];
+         list($slot_style,$ad_upstream,$slot_size) = $arrPostParams['slotmap_type'];
+        $arrParams = compact('app_id', 'slot_style', 'ad_upstream', 'slot_size', 'pre_slod_ids');
+        $this->load->model('PreAdSlotManager');
+        $arrPreAdSlotBefore = $this->PreAdSlotManager->getPreAdSlot($arrParams);
 
         $arrUpStreamSlotIds = [];
-        $arrFormatSlotIds = explode(',', $arrPostParams['pre_slod_ids']);
+        $arrFormatSlotIds = explode(',', $arrParams['pre_slod_ids']);
         if (empty($arrFormatSlotIds)
             || !is_array($arrFormatSlotIds)) {
             return $this->outJson($arrPreAdSlotAfter, ErrCode::ERR_INVALID_PARAMS, 'pre_slod_ids 错误');
@@ -41,23 +62,24 @@ class PreAdSlot extends BG_Controller {
         foreach ($arrFormatSlotIds as $slotid) {
             $arrPreSlitId[$slotid] = 0; 
         }
-        $arrUpStreamSlotIds[$arrPostParams['ad_upstream']][$arrPostParams['slot_style']][$arrPostParams['slot_size']] = $arrPreSlitId; 
+        $arrUpStreamSlotIds[$arrParams['ad_upstream']][$arrParams['slot_style']][$arrParams['slot_size']] = $arrPreSlitId; 
 
         $arrPreAdSlotAfter = [];
-        if (isset($arrPreAdSlotBefore[$arrPostParams['ad_upstream']])) {
-            $arrPreAdSlotAfter[$arrPostParams['ad_upstream']] = 
-                $arrUpStreamSlotIds[$arrPostParams['ad_upstream']]
+        if (isset($arrPreAdSlotBefore[$arrParams['ad_upstream']])) {
+            $arrPreAdSlotAfter[$arrParams['ad_upstream']] = 
+                $arrUpStreamSlotIds[$arrParams['ad_upstream']]
                 + 
-                $arrPreAdSlotBefore[$arrPostParams['ad_upstream']]; 
+                $arrPreAdSlotBefore[$arrParams['ad_upstream']]; 
         } else {
             $arrPreAdSlotAfter = array_merge($arrUpStreamSlotIds, $arrPreAdSlotBefore);
         }
 
-        $bolRes = $this->PreAdSlotManager->insertPreAdSlot($arrPostParams['app_id'], json_encode($arrPreAdSlotAfter));
+        $bolRes = $this->PreAdSlotManager->insertPreAdSlot($arrParams['app_id'], json_encode($arrPreAdSlotAfter));
         if (!$bolRes) {
             return $this->outJson($arrPreAdSlotAfter, ErrCode::ERR_SYSTEM, '预生成广告位更新失败');
         }
 
+        // 直接返回给前端展示
         $arrPreAdSlotIdsDisplay = [];
         $this->config->load('style2platform_map');
         $arrStyleMap = $this->config->item('style2platform_map');
