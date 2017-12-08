@@ -48,6 +48,11 @@ class MediaCheckStatus extends BG_Controller {
             'where' => "app_id='" . $arrPostParams['app_id'] . "'",
         ];
 
+        // H5媒体注册手状态是1，编辑会上传app_key然后checkstatus，此时会提交上来app_key的地址
+        if (intval($arrPostParams['check_status']) === 1) {
+            $arrUpdate['app_verify_url'] = $arrPostParams['app_verify_url']; 
+        }
+
         $this->load->model('MediaManager');
         $bolRes = $this->MediaManager->updateMediaInfo($arrUpdate);
         if (!$bolRes) {
