@@ -15,8 +15,7 @@ class PreAdSlot extends BG_Controller {
     ];
 
     /**
-     *
-     *
+     * 获取可用的上游广告位id列表
      */
     public function getList() {
         if (empty($this->arrUser)) {
@@ -34,7 +33,7 @@ class PreAdSlot extends BG_Controller {
     }
 
 	/**
-     *
+     * 插入/追加预生成广告位
 	 */
 	public function add() {
         if (empty($this->arrUser)) {
@@ -42,7 +41,9 @@ class PreAdSlot extends BG_Controller {
         }
         $arrPostParams = json_decode(file_get_contents('php://input'), true);
         if (empty($arrPostParams['app_id'])
-            || empty($arrPostParams['slotmap_list'])
+            || empty($arrPostParams['slotmap_type'])
+            || !is_array($arrPostParams['slotmap_type'])
+            || count($arrPostParams['slotmap_type']) !== 3
             || empty($arrPostParams['slotmap_list'])) {
             return $this->outJson('', ErrCode::ERR_INVALID_PARAMS);
         }
@@ -55,6 +56,13 @@ class PreAdSlot extends BG_Controller {
 
         $arrUpStreamSlotIds = [];
         $arrFormatSlotIds = explode(',', $arrParams['pre_slod_ids']);
+        foreach ($arrFormatSlotIds as $key => &$val) {
+            if (empty($val)) {
+                unset($arrFormatSlotIds[$key]);
+                continue;
+            }
+            $val = trim($val);
+        }
         if (empty($arrFormatSlotIds)
             || !is_array($arrFormatSlotIds)) {
             return $this->outJson($arrPreAdSlotAfter, ErrCode::ERR_INVALID_PARAMS, 'pre_slod_ids 错误');
@@ -65,6 +73,7 @@ class PreAdSlot extends BG_Controller {
         $arrUpStreamSlotIds[$arrParams['ad_upstream']][$arrParams['slot_style']][$arrParams['slot_size']] = $arrPreSlitId; 
 
         $arrPreAdSlotAfter = [];
+        // TODO  隐藏bug
         if (isset($arrPreAdSlotBefore[$arrParams['ad_upstream']])) {
             $arrPreAdSlotAfter[$arrParams['ad_upstream']] = 
                 $arrUpStreamSlotIds[$arrParams['ad_upstream']]

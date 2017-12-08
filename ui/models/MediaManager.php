@@ -56,7 +56,7 @@ class MediaManager extends CI_Model {
      * @param array
      * @return array 
      */
-    public function getMediaLists($pn, $rn, $intCount, $strMediaName, $strStatus) {
+    public function getMediaList($pn, $rn, $intCount, $strMediaName, $strStatus) {
         $this->load->library('DbUtil');
         if ($intCount === 0) {
             $arrSelect = [

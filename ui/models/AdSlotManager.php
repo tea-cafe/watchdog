@@ -9,16 +9,14 @@ class AdSlotManager extends CI_Model {
     /**
      *
      */
-    public function getAdSlotLists($strAppId, $pn = 1, $rn = 10, $intCount = 0) {
+    public function getAdSlotLists($strAppId, $pn = 1, $rn = 10) {
         $this->load->library('DbUtil');
-        if ($intCount === 0) {
-            $arrSelect = [
-                'select' => 'count(*) as total',
-                'where' => "app_id='" . $strAppId . "'",
-            ];
-            $arrRes = $this->dbutil->getAdSlot($arrSelect);
-            $intCount = $arrRes[0]['total'];
-        }
+        $arrSelect = [
+            'select' => 'count(*) as total',
+            'where' => "app_id='" . $strAppId . "'",
+        ];
+        $arrRes = $this->dbutil->getAdSlot($arrSelect);
+        $intCount = $arrRes[0]['total'];
         $arrSelect = [
             'select' => 'slot_id,app_id,media_name,media_platform,slot_name,slot_style,slot_size,upstream_adslots,,switch,create_time',
             'where' => "app_id='" . $strAppId . "'",
@@ -29,6 +27,20 @@ class AdSlotManager extends CI_Model {
             $arrSelect['where'] .= " AND media_name like '%" . $strSlotName . "%'"; 
         }
         $arrRes = $this->dbutil->getAdSlot($arrSelect);
+        if ($arrRes) {
+            $this->config->load('style2platform_map');
+            $arrStyleMap = $this->config->item('style2platform_map');
+            foreach ($arrRes as &$val) {
+                $val['slot_style'] = $arrStyleMap[$val['slot_style']]['des'];
+                foreach ($arrStyleMap[$val['slot_style']] as $k => $v) {
+                    if ($k !== 'des') {
+                        $val['slot_size'] = $v['size'][$val['slot_size']];
+                        break;
+                    }  
+                }
+                $val['upstream_adslots'] = json_decode($val['upstream_adslots'], true);
+            }
+        }
         return [
             'list' => $arrRes,
             'pagination' => [
@@ -64,7 +76,7 @@ class AdSlotManager extends CI_Model {
         // check jsonPreSlotId legal
         if ($this->checkPreSlotIdLegal($jsonPreSlotId)) {
             ErrCode::$msg = 'jsonPreSlotId struct check failed';
-            return false
+            return false;
         }
 
         // 回写 pre_slotid
