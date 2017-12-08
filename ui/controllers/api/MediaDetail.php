@@ -52,7 +52,7 @@ class MediaDetail extends BG_Controller {
             $val = $this->security->xss_clean($val);
             if (in_array($key, array_keys(self::APP_ID_MAP))) {
                 $arrAppIdMap[] = [
-                    self::APP_ID_MAP[$key] = $val;
+                    self::APP_ID_MAP[$key] => $val,
                 ];
             }
         }
