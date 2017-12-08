@@ -25,7 +25,7 @@ class MediaDetail extends BG_Controller {
     }
 
     /**
-     * 修改分成比例 & 默认可用样式
+     * 修改分成比例 & 默认可用样式 & app_id_map
      */
     public function modifyProportionAndStyle() {
         if (empty($this->arrUser)) {
@@ -39,17 +39,28 @@ class MediaDetail extends BG_Controller {
             $val = $this->security->xss_clean($val);
         }
         $strAppId = $arrPostParams['app_id'];
+
+        // default_valid_style 
         $strValidStyle = '';
         foreach ($arrPostParams['default_valid_style'] as $val) {
             $strValidStyle .= $val . ',';
         }
         $strValidStyle = substr($strValidStyle, 0, -1);
+
+        // app_id_map
+        $strAppIdMap = '';
+        foreach ($arrPostParams['app_id_map'] as $val) {
+            $strAppIdMap .= $val . ',';
+        }
+        $strAppIdMap = substr($strAppIdMap, 0, -1);
+
         $intProportion = intval($arrPostParams['proportion']);
         $this->load->library('DbUtil');
         $arrUpdate = [
-            'default_valid_style' => $strValidStyle,
-            'proportion' => $intProportion,
-            'where' => "app_id='" . $strAppId . "'",
+            'default_valid_style'   => $strValidStyle,
+            'app_id_style'          => $strAppIdMap,
+            'proportion'            => $intProportion,
+            'where'                 => "app_id='" . $strAppId . "'",
         ];
         $arrRes = $this->dbutil->udpMedia($arrUpdate);
         if ($arrRes['code'] === 0) {
