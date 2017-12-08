@@ -24,12 +24,15 @@ class MediaManager extends CI_Model {
      */
     public function getMediaDetail($strAppId) {
         $arrSelect = [
-            'select' => '*',
+            'select' => 'media_platform,app_id,app_id_map,media_name,proportion,check_status,default_valid_style,industry,app_platform,app_package_name,url,media_keywords,media_desc,app_detail_url,app_verify_url,update_time',
             'where' => "app_id='" . $strAppId . "'",
         ];
         $arrRes = $this->dbutil->getMedia($arrSelect);
         if (empty($arrRes[0])) {
             return [];
+        }
+        if (!empty($arrRes[0]['app_id_map'])) {
+            $arrRes[0]['app_id_map'] = explode(',', $arrRes[0]['app_id_map']); 
         }
         return $arrRes[0];
     }

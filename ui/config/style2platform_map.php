@@ -64,14 +64,17 @@ $config['style2platform_map'] = array(
 		"des"=>'API',
 		"TUIA"=> array(
 			"name" => "推啊",
-			"size" => array(0=>"互动广告")
-		),
-		"BAIDU"=> array(
-			"name" => "百度",
-			"size" => array(0=>"通用广告")
+			"size" => array(0=>"互动广告API")
 		),
 	),
 	8=>array(
+		"des"=>'API',
+		"BAIDU"=> array(
+			"name" => "百度",
+			"size" => array(0=>"通用广告API")
+		),
+	),
+	9=>array(
 		"des"=>'横幅',
 		"TUIA"=> array(
 			"name" => "推啊",
@@ -81,7 +84,7 @@ $config['style2platform_map'] = array(
 			)
 		),
 	),
-	9=>array(
+	10=>array(
 		"des"=>'插屏',
 		"TUIA"=> array(
 			"name" => "推啊",
@@ -90,7 +93,7 @@ $config['style2platform_map'] = array(
 			)
 		),
 	),
-	10=>array(
+	11=>array(
 		"des"=>'开屏',
 		"TUIA"=> array(
 			"name" => "推啊",
@@ -99,7 +102,7 @@ $config['style2platform_map'] = array(
 			)
 		),
 	),
-	11=>array(
+	12=>array(
 		"des"=>'信息流',
 		"TUIA"=> array(
 			"name" => "推啊",
@@ -109,7 +112,7 @@ $config['style2platform_map'] = array(
 			)
 		),
 	),
-	12=>array(
+	13=>array(
 		"des"=>'浮标',
 		"TUIA"=> array(
 			"name" => "推啊",
@@ -118,7 +121,7 @@ $config['style2platform_map'] = array(
 			)
 		),
 	),
-	13=>array(
+	14=>array(
 		"des"=>'应用墙',
 		"TUIA"=> array(
 			"name" => "推啊",
@@ -128,4 +131,3 @@ $config['style2platform_map'] = array(
 		),
 	)
 );
-?>

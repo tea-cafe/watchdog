@@ -20,7 +20,7 @@ class AdSlotManager extends CI_Model {
             $intCount = $arrRes[0]['total'];
         }
         $arrSelect = [
-            'select' => 'slot_id,app_id,media_name,media_platform,slot_name,slot_type,slot_style,slot_size,upstream_adslots,,switch,create_time',
+            'select' => 'slot_id,app_id,media_name,media_platform,slot_name,slot_style,slot_size,upstream_adslots,,switch,create_time',
             'where' => "app_id='" . $strAppId . "'",
             'order_by' => 'create_time DESC',
             'limit' => $rn*($pn-1) . ',' . $rn,
