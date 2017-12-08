@@ -59,7 +59,6 @@ class MediaDetail extends BG_Controller {
 
         $strAppId = $arrPostParams['app_id'];
 
-
         // default_valid_style
         $strValidStyle = '';
         foreach ($arrPostParams['default_valid_style'] as $styleId) {
