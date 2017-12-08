@@ -221,7 +221,6 @@ class DbUtil {
 	 * 注：由于ci事务判断出错回滚的条件是语句是否执行成功，而更新操作时，就算影响的条数为0，sql语句执行的结果过仍然为1，因为它执行成功了，只是影响的条数为0。
 	 */
 	public function sqlTrans($arrParams){
-		var_dump($arrParams);
 		if(empty($arrParams)){
 			return [];
 		}

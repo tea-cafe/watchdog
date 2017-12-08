@@ -9,10 +9,12 @@ class User extends BG_Controller {
 	}
 
 	public function Login(){
-        $arrPostParam = json_decode(file_get_contents('php://input'), true);
-		$userName = $arrPostParam['username'];
-		$passWord = $arrPostParam['password'];
-        $this->load->model('UserManager');
+        //$arrPostParam = json_decode(file_get_contents('php://input'), true);
+		//$userName = $arrPostParam['username'];
+		//$passWord = $arrPostParam['password'];
+		$userName = $this->input->get('username',true);
+		$passWord = $this->input->get('password',true);
+		$this->load->model('UserManager');
 		$loginRes = $this->UserManager->doLogin($userName,$passWord);
 		
 		if($loginRes){

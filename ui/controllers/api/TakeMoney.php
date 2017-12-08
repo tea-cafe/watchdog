@@ -20,6 +20,10 @@ class TakeMoney extends BG_Controller{
 
 	/*获取提现订单信息*/
 	public function index(){
+        if(empty($this->arrUser)){
+            return $this->outJson('',ErrCode::ERR_NOT_LOGIN);
+		}
+
 		$orderNumber = $this->input->get('order_number',true);
 		if(empty($orderNumber)){
 			return $this->outJson('', ErrCode::ERR_INVALID_PARAMS);
@@ -35,12 +39,20 @@ class TakeMoney extends BG_Controller{
 		}
 	}
 
-	/*审核提现订单*/
+	/**
+	 * 审核提现订单
+	 * 发票可能为多张,存为数组
+	 */
+
 	public function examine(){
+        if(empty($this->arrUser)){
+            return $this->outJson('',ErrCode::ERR_NOT_LOGIN);
+		}
+
 		$data['order_number'] = $this->input->post('order_number',true);
 		$data['money'] = $this->input->post('money',true);
 		$data['code'] = $this->input->post('code',true);
-		$data['photo'] = $this->input->post('photo',true);
+		$data['photo'][0] = $this->input->post('photo',true);
 		$data['fillInMoney'] = $this->input->post('fill_in_money',true);
 		$data['shouldFillInMoney'] = $this->input->post('should_fill_in_money',true);
 		$data['number'] = $this->input->post('number',true);
@@ -62,16 +74,38 @@ class TakeMoney extends BG_Controller{
 		
 		$this->load->model('TakeMoneyManager');
 		$res = $this->TakeMoneyManager->modifyInfo($data['order_number'],$data,$status,$remark);
-		
 		if($res){
-			return $this->outJson('', ErrCode::OK,'审核通过');
+			return $this->outJson('', ErrCode::OK,'审核完成');
 		}else{
 			return $this->outJson('', ErrCode::ERR_INVALID_PARAMS,'审核失败,请重新审核');
 		}
 	}
 
+	public function confirmRemitMoney(){
+        if(empty($this->arrUser)){
+            return $this->outJson('',ErrCode::ERR_NOT_LOGIN);
+		}
+
+		$orderNumber = $this->input->get('order_number',true);
+		if(empty($orderNumber) || strlen($orderNumber) != 15){
+			return $this->outJson('',ErrCode::ERR_INVALID_PARAMS,'参数错误');
+		}
+
+		$this->load->model('TakeMoneyManager');
+		$res = $this->TakeMoneyManager->remitMoney($orderNumber);
+		if($res){
+			return $this->outJson('',ErrCode::OK,'打款状态成功');
+		}else{
+			return $this->outJson('',ErrCode::ERR_INVALID_PARAMS,'打款状态失败');
+		}
+	}
+
 	/*上传发票照片*/
 	public function UpInvoicePhoto(){
+        if(empty($this->arrUser)){
+            return $this->outJson('',ErrCode::ERR_NOT_LOGIN);
+		}
+
 		header("Content-Type:application/json");
 		$newName = '/invoice_'.time().mt_rand(100,999).str_replace('image/','.',$_FILES['file']['type']);
 		$newDir = 'upload/imgs/'.date('Ym');
