@@ -18,7 +18,6 @@ class UserManager extends CI_Model {
 		);
 		$this->load->library('DbUtil');
 		$userRes = $this->dbutil->getBgUser($params);
-
 		if(empty($userRes)){
 			return false;
 		}
