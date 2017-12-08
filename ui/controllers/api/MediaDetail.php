@@ -44,6 +44,8 @@ class MediaDetail extends BG_Controller {
             return $this->outJson('', ErrCode::ERR_NOT_LOGIN);
         }
         $arrPostParams = json_decode(file_get_contents('php://input'), true);
+
+        // app_id_map
         $arrAppIdMap = [];
         foreach ($arrPostParams as $key => &$val) {
             if(!in_array($key, self::VALID_PARAMS_KEY)) {
@@ -51,33 +53,25 @@ class MediaDetail extends BG_Controller {
             }
             $val = $this->security->xss_clean($val);
             if (in_array($key, array_keys(self::APP_ID_MAP))) {
-                $arrAppIdMap[] = [
-                    self::APP_ID_MAP[$key] => $val,
-                ];
+                $arrAppIdMap[self::APP_ID_MAP[$key]] = $val;
             }
         }
 
         $strAppId = $arrPostParams['app_id'];
 
+
         // default_valid_style
         $strValidStyle = '';
-        foreach ($arrPostParams['default_valid_style'] as $val) {
-            $strValidStyle .= $val . ',';
+        foreach ($arrPostParams['default_valid_style'] as $styleId) {
+
+            $strValidStyle .= $styleId . ',';
         }
         $strValidStyle = substr($strValidStyle, 0, -1);
-
-        // app_id_map
-        $strAppIdMap = '';
-        foreach ($arrPostParams['app_id_map'] as $val) {
-            $strAppIdMap .= $val . ',';
-        }
-        $strAppIdMap = substr($strAppIdMap, 0, -1);
 
         $intProportion = intval($arrPostParams['proportion']);
         $this->load->library('DbUtil');
         $arrUpdate = [
             'default_valid_style'   => $strValidStyle,
-            'app_id_style'          => $strAppIdMap,
             'proportion'            => $intProportion,
             'app_id_map'            => json_encode($arrAppIdMap),
             'where'                 => "app_id='" . $strAppId . "'",

@@ -31,9 +31,6 @@ class MediaManager extends CI_Model {
         if (empty($arrRes[0])) {
             return [];
         }
-        if (!empty($arrRes[0]['app_id_map'])) {
-            $arrRes[0]['app_id_map'] = explode(',', $arrRes[0]['app_id_map']); 
-        }
         return $arrRes[0];
     }
 
