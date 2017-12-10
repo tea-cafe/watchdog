@@ -6,10 +6,9 @@ class MediaCheckStatus extends BG_Controller {
 	}
 
     /**
-     * 编辑上传H5 app_key后点击完成
-     * H5 专用， check_status 0 => 1
-     * H5 1-0-2-3/4
-     * APP 0-2-3/4
+     * H5 Android check_status 0 => 1
+     * H5,Android 1-0-2-3/4
+     * iOS 0-2-3/4
      */
     public function index() {
         if (empty($this->arrUser)) {
@@ -23,7 +22,7 @@ class MediaCheckStatus extends BG_Controller {
 
         // action =0 审核不通过  action = 1 审核通过
         switch (intval($arrPostParams['check_status'])) {
-            case 1: // H5类型，编辑上传app_key文件后，状态由 1 => 0 
+            case 1: // H5/Android类型，编辑上传app_key文件后，状态由 1 => 0 
                 if (isset($arrPostParams['action'])
                     && $arrPostParams['action'] === 0) {
                     $intStatus = 4;
@@ -40,7 +39,7 @@ class MediaCheckStatus extends BG_Controller {
                 }
                 break;
             default:
-                return $this->outJson('', ErrCode::ERR_INVALID_PARAMS);
+                return $this->outJson('', ErrCode::ERR_INVALID_PARAMS, 'check_status 不对');
         }
 
         $arrUpdate = [
@@ -48,8 +47,11 @@ class MediaCheckStatus extends BG_Controller {
             'where' => "app_id='" . $arrPostParams['app_id'] . "'",
         ];
 
-        // H5媒体注册手状态是1，编辑会上传app_key然后checkstatus，此时会提交上来app_key的地址
+        // H5、Android媒体注册手状态是1，编辑会上传app_key然后checkstatus，此时会提交上来app_key的地址
         if (intval($arrPostParams['check_status']) === 1) {
+            if (empty($arrPostParams['app_verify_url'])) {
+                return $this->outJson('', ErrCode::ERR_INVALID_PARAMS, '缺少app_key');
+            }
             $arrUpdate['app_verify_url'] = $arrPostParams['app_verify_url']; 
         }
 

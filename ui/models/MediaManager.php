@@ -58,19 +58,15 @@ class MediaManager extends CI_Model {
      */
     public function getMediaList($pn, $rn, $account_id, $strStatus) {
         $this->load->library('DbUtil');
-        if ($intCount === 0) {
-            $arrSelect = [
-                'select' => 'count(*) as total',
-            ];
-            $arrRes = $this->dbutil->getMedia($arrSelect);
-            $intCount = intval($arrRes[0]['total']);
-        }
         $arrSelect = [
             'select' => 'app_id,industry,media_name,check_status,media_platform,create_time',
-            'where' => "account_id=" . $account_id, 
             'order_by' => 'create_time DESC',
             'limit' => $rn*($pn-1) . ',' . $rn,
         ];
+
+        if (!empty($account_id)) {
+            $arrSelect['where'] = "account_id='" . $account_id . "'"; 
+        }
         if (!empty($strStatus)) {
             $arrStatus = explode(',', $strStatus);
              $arrSelect['where'] .= " AND (";
@@ -85,7 +81,7 @@ class MediaManager extends CI_Model {
         return [
             'list' => $arrRes,
             'pagination' => [
-                'total' => $intCount,
+                'total' => count($arrRes),
                 'pageSize' => $rn,
                 'current' => $pn,
             ],

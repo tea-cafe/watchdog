@@ -33,7 +33,7 @@ class TakeMoneyManager extends CI_Model{
 		);
 		$this->load->library('DbUtil');
 		$accRes = $this->dbutil->getTmr($accWhere);
-		$account_id = $accRes[0]['account_id'];
+		$accId = $accRes[0]['account_id'];
 
 		/* 查询提现单信息 */
 		$infoWhere = array(
@@ -55,11 +55,11 @@ class TakeMoneyManager extends CI_Model{
 		switch($status){
 			case '2':
 				/* 审核通过操作 */
-				$Res = $this->adopt($account_id,$orderNumber,$newInfo);
+				$Res = $this->adopt($accId,$orderNumber,$newInfo);
 				break;
 			case '3':
 				/* 审核失败操作 */
-				$Res = $this->reject($account_id,$orderNumber,$newInfo,$remark);
+				$Res = $this->reject($accId,$orderNumber,$newInfo,$remark);
 				break;
 		}
 
@@ -103,7 +103,9 @@ class TakeMoneyManager extends CI_Model{
 	 * 回滚账户余额、月账单余额和状态
 	 */
 	private function reject($accId,$orderNumber,$params,$remark){
-		$udpWhere = array(
+        var_dump($params);
+        exit;
+        $udpWhere = array(
 			0 => array(
 				'type' => 'update',
 				'tabName' => 'tmr',

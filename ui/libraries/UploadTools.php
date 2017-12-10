@@ -25,10 +25,9 @@ class UploadTools {
 	public function upload($arrUdpConf) {
         $arrUdpConf['upload_path'] = $arrUdpConf['upload_path'] . date("Ym") . '/';
 
-        if (!is_dir(FCPATH . $arrUdpConf['upload_path'])) {
-            mkdir(FCPATH . $arrUdpConf['upload_path'], 0777);
+        if (!$this->makeDir($arrUdpConf['upload_path'])) {
+            return '';
         }
-
         $this->CI->load->library('upload', $arrUdpConf);
 
         if (!$this->CI->upload->do_upload('file')) {
@@ -36,7 +35,34 @@ class UploadTools {
         }
         $arrRes = $this->CI->upload->data();
 
-        $strImgUrl = str_replace(WEBROOT, '', $arrRes['full_path']);
-        return $strImgUrl;
+        $strUrl = str_replace(WEBROOT, '', $arrRes['full_path']);
+        return $strUrl;
+    }
+
+    /**
+     * 递归检测、创建文件夹
+     * @param string $strConfDir upload/txt
+     * @return bool
+     */
+    private function makeDir($strConfDir){
+        if (is_dir(FCPATH . $strConfDir)) {
+            return true;
+        } else if (@mkdir(FCPATH . $strConfDir,0777)) {
+            return true;
+        } else {
+            $arrConfDir = explode('/',$strConfDir);
+            $dirTmp = '';
+            foreach ($arrConfDir as $dir) {
+                if (empty($dir)) {
+                    continue;
+                }
+                $dirTmp .= $dir . '/';
+                if (!$this->makeDir($dirTmp)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
     }
 }
