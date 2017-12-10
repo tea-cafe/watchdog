@@ -18,8 +18,29 @@ class TakeMoney extends BG_Controller{
 		parent::__construct();
 	}
 
-	/*获取提现订单信息*/
-	public function index(){
+    public function index(){
+        if(empty($this->arrUser)){
+            return $this->outJson('',ErrCode::ERR_NOT_LOGIN);
+		}
+
+        $pageSize = $this->input->get("pagesize",true);
+        $pageSize = empty($pageSize) ? 20 : $pageSize;
+        $currentPage = $this->input->get("currentpage",true);
+        $currentPage = empty($currentPage) ? 1 : $currentPage;        
+		$this->load->model('TakeMoneyManager');
+        $res = $this->TakeMoneyManager->getList($pageSize,$currentPage);
+
+        if(empty($res)){
+			return $this->outJson('', ErrCode::ERR_INVALID_PARAMS);
+        }
+
+        return $this->outJson($res,ErrCode::OK,'获取列表成功');
+    }
+
+    /**
+     * 审核详情页
+     */
+	public function content(){
         if(empty($this->arrUser)){
             return $this->outJson('',ErrCode::ERR_NOT_LOGIN);
 		}
@@ -48,24 +69,27 @@ class TakeMoney extends BG_Controller{
         if(empty($this->arrUser)){
             return $this->outJson('',ErrCode::ERR_NOT_LOGIN);
 		}
+        
+        $arrPostParams = json_decode(file_get_contents('php://input'), true);
+        $orderNumber = $arrPostParams['order_number'];
+        $data['money'] = $arrPostParams['money'];
+		$data['code'] = $arrPostParams['code'];
+		$data['number'] = $arrPostParams['number'];
+		$status = $arrPostParams['status'];
+        $remark = $arrPostParams['remark'];
+        $action = $arrPostParams['action'];
 
-		$data['order_number'] = $this->input->post('order_number',true);
-		$data['money'] = $this->input->post('money',true);
-		$data['code'] = $this->input->post('code',true);
-		$data['photo'][0] = $this->input->post('photo',true);
-		$data['fillInMoney'] = $this->input->post('fill_in_money',true);
-		$data['shouldFillInMoney'] = $this->input->post('should_fill_in_money',true);
-		$data['number'] = $this->input->post('number',true);
-		$status = $this->input->post('status',true);
-		$remark = $this->input->post('remark',true);
+		//$data['photo'][0] = $this->input->post('photo',true);
+		//$data['fillInMoney'] = $this->input->post('fill_in_money',true);
+		//$data['shouldFillInMoney'] = $this->input->post('should_fill_in_money',true);
 
 		foreach($data as $k => $v){
 			if(empty($v)){
 				return $this->outJson('', ErrCode::ERR_INVALID_PARAMS);
 			}
 		}
-		
-		if($status == '3' && empty($remark)){
+
+		if($action == 0 && empty($remark)){
 			return $this->outJson('', ErrCode::ERR_INVALID_PARAMS,'未填写审核失败原因');
 		}
 
@@ -73,8 +97,9 @@ class TakeMoney extends BG_Controller{
 		$company_invoice_info = $this->config->item('invoice');
 		
 		$this->load->model('TakeMoneyManager');
-		$res = $this->TakeMoneyManager->modifyInfo($data['order_number'],$data,$status,$remark);
-		if($res){
+		$res = $this->TakeMoneyManager->modifyInfo($orderNumber,$data,$action,$status,$remark);
+        exit;
+        if($res){
 			return $this->outJson('', ErrCode::OK,'审核完成');
 		}else{
 			return $this->outJson('', ErrCode::ERR_INVALID_PARAMS,'审核失败,请重新审核');

@@ -1,13 +1,53 @@
 <?php
 /**
- * æçŽ°å®¡æ ¸
+ * ÌáÏÖÉóºË
  */ 
 class TakeMoneyManager extends CI_Model{
 	public function __construct(){
 		parent::__construct();
 	}
 
-	/*èŽ·å–æçŽ°å•ä¿¡æ¯*/
+    /*»ñÈ¡ÌáÏÖµ¥ÐÅÏ¢*/
+    public function getList($pageSize,$currentPage){
+        if($currentPage == 1){
+            $currentPage = 0;
+        }else{
+            $currentPage = ($currentPage - 1) * $pageSize;
+        }
+
+        $where = array(
+            'select' => 'id,time,number,money,status',
+            'limit' => empty($pageSize) || empty($currentPage) ? '0,20' : $currentPage.','.$pageSize,
+        );
+
+        $this->load->library('DbUtil');
+        $tmrList = $this->dbutil->getTmr($where);
+        
+        if(empty($tmrList)){
+            return [];
+        }
+        
+        /* ·ÖÒ³ÐÅÏ¢²éÑ¯ */
+        $totalWhere = array(
+            'select' => 'count(*)', 
+        );
+
+        $totalCount = $this->dbutil->getTmr($totalWhere);
+
+        $paginAtion = array(
+            'current' => empty($currentPage) ? '1':$currentPage,
+            'pageSize' => $pageSize,
+            'total' => $totalCount[0]['count(*)'],
+        );
+        /* end */
+
+        $result['list'] = $tmrList;
+        $result['pagination'] = $paginAtion;
+
+        return $result;
+    }
+
+	/*»ñÈ¡ÌáÏÖµ¥ÐÅÏ¢*/
 	public function getInfo($number){
 		$where = array(
 			'select' => 'time,account_id,number,money,bill_list,info,status,remark',
@@ -22,11 +62,12 @@ class TakeMoneyManager extends CI_Model{
 	
 		$res[0]['bill_list'] = unserialize($res[0]['bill_list']);
 		$res[0]['info'] = unserialize($res[0]['info']);
-		return $res;
+        
+        return $res[0];
 	}
 
-	public function modifyInfo($orderNumber,$params,$status,$remark){
-		/*èŽ·å–è´¦å•ç”¨æˆ·å”¯ä¸€æ ‡è¯†ï¼šaccount_id*/
+	public function modifyInfo($orderNumber,$params,$action,$status,$remark){
+		/*»ñÈ¡ÕËµ¥ÓÃ»§Î¨Ò»±êÊ¶£ºaccount_id*/
 		$accWhere = array(
 			'select' => 'account_id',
 			'where' => 'number = '.$orderNumber,
@@ -35,14 +76,15 @@ class TakeMoneyManager extends CI_Model{
 		$accRes = $this->dbutil->getTmr($accWhere);
 		$accId = $accRes[0]['account_id'];
 
-		/* æŸ¥è¯¢æçŽ°å•ä¿¡æ¯ */
+		/* ²éÑ¯ÌáÏÖµ¥ÐÅÏ¢ */
 		$infoWhere = array(
-			'select' => 'info',
+			'select' => 'bill_list,info',
 			'where' => 'number = '.$orderNumber.' AND status = 1',
 		);
 		$this->load->library('DbUtil');
-		$info = $this->dbutil->getTmr($infoWhere);
-		$info = unserialize($info[0]['info']);
+		$arrInfo = $this->dbutil->getTmr($infoWhere);
+        $billList = unserialize($arrInfo[0]['bill_list']);
+        $info = unserialize($arrInfo[0]['info']);
 		$this->config->load('company_invoice_info');
 		$companyInvoiceInfo = $this->config->item('invoice');
 		$newInfo = array(
@@ -51,15 +93,14 @@ class TakeMoneyManager extends CI_Model{
 			'channel_invoice_info' => $params,
 		);
 
-
-		switch($status){
-			case '2':
-				/* å®¡æ ¸é€šè¿‡æ“ä½œ */
+		switch($action){
+        case '1':
+				/* ÉóºËÍ¨¹ý²Ù×÷ */
 				$Res = $this->adopt($accId,$orderNumber,$newInfo);
 				break;
-			case '3':
-				/* å®¡æ ¸å¤±è´¥æ“ä½œ */
-				$Res = $this->reject($accId,$orderNumber,$newInfo,$remark);
+			case '0':
+				/* ÉóºËÊ§°Ü²Ù×÷ */
+				$Res = $this->reject($accId,$orderNumber,$billList,$newInfo,$remark);
 				break;
 		}
 
@@ -67,11 +108,11 @@ class TakeMoneyManager extends CI_Model{
 	}
 
 	/**
-	 * å®¡æ ¸é€šè¿‡
-	 * ä¿®æ”¹æçŽ°å•çŠ¶æ€,æœˆè´¦å•çŠ¶æ€
+	 * ÉóºËÍ¨¹ý
+	 * ÐÞ¸ÄÌáÏÖµ¥×´Ì¬,ÔÂÕËµ¥×´Ì¬
 	 */	
 	private function adopt($accId,$orderNumber,$params){
-		$udpWhere = array(
+        $udpWhere = array(
 			0 => array(
 				'type' => 'update',
 				'tabName' => 'tmr',
@@ -85,26 +126,36 @@ class TakeMoneyManager extends CI_Model{
 			1 => array(
 				'type' => 'update',
 				'tabName' => 'monthly',
-				'where' => 'account_id = "'.$accId.'" AND status = 2',
+				'where' => 'account_id = '.$accId.' AND status = 2',
 				'data' => array(
 					'status' => '3',
 					'update_time' => time(),
 				),
 			),
-		);
+        );
+        var_dump($udpWhere);exit;
 		$this->load->library('DbUtil');
 		$res = $this->dbutil->sqlTrans($udpWhere);
-		
+
 		return $res;
 	}
 	
 	/**
-	 * å®¡æ ¸å¤±è´¥
-	 * å›žæ»šè´¦æˆ·ä½™é¢ã€æœˆè´¦å•ä½™é¢å’ŒçŠ¶æ€
+	 * ÉóºËÊ§°Ü
+	 * »Ø¹öÕË»§Óà¶î¡¢ÔÂÕËµ¥Óà¶îºÍ×´Ì¬
 	 */
-	private function reject($accId,$orderNumber,$params,$remark){
-        var_dump($params);
-        exit;
+	private function reject($accId,$orderNumber,$billList,$params,$remark){
+        $idSql = '';
+        foreach($billList as $key => $value){
+            if($key == 0){
+                $idSql .= ' AND id = '.$value['id'];
+            }elseif((count($billList) - 1) == $key){
+                $idSql .= ' OR id = '.$value['id'];
+            }else{
+                $idSql .= ' OR id = '.$value['id'];
+            }
+        }
+        
         $udpWhere = array(
 			0 => array(
 				'type' => 'update',
@@ -129,21 +180,21 @@ class TakeMoneyManager extends CI_Model{
 			2 => array(
 				'type' => 'update',
 				'tabName' => 'monthly',
-				'where' => 'account_id = "'.$accId.'" AND status = 2',
+				'where' => 'account_id = "'.$accId.'" AND status = 2'.$idSql,
 				'data' => array(
 					'status' => '1',
 					'update_time' => time(),
 				),
 			),
 		);
-
-		$result = $this->dbutil->sqlTrans($udpWhere);
+        
+        $result = $this->dbutil->sqlTrans($udpWhere);
 
 		return $result;
 	}
 
 	/**
-	 * å·²æ‰“æ¬¾
+	 * ÒÑ´ò¿î
 	 */
 	public function remitMoney($orderNumber){
 		$udpWhere = array(

@@ -85,7 +85,7 @@ class Tools extends BG_Controller {
     /**
      * 仅限运营使用
      */
-    public function uploadTxt() {
+    public function upload() {
         if (empty($this->arrUser)) {
             return $this->outJson('', ErrCode::ERR_NOT_LOGIN, '会话已过期,请重新登录');
         } 
@@ -96,17 +96,27 @@ class Tools extends BG_Controller {
         }
         // 用户白名单过滤
 
-        $arrUdpTxtConf = $this->config->item('txt');
-        $arrUdpTxtConf['file_name'] = md5($strAppId . $_FILES['file']['name']);
-        $strUrl = $this->uploadtools->upload($arrUdpTxtConf);
+        $arrTmp = explode('.', $_FILES['file']['name']);
+        $suffix = $arrTmp[count($arrTmp)-1];
+        if ($suffix === 'apk'
+            || $suffix === 'txt') {
+            if ($suffix === 'apk') {
+                $suffix = 'app';
+            }
+            $arrUdpConf = $this->config->item($suffix);
+            $arrUdpConf['file_name'] = md5($strAppId . $_FILES['file']['name']);
+            $strUrl = $this->uploadtools->upload($arrUdpConf);
 
-        if (empty($strUrl)) {
-            return $this->outJson('', ErrCode::ERR_UPLOAD, '上传app失败，请重试');
+            if (empty($strUrl)) {
+                return $this->outJson('', ErrCode::ERR_UPLOAD, '上传失败，请重试');
+            }
+            return $this->outJson(
+                ['url' => $strUrl],
+                ErrCode::OK,
+                '文件上传成功'
+            );
         }
-        return $this->outJson(
-            ['app_key' => $strUrl],
-            ErrCode::OK,
-            'txt文件上传成功');
+
     }
 }
 
