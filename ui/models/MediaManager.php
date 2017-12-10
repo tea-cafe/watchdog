@@ -56,7 +56,7 @@ class MediaManager extends CI_Model {
      * @param array
      * @return array 
      */
-    public function getMediaList($pn, $rn, $intCount, $strMediaName, $strStatus) {
+    public function getMediaList($pn, $rn, $account_id, $strStatus) {
         $this->load->library('DbUtil');
         if ($intCount === 0) {
             $arrSelect = [
@@ -67,12 +67,10 @@ class MediaManager extends CI_Model {
         }
         $arrSelect = [
             'select' => 'app_id,industry,media_name,check_status,media_platform,create_time',
+            'where' => "account_id=" . $account_id, 
             'order_by' => 'create_time DESC',
             'limit' => $rn*($pn-1) . ',' . $rn,
         ];
-        if (!empty($strMediaName)) {
-            $arrSelect['where'] .= "media_name like '%" . $strMediaName . "%'"; 
-        }
         if (!empty($strStatus)) {
             $arrStatus = explode(',', $strStatus);
              $arrSelect['where'] .= " AND (";
