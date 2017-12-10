@@ -45,13 +45,13 @@ class ChannelManager extends CI_Model{
 
 		foreach($res as $k => $v){
 			$data[$k]['account_id'] = $v['account_id'];
-			$data[$k]['type'] = $v['financial_object'];
+			$data[$k]['financial_object'] = $v['financial_object'];
 			$data[$k]['email'] = $v['email'];
 			$data[$k]['status'] = $v['check_status'];
 			$data[$k]['phone'] = $v['phone'];
 			$data[$k]['contact_person'] = $v['contact_person'];
 			$data[$k]['company'] = empty($v['company']) ? $v['contact_person'] : $v['company'];
-			$data[$k]['create_time'] = date("Y-m-d H:i:s",$v['create_time']);
+			$data[$k]['create_time'] = date("Y-m-d",$v['create_time']);
 		}
 
 		$totalWhere = array(

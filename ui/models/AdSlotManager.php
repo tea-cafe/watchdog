@@ -31,13 +31,13 @@ class AdSlotManager extends CI_Model {
             $this->config->load('style2platform_map');
             $arrStyleMap = $this->config->item('style2platform_map');
             foreach ($arrRes as &$val) {
-                $val['slot_style'] = $arrStyleMap[$val['slot_style']]['des'];
                 foreach ($arrStyleMap[$val['slot_style']] as $k => $v) {
                     if ($k !== 'des') {
                         $val['slot_size'] = $v['size'][$val['slot_size']];
                         break;
                     }  
                 }
+                $val['slot_style'] = $arrStyleMap[$val['slot_style']]['des'];
                 $val['upstream_adslots'] = json_decode($val['upstream_adslots'], true);
             }
         }

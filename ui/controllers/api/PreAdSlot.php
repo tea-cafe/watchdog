@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 /**
- * 后台 预生成slot_id管理 控制器 
+ * 后台 预生成slot_id管理 控制器
  */
 
 class PreAdSlot extends BG_Controller {
@@ -68,20 +68,30 @@ class PreAdSlot extends BG_Controller {
             return $this->outJson($arrPreAdSlotAfter, ErrCode::ERR_INVALID_PARAMS, 'pre_slod_ids 错误');
         }
         foreach ($arrFormatSlotIds as $slotid) {
-            $arrPreSlitId[$slotid] = 0; 
+            $arrPreSlotId[$slotid] = 0;
         }
-        $arrUpStreamSlotIds[$arrParams['ad_upstream']][$arrParams['slot_style']][$arrParams['slot_size']] = $arrPreSlitId; 
+        $arrUpStreamSlotIds[$arrParams['ad_upstream']][$arrParams['slot_style']][$arrParams['slot_size']] = $arrPreSlotId;
 
         $arrPreAdSlotAfter = [];
-        // TODO  隐藏bug
-        if (isset($arrPreAdSlotBefore[$arrParams['ad_upstream']])) {
-            $arrPreAdSlotAfter[$arrParams['ad_upstream']] = 
-                $arrUpStreamSlotIds[$arrParams['ad_upstream']]
-                + 
-                $arrPreAdSlotBefore[$arrParams['ad_upstream']]; 
+        $arrPreAdSlotAfter = $arrPreAdSlotBefore;
+        if (empty($arrPreAdSlotBefore[$arrParams['ad_upstream']])) {
+            $arrPreAdSlotAfter[$arrParams['ad_upstream']] = $arrUpStreamSlotIds[$arrParams['ad_upstream']];
         } else {
-            $arrPreAdSlotAfter = array_merge($arrUpStreamSlotIds, $arrPreAdSlotBefore);
-        }
+            if (empty($arrPreAdSlotBefore[$arrParams['ad_upstream']][$arrParams['slot_style']])) {
+                $arrPreAdSlotAfter[$arrParams['ad_upstream']][$arrParams['slot_style']] = $arrUpStreamSlotIds[$arrParams['ad_upstream']][$arrParams['slot_style']];
+            } else {
+                if (empty($arrPreAdSlotBefore[$arrParams['ad_upstream']][$arrParams['slot_style']][$arrParams['slot_size']])) {
+                    $arrPreAdSlotAfter[$arrParams['ad_upstream']][$arrParams['slot_style']][$arrParams['slot_size']] = $arrUpStreamSlotIds[$arrParams['ad_upstream']][$arrParams['slot_style']][$arrParams['slot_size']];
+                } else {
+                    $arrPreAdSlotAfter[$arrParams['ad_upstream']][$arrParams['slot_style']][$arrParams['slot_size']] 
+                        = 
+                        array_merge(
+                            $arrUpStreamSlotIds[$arrParams['ad_upstream']][$arrParams['slot_style']][$arrParams['slot_size']],
+                            $arrPreAdSlotBefore[$arrParams['ad_upstream']][$arrParams['slot_style']][$arrParams['slot_size']]
+                        );
+                }
+            } 
+        } 
 
         $bolRes = $this->PreAdSlotManager->insertPreAdSlot($arrParams['app_id'], json_encode($arrPreAdSlotAfter));
         if (!$bolRes) {
