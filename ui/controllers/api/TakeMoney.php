@@ -106,23 +106,21 @@ class TakeMoney extends BG_Controller{
             return $this->outJson('',ErrCode::ERR_NOT_LOGIN);
 		}
 
-		header("Content-Type:application/json");
+        $this->load->library('UploadTools');
+        $arrUdpImgConf = $this->config->item('img');
 		$newName = '/invoice_'.time().mt_rand(100,999).str_replace('image/','.',$_FILES['file']['type']);
-		$newDir = 'upload/imgs/'.date('Ym');
-		$newPath = FCPATH.$newDir;
+        $arrUdpImgConf['file_name'] = $newName; 
 
-		if(!is_dir($newPath)){
-			@mkdir($newPath);
-		}
+        $strUrl = $this->uploadtools->upload($arrUdpImgConf);
 		
-		$res = move_uploaded_file($_FILES['file']['tmp_name'],$newPath.$newName);
-		
-		if($res){
-			$data['img_url'] = '/'.$newDir.$newName;
-			return $this->outJson($data,ErrCode::OK,'发票图片上传成功');
-		}else{
-			return $this->outJson('', ErrCode::ERR_INVALID_PARAMS,'发票上传失败');
-		}
+        if (empty($strUrl)) {
+            return $this->outJson('', ErrCode::ERR_UPLOAD, '发票上传失败，请重试');
+        }
+        return $this->outJson(
+            ['url' => $strUrl],
+            ErrCode::OK,
+            '发票上传成功'
+        );
 	}
 }
 

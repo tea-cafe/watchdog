@@ -6,10 +6,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class UploadTools {
 
+    
     const KEY_IMG_URL_SALT = 'Qspjv5$E@Vkj7fZb';
 
     public function __construct() {
-        parent::__construct();
+        $this->CI =& get_instance();
         $this->CI->config->load('upload');
         $this->CI->load->helper(['form', 'url']);
     }
@@ -22,10 +23,10 @@ class UploadTools {
      *
 	 */
 	public function upload($arrUdpConf) {
-        $arrUdpConf['upload_path'] = $arrUdpConf['upload_path'] . date("Y/m") . '/';
+        $arrUdpConf['upload_path'] = $arrUdpConf['upload_path'] . date("Ym") . '/';
 
-        if (!is_dir($arrUdpConf['upload_path'])) {
-            @mkdir($arrUdpConf['upload_path'], 0777);
+        if (!is_dir(FCPATH . $arrUdpConf['upload_path'])) {
+            mkdir(FCPATH . $arrUdpConf['upload_path'], 0777);
         }
 
         $this->CI->load->library('upload', $arrUdpConf);

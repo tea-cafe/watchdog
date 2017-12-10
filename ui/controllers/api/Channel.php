@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 /**
- * 后台 渠道管理
+ * 后台 渠道(用户)管理
  */
 
 class Channel extends BG_Controller {

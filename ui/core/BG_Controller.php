@@ -20,6 +20,7 @@ class BG_Controller extends CI_Controller {
      * @bool $bolJsonpSwitch
      */
     protected function outJson($arrData, $intErrCode, $strErrMsg=null,$bolJsonpSwitch = false) {
+        header("Content-Type:application/json");
         $arrData = ErrCode::format($arrData, $intErrCode, $strErrMsg);
         echo json_encode($arrData); 
     } 
