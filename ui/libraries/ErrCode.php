@@ -61,7 +61,7 @@ class ErrCode {
             case self::ERR_DUPLICATE_ACCOUNT:
                 return '用户已存在';
             case self::ERR_UPLOAD:
-                return '图片上传失败';
+                return '上传失败';
             default:
                 return 'Unknown error type.';
         }

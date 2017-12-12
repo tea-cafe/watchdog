@@ -55,6 +55,14 @@ class DbUtil {
 	const TAB_MONTHLY_BILL			= 'monthly_bill';
 	const TAB_DAILY_BILL			= 'daily_bill';
 	const TAB_PLATFORM              = 'tab_platform';
+    const TAB_ORIPROFITBAIDU    = 'tab_slot_ori_profit_baidu_daily';
+    const TAB_ORIPROFITGDT    = 'tab_slot_ori_profit_gdt_daily';
+    const TAB_ORIPROFITTUIA    = 'tab_slot_ori_profit_tuia_daily';
+    const TAB_ORIPROFITYEZI    = 'tab_slot_ori_profit_yezi_daily';
+    const TAB_USRSLOTSUM    = 'tab_slot_user_profit_sum_daily';
+    const TAB_USRMEDIASUM    = 'tab_media_user_profit_sum_daily';
+    const TAB_USRACCTSUM    = 'tab_acct_user_profit_sum_daily';
+    const TAB_PROCESSSTATE  = 'tab_process_state';
 	const TAB_ACCOUNT_BALANCE       = 'account_balance';
 	const TAB_BG_USER				= 'bg_user';
 
@@ -71,6 +79,14 @@ class DbUtil {
 		'monthly'	=> self::TAB_MONTHLY_BILL,
 		'daily'		=> self::TAB_DAILY_BILL,
 		'platform'	=> self::TAB_PLATFORM,
+        'oriprofitbaidu' => self::TAB_ORIPROFITBAIDU,
+        'oriprofitgdt' => self::TAB_ORIPROFITGDT,
+        'oriprofittuia' => self::TAB_ORIPROFITTUIA,
+        'oriprofityezi' => self::TAB_ORIPROFITYEZI,
+        'usrslotsum' => self::TAB_USRSLOTSUM,
+        'usrmediasum' => self::TAB_USRMEDIASUM,
+        'usracctsum' => self::TAB_USRACCTSUM,
+        'processstate' => self::TAB_PROCESSSTATE,
 		'accbalance' => self::TAB_ACCOUNT_BALANCE,
 		'bguser' => self::TAB_BG_USER,
 	];
@@ -88,7 +104,7 @@ class DbUtil {
      * @return array
      */
     public function __call($strFuncName, $arrParams = []) {
-        $strTabName = preg_match('#(get|set|udp)([A-Z].*)#', $strFuncName, $arrAcT);
+        $strTabName = preg_match('#(get|set|udp|del|getall)([A-Z].*)#', $strFuncName, $arrAcT);
         if (empty($arrAcT[1])
             || empty($arrAcT[2])
             || (!in_array(strtolower($arrAcT[2]), array_keys(self::TAB_MAP)))) {
@@ -134,6 +150,25 @@ class DbUtil {
         return $arrRes;
     }
 
+    /**
+     * @param string $strTabName
+     * @param array $arrParams
+     * @return array
+     */
+    private function getall($strTabName, $arrParams) {
+        foreach ($arrParams as $act => $sqlPart) {
+            $this->CI->db->$act($sqlPart);
+        }
+        $objRes = $this->CI->db->get($strTabName);
+		if (empty($objRes)) {
+            return [];
+        }
+        $arrRes = $objRes->result_array();
+        if (!empty($arrRes[0])) {
+            return $arrRes;
+        }
+        return $arrRes;
+    }
 
     /**
      * @param string $strTabName
@@ -167,6 +202,15 @@ class DbUtil {
                 'message' => 'affected rows 0',
             ];
         }
+    }
+
+    /**
+     * del
+     */
+    private function del($strTabName, $arrParams) {
+        $strWhere = $arrParams['where'];
+        $this->CI->db->where($strWhere);
+        $this->CI->db->delete($strTabName);
         $arrRes = $this->CI->db->error();
         return $arrRes;
     }
