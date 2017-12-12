@@ -10,6 +10,14 @@ class CsvAdapter extends CI_Model {
 	}
 
 	public function process($arrParams) {//{{{//
+        $arrSelect = [
+            'select' => 'btn_select',
+            'where' => "platform_en='".$arrParams['source']."' AND date='".$arrParams['date']."'",
+        ];
+        $arrStateRet = $this->BtnState->checkBtnState($arrSelect);
+        if($arrStateRet && $arrStateRet[0]['btn_select'] == 0) {
+            return false;
+        }
         $boolDataRet = false;
 		$boolRet = $this->csvreader->import();
 		$arrContent = $this->csvreader->read_file();
@@ -76,7 +84,7 @@ class CsvAdapter extends CI_Model {
                 $arrState['create_time'] = time();
                 $arrState['update_time'] = time();
                 $arrState['platform_en'] = $arrParams['source'];
-                $arrState['btn_select'] = 0;
+                $arrState['btn_select'] = 1;
                 $arrState['date'] = $arrParams['date'];
                 $arrStateRet = $this->BtnState->insertBtnState($arrState);
             }
@@ -140,7 +148,7 @@ class CsvAdapter extends CI_Model {
                 $arrState['create_time'] = time();
                 $arrState['update_time'] = time();
                 $arrState['platform_en'] = $arrParams['source'];
-                $arrState['btn_select'] = 0;
+                $arrState['btn_select'] = 1;
                 $arrState['date'] = $arrParams['date'];
                 $arrStateRet = $this->BtnState->insertBtnState($arrState);
             }
@@ -204,7 +212,7 @@ class CsvAdapter extends CI_Model {
                 $arrState['create_time'] = time();
                 $arrState['update_time'] = time();
                 $arrState['platform_en'] = $arrParams['source'];
-                $arrState['btn_select'] = 0;
+                $arrState['btn_select'] = 1;
                 $arrState['date'] = $arrParams['date'];
                 $arrStateRet = $this->BtnState->insertBtnState($arrState);
             }
@@ -268,7 +276,7 @@ class CsvAdapter extends CI_Model {
                 $arrState['create_time'] = time();
                 $arrState['update_time'] = time();
                 $arrState['platform_en'] = $arrParams['source'];
-                $arrState['btn_select'] = 0;
+                $arrState['btn_select'] = 1;
                 $arrState['date'] = $arrParams['date'];
 
                 $arrStateRet = $this->BtnState->insertBtnState($arrState);

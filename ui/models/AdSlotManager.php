@@ -96,6 +96,7 @@ class AdSlotManager extends CI_Model {
      *
      */
     private function checkPreSlotIdLegal($jsonPreSlotId)  {
+        // TODO
        return true; 
     }
 

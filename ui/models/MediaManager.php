@@ -56,7 +56,7 @@ class MediaManager extends CI_Model {
      * @param array
      * @return array 
      */
-    public function getMediaList($pn, $rn, $account_id, $strStatus) {
+    public function getMediaList($pn, $rn, $account_id, $strStatus, $strMediaName) {
         $this->load->library('DbUtil');
         $arrSelect = [
             'select' => 'app_id,industry,media_name,check_status,media_platform,create_time',
@@ -69,12 +69,25 @@ class MediaManager extends CI_Model {
         }
         if (!empty($strStatus)) {
             $arrStatus = explode(',', $strStatus);
-             $arrSelect['where'] .= " AND (";
+            if (empty($arrSelect['where'])) {
+                $arrSelect['where'] = "(";
+            } else {
+                $arrSelect['where'] .= " AND (";
+            }
             foreach ($arrStatus as $state) {
                 $arrSelect['where'] .= "check_status=" . $state . " OR "; 
             }
             $arrSelect['where'] = substr($arrSelect['where'], 0, -4);
             $arrSelect['where'] .= ")";
+        }
+
+        if (!empty($strMediaName)) {
+            if (empty($arrSelect['where'])) {
+                $arrSelect['where'] = "media_name like '%" . $strMediaName . "%'";
+            } else {
+                $arrSelect['where'] .= " AND media_name like '%" . $strMediaName . "%'";
+            }
+
         }
         $arrRes = $this->dbutil->getMedia($arrSelect);
         $arrRes = $this->industryMap($arrRes);
@@ -100,5 +113,21 @@ class MediaManager extends CI_Model {
         }
         return $arrData;
      }
+
+    /**
+     * getMediaByAppId
+     */
+    public function getMediaByAppId($strAppId) {
+        $arrSelect = [
+            'select' => 'media_platform,media_name',
+            'where' => "app_id='" . $strAppId . "'",
+        ];
+
+        $arrRes = $this->dbutil->getMedia($arrSelect);
+        if (empty($arrRes[0])) {
+            return false;
+        }
+        return $arrRes;
+    }
 
 }

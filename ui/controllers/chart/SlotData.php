@@ -1,5 +1,5 @@
 <?php
-class SlotData extends MY_Controller {
+class SlotData extends BG_Controller {
     public function __construct() {
         parent::__construct();
         $this->load->model('chart/SlotDataModel');

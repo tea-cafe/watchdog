@@ -16,6 +16,7 @@ class MediaData extends BG_Controller {
         }
         $arrParams['pn'] = empty($arrParams['pn']) ? 1 : $arrParams['pn'];
         $arrParams['rn'] = empty($arrParams['rn']) ? 10 : $arrParams['rn'];
+        $arrParams['method'] = 'getUsrMediaSum';
 
         $arrList = $this->MediaDataModel->getMediaSumDataList($arrParams);
         return $arrList?$this->outJson($arrList, ErrCode::OK) : $this->outJson([], ErrCode::OK);
@@ -35,6 +36,7 @@ class MediaData extends BG_Controller {
         $arrParams['pn'] = empty($arrParams['pn']) ? 1 : $arrParams['pn'];
         $arrParams['rn'] = empty($arrParams['rn']) ? 10 : $arrParams['rn'];
 
+        $arrParams['method'] = 'getUsrMediaSum';
         $arrList = $this->MediaDataModel->getMediaDailyDataList($arrParams);
         return $arrList?$this->outJson($arrList, ErrCode::OK) : $this->outJson([], ErrCode::OK);
     }//}}}//

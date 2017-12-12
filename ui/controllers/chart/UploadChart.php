@@ -1,5 +1,5 @@
 <?php
-class UploadChart extends MY_Controller {
+class UploadChart extends BG_Controller {
 
     public function __construct() {
         parent::__construct();
@@ -29,10 +29,11 @@ class UploadChart extends MY_Controller {
      */
     public function BAIDU($arrParams) {//{{{//
         $arrParams = $this->input->get(NULL, TRUE);
-        //$arrParams = $this->input->post(NULL, TRUE);
-        $arrParams['date'] = '2017-12-06';
-        //$arrParams['source'] = __FUNCTION__;
-        $arrParams['source'] = 'BAIDU';
+
+        if(empty($arrParams['date'])
+            || empty($arrParams['source'])) {
+            return $this->outJson([], ErrCode::ERR_INVALID_PARAMS);
+        }
         $arrData = $this->CsvAdapter->process($arrParams);
 
         return $arrData ? $this->outJson($arrData, ErrCode::OK) : $this->outJson($arrData, ErrCode::ERR_UPLOAD);
@@ -44,9 +45,10 @@ class UploadChart extends MY_Controller {
      */
     public function GDT($arrParams) {//{{{//
         $arrParams = $this->input->get(NULL, TRUE);
-        //$arrParams = $this->input->post(NULL, TRUE);
-        $arrParams['date'] = '2017-12-06';
-        $arrParams['source'] = 'GDT';
+        if(empty($arrParams['date'])
+            || empty($arrParams['source'])) {
+            return $this->outJson([], ErrCode::ERR_INVALID_PARAMS);
+        }
         $arrData = $this->CsvAdapter->process($arrParams);
 
         return $arrData ? $this->outJson($arrData, ErrCode::OK) : $this->outJson($arrData, ErrCode::ERR_UPLOAD);
@@ -58,9 +60,10 @@ class UploadChart extends MY_Controller {
      */
     public function TUIA($arrParams) {//{{{//
         $arrParams = $this->input->get(NULL, TRUE);
-        //$arrParams = $this->input->post(NULL, TRUE);
-        $arrParams['date'] = '2017-12-06';
-        $arrParams['source'] = 'TUIA';
+        if(empty($arrParams['date'])
+            || empty($arrParams['source'])) {
+            return $this->outJson([], ErrCode::ERR_INVALID_PARAMS);
+        }
         $arrData = $this->CsvAdapter->process($arrParams);
 
         return $arrData ? $this->outJson($arrData, ErrCode::OK) : $this->outJson($arrData, ErrCode::ERR_UPLOAD);
@@ -72,10 +75,11 @@ class UploadChart extends MY_Controller {
      */
     public function YEZI($arrParams) {//{{{//
         $arrParams = $this->input->get(NULL, TRUE);
-        //$arrParams = $this->input->post(NULL, TRUE);
-        $arrParams['date'] = '2017-12-06';
-        //$arrParams['source'] = __FUNCTION__;
-        $arrParams['source'] = 'YEZI';
+
+        if(empty($arrParams['date'])
+            || empty($arrParams['source'])) {
+            return $this->outJson([], ErrCode::ERR_INVALID_PARAMS);
+        }
         $arrData = $this->CsvAdapter->process($arrParams);
 
         return $arrData ? $this->outJson($arrData, ErrCode::OK) : $this->outJson($arrData, ErrCode::ERR_UPLOAD);

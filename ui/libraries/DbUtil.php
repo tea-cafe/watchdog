@@ -66,6 +66,8 @@ class DbUtil {
 	const TAB_ACCOUNT_BALANCE       = 'account_balance';
 	const TAB_BG_USER				= 'bg_user';
 
+    const TAB_DATA_FOR_SDK = 'data_for_sdk';
+
     const TAB_MAP = [
         'account'   => self::TAB_ACCOUNT,
         'media'     => self::TAB_MEDIA,
@@ -89,6 +91,7 @@ class DbUtil {
         'processstate' => self::TAB_PROCESSSTATE,
 		'accbalance' => self::TAB_ACCOUNT_BALANCE,
 		'bguser' => self::TAB_BG_USER,
+        'sdkdata' => self::TAB_DATA_FOR_SDK,
 	];
 
     public static $instance;
@@ -202,6 +205,8 @@ class DbUtil {
                 'message' => 'affected rows 0',
             ];
         }
+        $arrRes = $this->CI->db->error();
+        return $arrRes;
     }
 
     /**

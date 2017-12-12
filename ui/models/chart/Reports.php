@@ -6,6 +6,7 @@ class Reports extends CI_Model {
         $this->load->library('DbUtil');
     }
 
+
     public function getViewList($arrParams) {//{{{//
         $intCount = 0;
         if(!isset($arrParams['count']) || $arrParams['count'] == 0) {
@@ -13,17 +14,23 @@ class Reports extends CI_Model {
         }
         $rn = $arrParams['rn'];
         $pn = $arrParams['pn'];
-        $mark = intval($arrParams['mark']);
         $arrSelect = [
             'select' => '*',
-            'where' => "mark=".$mark." AND date='" .$arrParams['date']. "'",
+            'where' => " date='" .$arrParams['date']. "'",
             'order_by' => 'create_time DESC',
             'limit' => $rn*($pn-1) . ',' . $rn,
         ];
         $method = $arrParams['method'];
         $arrRes = $this->dbutil->$method($arrSelect);
         if(empty($arrRes[0])) {
-            return false;
+            return [
+                'list' => [],
+                'pagination' => [
+                    'total' => $intCount,
+                    'pageSize' => $rn,
+                    'current' => $pn,
+                ],
+            ];
         }
 
         return [
@@ -37,14 +44,13 @@ class Reports extends CI_Model {
     }//}}}//
 
     private function getTotalCount($arrParams) {//{{{//
-        $mark = intval($arrParams['mark']);
         $arrSelect = [
             'select' => 'count(*) as total',
-            'where' => "mark=".$mark." AND date='" .$arrParams['date']. "'",
+            'where' => "date='" .$arrParams['date']. "'",
         ];
-        $method = 'getOriProfit'.$arrParams['source'];
+        $method = $arrParams['method'];
         $arrRes = $this->dbutil->$method($arrSelect);
-        $intCount = $arrRes[0] ? $arrRes[0]['total'] : 0;
+        $intCount = $arrRes[0] ? intval($arrRes[0]['total']) : 0;
         return $intCount;
     }//}}}//
 

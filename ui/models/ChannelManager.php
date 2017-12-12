@@ -5,6 +5,7 @@
 class ChannelManager extends CI_Model{
 	public function __construct(){
 		parent::__construct();
+		$this->load->library('DbUtil');
 	}
 
 	/*获取渠道列表*/
@@ -36,7 +37,6 @@ class ChannelManager extends CI_Model{
             unset($listWhere['where']);
         }
 
-        $this->load->library('DbUtil');
 		$res = $this->dbutil->getAccount($listWhere);
         
         if(empty($res)){
@@ -81,7 +81,6 @@ class ChannelManager extends CI_Model{
 			'where' => 'account_id = '.$account_id,
 		);
 
-		$this->load->library('DbUtil');
 		$res = $this->dbutil->getAccount($where);
 		unset($res[0]['passwd']);
 		
@@ -100,7 +99,6 @@ class ChannelManager extends CI_Model{
 			'where' => 'email = "'.$email.'"',
 		);	
 		
-		$this->load->library('DbUtil');
 		$res = $this->dbutil->udpAccount($where);
 		
 		if($res['code'] == 0){
@@ -109,6 +107,24 @@ class ChannelManager extends CI_Model{
 			return false;
 		}
 	}
+
+    /**
+     * getAcctByAcctId
+     */
+    public function getAcctByAcctId($strAcctId) {
+        $where = array(
+			'select' => 'company',
+			'where' => 'account_id = '.$strAcctId,
+		);
+
+		$res = $this->dbutil->getAccount($where);
+		
+		if(empty($res)){
+			return false;
+		}
+
+		return $res[0];
+    }
 }
 
 ?>

@@ -1,8 +1,9 @@
 <?php
-class Report extends MY_Controller {
+class Report extends BG_Controller {
     public function __construct() {
         parent::__construct();
         $this->load->model('chart/Reports');
+        $this->load->model('chart/Processes');
     }
 
     /**
@@ -16,9 +17,9 @@ class Report extends MY_Controller {
         }
         $arrParams['pn'] = empty($arrParams['pn']) ? 1 : $arrParams['pn'];
         $arrParams['rn'] = empty($arrParams['rn']) ? 10 : $arrParams['rn'];
-        $arrParams['mark'] = 0;
         $arrParams['method'] = 'getOriProfit'.$arrParams['source'];
         $arrList = $this->Reports->getViewList($arrParams);
+        $arrList['state'] = $this->Processes->getBtnState($arrParams);
         return $arrList?$this->outJson($arrList, ErrCode::OK) : $this->outJson([], ErrCode::OK);
     }//}}}//
 
@@ -42,17 +43,18 @@ class Report extends MY_Controller {
     /**
      * 广告位汇总
      */
-    public function getSlotSumList() {//{{{//
+    public function getSumList() {//{{{//
         $arrParams = $this->input->get(NULL, TRUE);
         if(empty($arrParams['date'])
-            || empty($arrParams['source'])) {
+            || empty($arrParams['type'])) {
             return $this->outJson([], ErrCode::ERR_INVALID_PARAMS);
         }
         $arrParams['pn'] = empty($arrParams['pn']) ? 1 : $arrParams['pn'];
         $arrParams['rn'] = empty($arrParams['rn']) ? 10 : $arrParams['rn'];
         $arrParams['mark'] = 1;
-        $arrParams['method'] = 'getUsrSlotSum';
+        $arrParams['method'] = 'getUsr'.$arrParams['type'].'Sum';
         $arrList = $this->Reports->getViewList($arrParams);
+        $arrList['state'] = $this->Processes->getBtnState($arrParams);
         return $arrList?$this->outJson($arrList, ErrCode::OK) : $this->outJson([], ErrCode::OK);
     }//}}}//
 
@@ -62,7 +64,7 @@ class Report extends MY_Controller {
     public function getMediaSumList() {//{{{//
         $arrParams = $this->input->get(NULL, TRUE);
         if(empty($arrParams['date'])
-            || empty($arrParams['source'])) {
+            || empty($arrParams['type'])) {
             return $this->outJson([], ErrCode::ERR_INVALID_PARAMS);
         }
         $arrParams['pn'] = empty($arrParams['pn']) ? 1 : $arrParams['pn'];
@@ -79,7 +81,7 @@ class Report extends MY_Controller {
     public function getAcctSumList() {//{{{//
         $arrParams = $this->input->get(NULL, TRUE);
         if(empty($arrParams['date'])
-            || empty($arrParams['source'])) {
+            || empty($arrParams['type'])) {
             return $this->outJson([], ErrCode::ERR_INVALID_PARAMS);
         }
         $arrParams['pn'] = empty($arrParams['pn']) ? 1 : $arrParams['pn'];
