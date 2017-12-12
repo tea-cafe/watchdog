@@ -1,6 +1,7 @@
 # folders
 web
 scripts
+ui/logs
 
 # files
 *.DS_Store

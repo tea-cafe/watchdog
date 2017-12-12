@@ -1,5 +1,5 @@
 <?php
-class MediaData extends MY_Controller {
+class MediaData extends BG_Controller {
     public function __construct() {
         parent::__construct();
         $this->load->model('chart/MediaDataModel');
