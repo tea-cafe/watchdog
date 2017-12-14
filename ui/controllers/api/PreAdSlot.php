@@ -46,9 +46,11 @@ class PreAdSlot extends BG_Controller {
             || empty($arrPostParams['slotmap_type'])
             || !is_array($arrPostParams['slotmap_type'])
             || count($arrPostParams['slotmap_type']) !== 3
-            || empty($arrPostParams['slotmap_list'])
-            || preg_match('#[^a-zA-Z0-9,]#', $arrPostParams['slotmap_list'])) {
-            return $this->outJson('', ErrCode::ERR_INVALID_PARAMS, 'zzhelifanhui');
+            || empty($arrPostParams['slotmap_list'])) {
+            return $this->outJson('', ErrCode::ERR_INVALID_PARAMS);
+        }
+        if (preg_match('#[^a-zA-Z0-9,]#', $arrPostParams['slotmap_list'])) {
+            return $this->outJson('', ErrCode::ERR_INVALID_PARAMS, '预生成id列表请确保只有数字字母和英文逗号');
         }
         $app_id = $arrPostParams['app_id'];
         $pre_slod_ids = $arrPostParams['slotmap_list'];
@@ -74,7 +76,6 @@ class PreAdSlot extends BG_Controller {
             $arrPreSlotId[$slotid] = 0;
         }
         $arrUpStreamSlotIds[$arrParams['ad_upstream']][$arrParams['slot_style']][$arrParams['slot_size']] = $arrPreSlotId;
-
         $arrPreAdSlotAfter = [];
         $arrPreAdSlotAfter = $arrPreAdSlotBefore;
         if (empty($arrPreAdSlotBefore[$arrParams['ad_upstream']])) {
@@ -93,10 +94,9 @@ class PreAdSlot extends BG_Controller {
                     }
                     $arrPreAdSlotAfter[$arrParams['ad_upstream']][$arrParams['slot_style']][$arrParams['slot_size']]
                         =
-                        array_merge(
-                            $arrUpStreamSlotIds[$arrParams['ad_upstream']][$arrParams['slot_style']][$arrParams['slot_size']],
-                            $arrPreAdSlotBefore[$arrParams['ad_upstream']][$arrParams['slot_style']][$arrParams['slot_size']]
-                        );
+                        $arrUpStreamSlotIds[$arrParams['ad_upstream']][$arrParams['slot_style']][$arrParams['slot_size']]
+                        +
+                        $arrPreAdSlotBefore[$arrParams['ad_upstream']][$arrParams['slot_style']][$arrParams['slot_size']];
                 }
             }
         }

@@ -47,7 +47,7 @@ class MediaCheckStatus extends BG_Controller {
             'where' => "app_id='" . $arrPostParams['app_id'] . "'",
         ];
 
-        // H5、Android媒体注册手状态是1，编辑会上传app_key然后checkstatus，此时会提交上来app_key的地址
+        // H5、Android媒体注册手状态是1时，编辑会上传app_key然后checkstatus，此时会提交上来app_key的地址
         if (intval($arrPostParams['check_status']) === 1
             && $arrPostParams['action'] == 1) {
             if (empty($arrPostParams['app_verify_url'])) {

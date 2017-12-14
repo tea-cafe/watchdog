@@ -24,7 +24,7 @@ class MediaManager extends CI_Model {
      */
     public function getMediaDetail($strAppId) {
         $arrSelect = [
-            'select' => 'media_platform,app_id,app_id_map,media_name,proportion,check_status,default_valid_style,industry,app_platform,app_package_name,app_secret,url,media_keywords,media_desc,app_detail_url,app_verify_url,update_time',
+            'select' => 'media_platform,app_id,app_id_map,media_name,proportion,check_status,default_valid_style,industry,app_platform,app_package_name,app_secret,url,media_keywords,media_desc,app_detail_url,app_verify_url,update_time,create_time',
             'where' => "app_id='" . $strAppId . "'",
         ];
 
@@ -69,6 +69,11 @@ class MediaManager extends CI_Model {
     public function getMediaList($pn, $rn, $account_id, $strStatus, $strMediaName) {
         $this->load->library('DbUtil');
         $arrSelect = [
+            'select' => 'count(*) as total',
+        ];
+        $arrRes = $this->dbutil->getMedia($arrSelect);
+        $intCount = empty($arrRes[0]['total']) ? 10 : intval($arrRes[0]['total']);
+        $arrSelect = [
             'select' => 'app_id,industry,media_name,check_status,media_platform,media_delivery_method,create_time',
             'order_by' => 'create_time DESC',
             'limit' => $rn*($pn-1) . ',' . $rn,
@@ -104,7 +109,7 @@ class MediaManager extends CI_Model {
         return [
             'list' => $arrRes,
             'pagination' => [
-                'total' => count($arrRes),
+                'total' => $intCount,
                 'pageSize' => $rn,
                 'current' => $pn,
             ],
