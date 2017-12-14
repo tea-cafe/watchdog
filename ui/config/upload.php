@@ -8,7 +8,7 @@ $config['img'] = [
     'overwrite' => true,
 ];
 $config['csv'] = [
-    'upload_path' => './upload/csv/',
+    'upload_path' => '/upload/csv/',
     'allowed_types' => 'csv',
     'max_size' => 0, // 无限制
     'overwrite' => true,

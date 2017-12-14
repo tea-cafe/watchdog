@@ -6,6 +6,7 @@ class Processes extends CI_Model {
         $this->load->model('chart/BtnState');
         $this->load->model('MediaManager');
         $this->load->model('ChannelManager');
+        $this->load->model('AdSlotManager');
     }
 
     public function doConfirmLoad($arrParams) {//{{{//
@@ -286,14 +287,19 @@ class Processes extends CI_Model {
             return false;
         }
         foreach($arrOriData as $key=>$val) {
+            $arrSlot = $this->AdSlotManager->getSlotBySlotId($key);
+            if(!$arrSlot) {
+                return false;
+            }
+            $val['slot_name'] = $arrSlot['slot_name'];
+
 			$time = time();
+            $sqlKeys = " (`".implode("`, `", array_keys($val))."`)";
             $sqlString = '('."'".implode( "','", $val ) . "'".')'; //批量
             $insertRows[] = $sqlString;
             $strValues = implode(',', $insertRows);
-			$sql = "INSERT IGNORE INTO tab_slot_user_profit_sum_daily(
-                user_slot_id,app_id,acct_id,pre_exposure_num,
-                post_exposure_num,pre_click_num,post_click_num,pre_profit,post_profit,click_rate,cpc,ecpm,
-                mark,date,create_time,update_time) VALUES {$strValues} ON DUPLICATE KEY UPDATE 
+			$sql = "INSERT IGNORE INTO tab_slot_user_profit_sum_daily {$sqlKeys} 
+ VALUES {$strValues} ON DUPLICATE KEY UPDATE 
                 pre_exposure_num=pre_exposure_num $label '" . $val['pre_exposure_num'] . "',
                 post_exposure_num=post_exposure_num $label '" . $val['post_exposure_num'] ."',
                 pre_click_num=pre_click_num $label '" . $val['pre_click_num'] ."',

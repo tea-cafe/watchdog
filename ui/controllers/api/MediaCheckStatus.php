@@ -16,7 +16,7 @@ class MediaCheckStatus extends BG_Controller {
         }
         $arrPostParams = json_decode(file_get_contents('php://input'), true);
         if (empty($arrPostParams['app_id'])
-            || empty($arrPostParams['check_status'])) {
+            || !isset($arrPostParams['check_status'])) {
             return $this->outJson('', ErrCode::ERR_INVALID_PARAMS); 
         }
 
@@ -48,7 +48,8 @@ class MediaCheckStatus extends BG_Controller {
         ];
 
         // H5、Android媒体注册手状态是1，编辑会上传app_key然后checkstatus，此时会提交上来app_key的地址
-        if (intval($arrPostParams['check_status']) === 1) {
+        if (intval($arrPostParams['check_status']) === 1
+            && $arrPostParams['action'] == 1) {
             if (empty($arrPostParams['app_verify_url'])) {
                 return $this->outJson('', ErrCode::ERR_INVALID_PARAMS, '缺少app_verify_url');
             }

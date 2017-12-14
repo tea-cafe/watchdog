@@ -1,11 +1,11 @@
 <?php
-class SlotDataModel extends CI_Model {
+class AcctDataModel extends CI_Model {
     public function __construct() {
         parent::__construct();
         $this->load->library('DbUtil');
     }
 
-    public function getSlotSumDataList($arrParams) {//{{{//
+    public function getAcctSumDataList($arrParams) {//{{{//
         $intCount = 0;
         if(!isset($arrParams['count']) || $arrParams['count'] == 0) {
             $intCount = $this->getTotalCount($arrParams);
@@ -33,8 +33,8 @@ class SlotDataModel extends CI_Model {
             ];
         }
 
-        $arrRet = $this->formatSlotData($arrRes);
-        $arrDate = $this->formatSlotDataByDate($arrRes);
+        $arrRet = $this->formatAcctData($arrRes);
+        $arrDate = $this->formatAcctDataByDate($arrRes);
         $arrCurve = $this->formatCurve($arrDate);
 
         return [
@@ -48,7 +48,7 @@ class SlotDataModel extends CI_Model {
         ];
     }//}}}//
 
-    public function getSlotDailyDataList($arrParams) {//{{{//
+    public function getAcctDailyDataList($arrParams) {//{{{//
         $intCount = 0;
         if(!isset($arrParams['count']) || $arrParams['count'] == 0) {
             $intCount = $this->getTotalCount($arrParams);
@@ -58,7 +58,7 @@ class SlotDataModel extends CI_Model {
         $pn = $arrParams['pn'];
         $arrSelect = [
             'select' => '*',
-            'where' => "date>='" .$arrParams['startDate']. "' AND date<='".$arrParams['endDate']."' AND user_slot_id= '".$arrParams['user_slot_id']."'",
+            'where' => "date>='" .$arrParams['startDate']. "' AND date<='".$arrParams['endDate']."' AND account_id= '".$arrParams['account_id']."'",
             'order_by' => 'date DESC',
             'limit' => $rn*($pn-1) . ',' . $rn,
         ];
@@ -97,37 +97,36 @@ class SlotDataModel extends CI_Model {
         return $intCount;
     }//}}}//
 
-    private function formatSlotData($arrRes) {//{{{//
+    private function formatAcctData($arrRes) {//{{{//
         $arrOriData = [];
         foreach($arrRes as $key=>$val) {
-            $arrOriData[$val['user_slot_id']]['user_slot_id'] = $val['user_slot_id'];
-            $arrOriData[$val['user_slot_id']]['account_id'] = $val['acct_id'];
-            $arrOriData[$val['user_slot_id']]['slot_name'] = $val['slot_name'];
-            $arrOriData[$val['user_slot_id']]['pre_exposure_num'] = empty($arrOriData[$val['user_slot_id']]['pre_exposure_num'])
-                ? intval($val['pre_exposure_num']) : intval($val['pre_exposure_num']) + $arrOriData[$val['user_slot_id']]['pre_exposure_num'];
-            $arrOriData[$val['user_slot_id']]['post_exposure_num'] = empty($arrOriData[$val['user_slot_id']]['post_exposure_num'])
-                ? intval($val['post_exposure_num']) : intval($val['post_exposure_num']) + $arrOriData[$val['user_slot_id']]['post_exposure_num'];
-            $arrOriData[$val['user_slot_id']]['pre_click_num'] = empty($arrOriData[$val['user_slot_id']]['pre_click_num'])
-                ? intval($val['pre_click_num']) : intval($val['pre_click_num']) + $arrOriData[$val['user_slot_id']]['pre_click_num'];
-            $arrOriData[$val['user_slot_id']]['post_click_num'] = empty($arrOriData[$val['user_slot_id']]['post_click_num'])
-                ? intval($val['post_click_num']) : intval($val['post_click_num']) + $arrOriData[$val['user_slot_id']]['post_click_num'];
-            $arrOriData[$val['user_slot_id']]['pre_profit'] = empty($arrOriData[$val['user_slot_id']]['pre_profit'])
-                ? intval($val['pre_profit']) : intval($val['pre_profit']) + $arrOriData[$val['user_slot_id']]['pre_profit'];
-            $arrOriData[$val['user_slot_id']]['post_profit'] = empty($arrOriData[$val['user_slot_id']]['post_profit'])
-                ? floatval($val['post_profit']) : floatval($val['post_profit']) + $arrOriData[$val['user_slot_id']]['post_profit'];
-            $arrOriData[$val['user_slot_id']]['click_rate'] = 0;
-            $arrOriData[$val['user_slot_id']]['cpc'] = 0;
-            $arrOriData[$val['user_slot_id']]['ecpm'] = 0;
-            $arrOriData[$val['user_slot_id']]['mark'] = 1;
-            $arrOriData[$val['user_slot_id']]['date'] = $val['date'];
-            $arrOriData[$val['user_slot_id']]['create_time'] = time();
-            $arrOriData[$val['user_slot_id']]['update_time'] = time();
+            $arrOriData[$val['account_id']]['account_id'] = $val['account_id'];
+            $arrOriData[$val['account_id']]['acct_name'] = $val['acct_name'];
+            $arrOriData[$val['account_id']]['pre_exposure_num'] = empty($arrOriData[$val['account_id']]['pre_exposure_num'])
+                ? intval($val['pre_exposure_num']) : intval($val['pre_exposure_num']) + $arrOriData[$val['account_id']]['pre_exposure_num'];
+            $arrOriData[$val['account_id']]['post_exposure_num'] = empty($arrOriData[$val['account_id']]['post_exposure_num'])
+                ? intval($val['post_exposure_num']) : intval($val['post_exposure_num']) + $arrOriData[$val['account_id']]['post_exposure_num'];
+            $arrOriData[$val['account_id']]['pre_click_num'] = empty($arrOriData[$val['account_id']]['pre_click_num'])
+                ? intval($val['pre_click_num']) : intval($val['pre_click_num']) + $arrOriData[$val['account_id']]['pre_click_num'];
+            $arrOriData[$val['account_id']]['post_click_num'] = empty($arrOriData[$val['account_id']]['post_click_num'])
+                ? intval($val['post_click_num']) : intval($val['post_click_num']) + $arrOriData[$val['account_id']]['post_click_num'];
+            $arrOriData[$val['account_id']]['pre_profit'] = empty($arrOriData[$val['account_id']]['pre_profit'])
+                ? intval($val['pre_profit']) : intval($val['pre_profit']) + $arrOriData[$val['account_id']]['pre_profit'];
+            $arrOriData[$val['account_id']]['post_profit'] = empty($arrOriData[$val['account_id']]['post_profit'])
+                ? floatval($val['post_profit']) : floatval($val['post_profit']) + $arrOriData[$val['account_id']]['post_profit'];
+            $arrOriData[$val['account_id']]['click_rate'] = 0;
+            $arrOriData[$val['account_id']]['cpc'] = 0;
+            $arrOriData[$val['account_id']]['ecpm'] = 0;
+            $arrOriData[$val['account_id']]['mark'] = 1;
+            $arrOriData[$val['account_id']]['date'] = $val['date'];
+            $arrOriData[$val['account_id']]['create_time'] = time();
+            $arrOriData[$val['account_id']]['update_time'] = time();
 
         }
         return array_values($arrOriData);
     }//}}}//
-    
-    private function formatSlotDataByDate($arrRes) {//{{{//
+
+    private function formatAcctDataByDate($arrRes) {//{{{//
         $arrOriData = [];
         foreach($arrRes as $key=>$val) {
             $arrOriData[$val['date']]['pre_exposure_num'] = empty($arrOriData[$val['date']]['pre_exposure_num'])
@@ -147,8 +146,6 @@ class SlotDataModel extends CI_Model {
             $arrOriData[$val['date']]['ecpm'] = 0;
             $arrOriData[$val['date']]['mark'] = 1;
             $arrOriData[$val['date']]['date'] = $val['date'];
-            $arrOriData[$val['date']]['create_time'] = time();
-            $arrOriData[$val['date']]['update_time'] = time();
 
         }
         return array_values($arrOriData);

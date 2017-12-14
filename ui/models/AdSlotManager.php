@@ -28,8 +28,10 @@ class AdSlotManager extends CI_Model {
         }
         $arrRes = $this->dbutil->getAdSlot($arrSelect);
         if ($arrRes) {
+            // id -> 中文
             $this->config->load('style2platform_map');
             $arrStyleMap = $this->config->item('style2platform_map');
+
             foreach ($arrRes as &$val) {
                 foreach ($arrStyleMap[$val['slot_style']] as $k => $v) {
                     if ($k !== 'des') {
@@ -41,6 +43,7 @@ class AdSlotManager extends CI_Model {
                 $val['upstream_adslots'] = json_decode($val['upstream_adslots'], true);
             }
         }
+
         return [
             'list' => $arrRes,
             'pagination' => [
@@ -99,5 +102,21 @@ class AdSlotManager extends CI_Model {
         // TODO
        return true; 
     }
+
+    /**
+     * getSlotBySlotId
+     */
+    public function getSlotBySlotId($strSlotId) {//{{{//
+        $arrSelect = [
+            'select' => 'slot_name',
+            'where' => "slot_id='" . $strSlotId . "'",
+        ];
+
+        $arrRes = $this->dbutil->getAdSlot($arrSelect);
+        if (empty($arrRes[0])) {
+            return false;
+        }
+        return $arrRes[0];
+    }//}}}//
 
 }

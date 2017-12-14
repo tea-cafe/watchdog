@@ -98,7 +98,7 @@ class TakeMoney extends BG_Controller{
 		
 		$this->load->model('TakeMoneyManager');
 		$res = $this->TakeMoneyManager->modifyInfo($orderNumber,$data,$action,$status,$remark);
-        exit;
+
         if($res){
 			return $this->outJson('', ErrCode::OK,'审核完成');
 		}else{

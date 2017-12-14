@@ -20,7 +20,8 @@ class ChannelManager extends CI_Model{
 			$StrKeyWord = '';
 		}else{
 			$StrKeyWord = 'company like "%'.$keyWord.'%" OR contact_person like "%'.$keyWord.'%"';
-		}
+        }
+
 		if(empty($status)){
 			$StrStatus = '';
 		}else{
@@ -28,7 +29,7 @@ class ChannelManager extends CI_Model{
 		}
 		
 		$listWhere = array(
-			'select' => 'account_id,company,contact_person,financial_object,phone,email,create_time,check_status',
+			'select' => 'account_id,company,contact_person,phone,email,create_time,check_status',
 			'where' => $StrKeyWord.$StrStatus,
             'limit' => empty($pageSize) || empty($currentPage) ? '0,20' : $currentPage.','.$pageSize,
         );
@@ -45,13 +46,12 @@ class ChannelManager extends CI_Model{
 
 		foreach($res as $k => $v){
 			$data[$k]['account_id'] = $v['account_id'];
-			$data[$k]['financial_object'] = $v['financial_object'];
 			$data[$k]['email'] = $v['email'];
-			$data[$k]['status'] = $v['check_status'];
+			$data[$k]['check_status'] = $v['check_status'];
 			$data[$k]['phone'] = $v['phone'];
 			$data[$k]['contact_person'] = $v['contact_person'];
 			$data[$k]['company'] = empty($v['company']) ? $v['contact_person'] : $v['company'];
-			$data[$k]['create_time'] = date("Y-m-d",$v['create_time']);
+			$data[$k]['create_time'] = $v['create_time'];
 		}
 
 		$totalWhere = array(
@@ -75,33 +75,35 @@ class ChannelManager extends CI_Model{
 	}
 
 	/*获取渠道信息*/
-	public function getInfo($account_id){
+	public function getInfo($accId){
         $where = array(
-			'select' => '',
-			'where' => 'account_id = '.$account_id,
+			'select' => '*',
+			'where' => 'account_id = "'.$accId.'"',
 		);
 
-		$res = $this->dbutil->getAccount($where);
-		unset($res[0]['passwd']);
-		
+        $res = $this->dbutil->getAccount($where);
 		if(empty($res)){
 			return [];
-		}
+        }
 
+		unset($res[0]['passwd']);
 		return $res[0];
 	}
 
 	/*修改财务认证*/
-	public function modifyFinanceStatus($email,$status,$remark){
+	public function modifyFinanceStatus($accId,$status,$remark){
 		$where = array(
 			'check_status' => $status,
-			'remark' => $remark,
-			'where' => 'email = "'.$email.'"',
+			'auth_finance_remark' => $remark,
+			'where' => 'account_id = "'.$accId.'" AND check_status = 1',
 		);	
-		
+        
+        if(empty($where['remark'])){
+            unset($where['remark']);
+        }
 		$res = $this->dbutil->udpAccount($where);
-		
-		if($res['code'] == 0){
+        
+        if($res['code'] == 0){
 			return true;
 		}else{
 			return false;
@@ -111,10 +113,10 @@ class ChannelManager extends CI_Model{
     /**
      * getAcctByAcctId
      */
-    public function getAcctByAcctId($strAcctId) {
+    public function getAcctByAcctId($AccId) {
         $where = array(
 			'select' => 'company',
-			'where' => 'account_id = '.$strAcctId,
+			'where' => 'account_id = "'.$AccId.'"',
 		);
 
 		$res = $this->dbutil->getAccount($where);

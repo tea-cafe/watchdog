@@ -287,18 +287,18 @@ class DbUtil {
 				case 'update':
 					$this->CI->db->where($value['where']);
 					$this->CI->db->update($TabName,$value['data']);
-					if(!$this->CI->db->affected_rows()){
+                    if ($this->CI->db->affected_rows() === 0) {
 						$this->CI->db->trans_rollback();
-						continue;
+			            return false;
 					}
 					break;
 				case 'delete':
 					$this->CI->db->where($value['where']);
 					$this->CI->db->delete($TabName);
 					
-					if(!$this->CI->db->affected_rows()){
+                    if ($this->CI->db->affected_rows() === 0) {
 						$this->CI->db->trans_rollback();
-						continue;
+			            return false;
 					}
 					break;
 			}

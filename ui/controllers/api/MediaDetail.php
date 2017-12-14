@@ -60,6 +60,9 @@ class MediaDetail extends BG_Controller {
                 if (in_array('7', $arrPostParams['default_valid_style']) !== false
                     && $key === 'app_id_map_ta') {
                     $arrTmp = explode('|', $val);
+                    if (empty($arrTmp[1])) {
+                        return $this->outJson('', ErrCode::ERR_INVALID_PARAMS, '推啊互动API需要填写appID和appSecret，如39322|3WmvuKh4LUEdJ8GknKgRNY9Jvp3NaeWYhxae5vN');
+                    }
                     $arrAppIdMap[self::APP_ID_MAP[$key]] = $arrTmp[0];
                     $strAppSecret = $arrTmp[1];
                     continue;
@@ -72,14 +75,17 @@ class MediaDetail extends BG_Controller {
 
         // default_valid_style
         $strValidStyle = '';
+        if (empty($arrPostParams['default_valid_style'])) {
+            return $this->outJson('', ErrCode::ERR_INVALID_PARAMS);
+        }
         foreach ($arrPostParams['default_valid_style'] as $styleId) {
 
             $strValidStyle .= $styleId . ',';
         }
         $strValidStyle = substr($strValidStyle, 0, -1);
+        // TODO 上游app_id 修改是 触发 同步 
 
-
-
+        // 分成比例
         $intProportion = intval($arrPostParams['proportion']);
         $this->load->library('DbUtil');
         $arrUpdate = [

@@ -24,13 +24,23 @@ class MediaManager extends CI_Model {
      */
     public function getMediaDetail($strAppId) {
         $arrSelect = [
-            'select' => 'media_platform,app_id,app_id_map,media_name,proportion,check_status,default_valid_style,industry,app_platform,app_package_name,url,media_keywords,media_desc,app_detail_url,app_verify_url,update_time',
+            'select' => 'media_platform,app_id,app_id_map,media_name,proportion,check_status,default_valid_style,industry,app_platform,app_package_name,app_secret,url,media_keywords,media_desc,app_detail_url,app_verify_url,update_time',
             'where' => "app_id='" . $strAppId . "'",
         ];
 
         $arrRes = $this->dbutil->getMedia($arrSelect);
         if (empty($arrRes[0])) {
             return [];
+        }
+
+        if (strpos($arrRes[0]['default_valid_style'], 7) !== false) {
+            $arrAppIdMap = json_decode($arrRes[0]['app_id_map'], true);
+            foreach ($arrAppIdMap as $appid => &$val) {
+                if ($appid === 'TUIA') {
+                    $val .= '|' . $arrRes[0]['app_secret'];
+                    break;
+                }
+            }
         }
         $arrRes = $this->industryMap($arrRes);
         return $arrRes[0];
@@ -59,7 +69,7 @@ class MediaManager extends CI_Model {
     public function getMediaList($pn, $rn, $account_id, $strStatus, $strMediaName) {
         $this->load->library('DbUtil');
         $arrSelect = [
-            'select' => 'app_id,industry,media_name,check_status,media_platform,create_time',
+            'select' => 'app_id,industry,media_name,check_status,media_platform,media_delivery_method,create_time',
             'order_by' => 'create_time DESC',
             'limit' => $rn*($pn-1) . ',' . $rn,
         ];
@@ -117,7 +127,7 @@ class MediaManager extends CI_Model {
     /**
      * getMediaByAppId
      */
-    public function getMediaByAppId($strAppId) {
+    public function getMediaByAppId($strAppId) {//{{{//
         $arrSelect = [
             'select' => 'media_platform,media_name',
             'where' => "app_id='" . $strAppId . "'",
@@ -128,6 +138,6 @@ class MediaManager extends CI_Model {
             return false;
         }
         return $arrRes;
-    }
+    }//}}}//
 
 }

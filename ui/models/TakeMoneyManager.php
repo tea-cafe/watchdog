@@ -85,14 +85,15 @@ class TakeMoneyManager extends CI_Model{
 		$arrInfo = $this->dbutil->getTmr($infoWhere);
         $billList = unserialize($arrInfo[0]['bill_list']);
         $info = unserialize($arrInfo[0]['info']);
-		$this->config->load('company_invoice_info');
-		$companyInvoiceInfo = $this->config->item('invoice');
+		//$this->config->load('company_invoice_info');
+		//$companyInvoiceInfo = $this->config->item('invoice');
 		$newInfo = array(
 			'channel_info' => $info['channel_info'],
-			'company_invoice_info' => $companyInvoiceInfo,
-			'channel_invoice_info' => $params,
+			'company_info' => $info['company_info'],
+			'mail' => $info['mail'],
+            'invoice_info' => $params,
 		);
-
+        
 		switch($action){
         case '1':
 				/* ÉóºËÍ¨¹ý²Ù×÷ */
@@ -126,14 +127,13 @@ class TakeMoneyManager extends CI_Model{
 			1 => array(
 				'type' => 'update',
 				'tabName' => 'monthly',
-				'where' => 'account_id = '.$accId.' AND status = 2',
+				'where' => 'account_id = "'.$accId.'" AND status = 2',
 				'data' => array(
 					'status' => '3',
 					'update_time' => time(),
 				),
 			),
         );
-        var_dump($udpWhere);exit;
 		$this->load->library('DbUtil');
 		$res = $this->dbutil->sqlTrans($udpWhere);
 

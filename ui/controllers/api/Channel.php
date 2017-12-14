@@ -43,7 +43,8 @@ class Channel extends BG_Controller {
 		if(empty($account_id)){
 			return $this->outJson('',ErrCode::ERR_INVALID_PARAMS,'参数有误');
 		}
-		$this->load->model('ChannelManager');
+        
+        $this->load->model('ChannelManager');
 		$res = $this->ChannelManager->getInfo($account_id);
 		
 		if(empty($res)){
@@ -58,23 +59,24 @@ class Channel extends BG_Controller {
         if(empty($this->arrUser)){
             return $this->outJson('',ErrCode::ERR_NOT_LOGIN);
         }
-        
-        $email = $this->input->post('email',true);
-		$status = $this->input->post('status',true);
-		$remark = $this->input->post('remark',true);
+
+        $accId = $this->input->get('account_id',true);
+		$status = $this->input->get('check_status',true);
+		$remark = $this->input->get('auth_finance_remark',true);
 		
-		if(empty($email)){
+        if(empty($accId)){
 			return $this->outJson('',ErrCode::ERR_INVALID_PARAMS,'参数有误');
 		}
 
 		if($status == '3' && empty($remark)){
 			return $this->outJson('',ErrCode::ERR_INVALID_PARAMS,'未填写审核失败原因');
 		
-		}
+        }
 
 		$this->load->model('ChannelManager');
-		$res = $this->ChannelManager->modifyFinanceStatus($email,$status,$remark);
-		if($res){
+		$res = $this->ChannelManager->modifyFinanceStatus($accId,$status,$remark);
+        
+        if($res){
 			return $this->outJson('',ErrCode::OK,'修改成功');
 		}else{
 			return $this->outJson('',ErrCode::ERR_INVALID_PARAMS,'参数有误');

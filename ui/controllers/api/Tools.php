@@ -64,7 +64,8 @@ class Tools extends BG_Controller {
             return $this->outJson('', ErrCode::ERR_NOT_LOGIN, '会话已过期,请重新登录');
         } 
 
-        $strAppId = $this->input->post('app_id', true);
+        $arrPostParams = json_decode(file_get_contents('php://input'), true);
+        $strAppId = $arrPostParams['app_id'];
         if (empty($strAppId)) {
             return $this->outJson('', ErrCode::ERR_INVALID_PARAMS); 
         }
@@ -90,6 +91,7 @@ class Tools extends BG_Controller {
             return $this->outJson('', ErrCode::ERR_NOT_LOGIN, '会话已过期,请重新登录');
         } 
 
+        // 这里upload 参数接受不走 php input
         $strAppId = $this->input->post('app_id', true);
         if (empty($strAppId)) {
             return $this->outJson('', ErrCode::ERR_INVALID_PARAMS); 

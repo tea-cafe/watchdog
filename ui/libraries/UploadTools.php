@@ -35,7 +35,7 @@ class UploadTools {
         }
         $arrRes = $this->CI->upload->data();
 
-        $strUrl = str_replace(WEBROOT, '', $arrRes['full_path']);
+        $strUrl = explode('web/', $arrRes['full_path'])[1];
         return $strUrl;
     }
 
