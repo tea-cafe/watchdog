@@ -76,15 +76,14 @@ class TakeMoneyManager extends CI_Model{
 		/* 查询提现单信息 */
 		$infoWhere = array(
 			'select' => 'bill_list,info',
-			'where' => 'number = '.$orderNumber.' AND status = 1',
+			'where' => 'number = '.$orderNumber.' AND status = "0"',
 		);
 		$this->load->library('DbUtil');
 		$arrInfo = $this->dbutil->getTmr($infoWhere);
         $billList = unserialize($arrInfo[0]['bill_list']);
         $info = unserialize($arrInfo[0]['info']);
-		//$this->config->load('company_invoice_info');
-		//$companyInvoiceInfo = $this->config->item('invoice');
-		$newInfo = array(
+        
+        $newInfo = array(
 			'channel_info' => $info['channel_info'],
 			'company_info' => $info['company_info'],
 			'mail' => $info['mail'],
@@ -114,19 +113,19 @@ class TakeMoneyManager extends CI_Model{
 			0 => array(
 				'type' => 'update',
 				'tabName' => 'tmr',
-				'where' => 'number = '.$orderNumber.' AND status = 1',
+				'where' => 'number = '.$orderNumber.' AND status = "0"',
 				'data' => array(
 					'info' => serialize($params),
-					'status' => '2',
+					'status' => '1',
 					'update_time' => time(),
 				),
 			),
 			1 => array(
 				'type' => 'update',
 				'tabName' => 'monthly',
-				'where' => 'account_id = "'.$accId.'" AND status = 2',
+				'where' => 'account_id = "'.$accId.'" AND status = "1"',
 				'data' => array(
-					'status' => '3',
+					'status' => '2',
 					'update_time' => time(),
 				),
 			),
@@ -157,10 +156,10 @@ class TakeMoneyManager extends CI_Model{
 			0 => array(
 				'type' => 'update',
 				'tabName' => 'tmr',
-				'where' => 'number = '.$orderNumber.' AND status = 1',
+				'where' => 'number = '.$orderNumber.' AND status = "0"',
 				'data' => array(
 					'info' => serialize($params),
-					'status' => '3',
+					'status' => '2',
 					'remark' => $remark,
 					'update_time' => time(),
 				),
@@ -177,9 +176,9 @@ class TakeMoneyManager extends CI_Model{
 			2 => array(
 				'type' => 'update',
 				'tabName' => 'monthly',
-				'where' => 'account_id = "'.$accId.'" AND status = 2'.$idSql,
+				'where' => 'account_id = "'.$accId.'" AND status = "1"'.$idSql,
 				'data' => array(
-					'status' => '1',
+					'status' => '0',
 					'update_time' => time(),
 				),
 			),
@@ -195,9 +194,9 @@ class TakeMoneyManager extends CI_Model{
 	 */
 	public function remitMoney($orderNumber){
 		$udpWhere = array(
-			'status' => '4',
+			'status' => '3',
 			'update_time' => time(),
-			'where' => 'number = '.$orderNumber.' AND status = 2'
+			'where' => 'number = '.$orderNumber.' AND status = "1"'
 		);
 
 		$this->load->library('DbUtil');

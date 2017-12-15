@@ -54,7 +54,7 @@ $config['style2platform_map'] = array(
 			"name" => "腾讯",
 			"size" => array(
 				0=>"上图下文",
-				1=>"左文又图",
+				1=>"左文右图",
 				2=>"双图双文",
 				3=>"纯图",
 			),

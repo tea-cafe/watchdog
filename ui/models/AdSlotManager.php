@@ -9,12 +9,15 @@ class AdSlotManager extends CI_Model {
     /**
      *
      */
-    public function getAdSlotLists($strAppId, $pn = 1, $rn = 10) {
+    public function getAdSlotLists($strAppId, $pn = 1, $rn = 10, $strSlotName) {
         $this->load->library('DbUtil');
         $arrSelect = [
             'select' => 'count(*) as total',
             'where' => "app_id='" . $strAppId . "'",
         ];
+        if (!empty($strAlotName)) {
+            $arrSelect['where'] .= " AND slot_name like '%" . $strSlotName . "%'"; 
+        }
         $arrRes = $this->dbutil->getAdSlot($arrSelect);
         $intCount = $arrRes[0]['total'];
         $arrSelect = [
@@ -23,8 +26,8 @@ class AdSlotManager extends CI_Model {
             'order_by' => 'slot_style,update_time DESC',
             'limit' => $rn*($pn-1) . ',' . $rn,
         ];
-        if (!empty($condition)) {
-            $arrSelect['where'] .= " AND media_name like '%" . $strSlotName . "%'"; 
+        if (!empty($strAlotName)) {
+            $arrSelect['where'] .= " AND slot_name like '%" . $strSlotName . "%'"; 
         }
         $arrRes = $this->dbutil->getAdSlot($arrSelect);
         if ($arrRes) {
