@@ -23,6 +23,7 @@ class MediaManager extends CI_Model {
      * @return bool
      */
     public function getMediaDetail($strAppId) {
+        echo 222;exit;
         $arrSelect = [
             'select' => 'media_platform,app_id,app_id_map,media_name,proportion,check_status,default_valid_style,industry,media_delivery_method,app_platform,app_package_name,app_secret,url,media_keywords,media_desc,app_detail_url,app_verify_url,bg_verify_url,update_time,create_time',
             'where' => "app_id='" . $strAppId . "'",
@@ -34,11 +35,13 @@ class MediaManager extends CI_Model {
         }
 
         if (strpos($arrRes[0]['default_valid_style'], '7') !== false) {
-            $arrAppIdMap = json_decode($arrRes[0]['app_id_map'], true);
-            foreach ($arrAppIdMap as $appid => &$val) {
-                if ($appid === 'TUIA') {
-                    $val .= '|' . $arrRes[0]['app_secret'];
-                    break;
+            if (!empty($arrRes[0]['app_id_map'])) {
+                $arrAppIdMap = json_decode($arrRes[0]['app_id_map'], true);
+                foreach ($arrAppIdMap as $appid => &$val) {
+                    if ($appid === 'TUIA') {
+                        $val .= '|' . $arrRes[0]['app_secret'];
+                        break;
+                    }
                 }
             }
             $arrRes[0]['app_id_map'] = json_encode($arrAppIdMap);
