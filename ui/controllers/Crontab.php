@@ -1,6 +1,5 @@
 <?php
 // all tasks: watchdog/ui/config/scripts.php
-ini_set('date.timezone','Asia/Shanghai');
 defined('BASEPATH') OR exit('No direct script access allowed');
 class Crontab extends CI_Controller {
 

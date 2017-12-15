@@ -83,6 +83,13 @@ class Processes extends CI_Model {
         if(!$boolBtnRet) {
             return false;
         }
+        //calc slot sum()
+        $arrSlotSumWhere = [
+            'cpc' => "if(pre_click_num=0,0,pre_profit/pre_click_num)",
+            //'ecpm' => "if(pre_exposure_num=0,0,pre_profit/pre_exposure_num)",
+            'where' => "date='".$arrParams['date']."'",
+        ];
+        $arrSlotRet = $this->dbutil->udpUsrSlotSum($arrSlotSumWhere);
         //do media sum
         $strMethod = 'getallUsrSlotSum';
         $arrSlotData = $this->formatSlotData($arrParams, $strMethod);
@@ -298,7 +305,7 @@ class Processes extends CI_Model {
             $sqlString = '('."'".implode( "','", $val ) . "'".')'; //批量
             $insertRows[] = $sqlString;
             $strValues = implode(',', $insertRows);
-			$sql = "INSERT IGNORE INTO tab_slot_user_profit_sum_daily {$sqlKeys} 
+			$sql = "INSERT INTO tab_slot_user_profit_sum_daily {$sqlKeys} 
  VALUES {$strValues} ON DUPLICATE KEY UPDATE 
                 pre_exposure_num=pre_exposure_num $label '" . $val['pre_exposure_num'] . "',
                 post_exposure_num=post_exposure_num $label '" . $val['post_exposure_num'] ."',
@@ -311,6 +318,7 @@ class Processes extends CI_Model {
 			if(!$boolRes) {
 				return false;
 			}
+            unset($insertRows);
 		}
         return true; 
 	}//}}}//
@@ -346,6 +354,7 @@ class Processes extends CI_Model {
 			if(!$boolRes) {
 				return false;
 			}
+            unset($insertRows);
 		}
         return true; 
 	}//}}}//
@@ -382,6 +391,7 @@ class Processes extends CI_Model {
 			if(!$boolRes) {
 				return false;
 			}
+            unset($insertRows);
 		}
         return true; 
 	}//}}}//
