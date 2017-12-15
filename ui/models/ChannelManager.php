@@ -31,6 +31,7 @@ class ChannelManager extends CI_Model{
 		$listWhere = array(
 			'select' => 'account_id,company,contact_person,phone,email,create_time,check_status',
 			'where' => $StrKeyWord.$StrStatus,
+            'order_by' => 'id desc',
             'limit' => empty($pageSize) || empty($currentPage) ? '0,20' : $currentPage.','.$pageSize,
         );
 

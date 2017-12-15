@@ -74,7 +74,7 @@ class MediaDetail extends BG_Controller {
         }
 
         if ($intAppIdMapValidMark === 0) {
-            return $this->outJson('', ErrCode::ERR_INVALID_PARAMS, '提交失败,上游id不能为空');
+            return $this->outJson('', ErrCode::ERR_INVALID_PARAMS, '提交失败,按样式填写对应上游平台的app id');
         }
         $strAppId = $arrPostParams['app_id'];
 
@@ -88,7 +88,6 @@ class MediaDetail extends BG_Controller {
             $strValidStyle .= $styleId . ',';
         }
         $strValidStyle = substr($strValidStyle, 0, -1);
-        // TODO 上游app_id 修改是 触发 同步 
 
         // 分成比例
         $intProportion = intval($arrPostParams['proportion']);

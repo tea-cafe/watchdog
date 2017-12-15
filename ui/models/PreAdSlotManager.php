@@ -6,6 +6,32 @@ class PreAdSlotManager extends CI_Model {
         $this->load->library('DbUtil');
     }
 
+
+    /**
+     * 插入预生成id事，检测媒体是否具有这个上游id
+     */
+    public function checkMediaLigal($strAppId) {
+        $arrCheckMediaLegal = [
+            'select' => 'app_id,app_id_map',
+            'where' => "app_id='" . $strAppId . "' AND (check_status=2 OR check_status=3)",
+            'limit' => '0,1',
+        ];
+        $arrRes = $this->dbutil->getMedia($arrCheckMediaLegal);
+        if (empty($arrRes[0])
+            || empty($arrRes[0]['app_id_map'])) {
+            ErrCode::$msg = '媒体上游app id为空，请检查';
+            return [];
+        }
+        $arrAppIdMap = json_decode($arrRes[0]['app_id_map'], true);
+        if (empty($arrAppIdMap)) {
+            ErrCode::$msg = '媒体映射信息有误，请检查';
+            return [];
+        }
+        return $arrAppIdMap;
+    }
+
+
+
     /**
      * 所有此媒体未被分配的slot_id列表
      */

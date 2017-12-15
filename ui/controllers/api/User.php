@@ -8,7 +8,7 @@ class User extends BG_Controller {
 		parent::__construct();
 	}
 
-	public function Login(){
+	public function login(){
         $arrPostParam = json_decode(file_get_contents('php://input'), true);
 		$userName = $arrPostParam['username'];
 		$passWord = $arrPostParam['password'];

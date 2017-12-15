@@ -33,7 +33,7 @@ class MediaManager extends CI_Model {
             return [];
         }
 
-        if (strpos($arrRes[0]['default_valid_style'], 7) !== false) {
+        if (strpos($arrRes[0]['default_valid_style'], '7') !== false) {
             $arrAppIdMap = json_decode($arrRes[0]['app_id_map'], true);
             foreach ($arrAppIdMap as $appid => &$val) {
                 if ($appid === 'TUIA') {
@@ -41,6 +41,7 @@ class MediaManager extends CI_Model {
                     break;
                 }
             }
+            $arrRes[0]['app_id_map'] = json_encode($arrAppIdMap);
         }
         $arrRes = $this->industryMap($arrRes);
         return $arrRes[0];

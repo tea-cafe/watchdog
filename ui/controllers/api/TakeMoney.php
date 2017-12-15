@@ -34,7 +34,11 @@ class TakeMoney extends BG_Controller{
 			return $this->outJson('', ErrCode::ERR_INVALID_PARAMS);
         }
 
-        return $this->outJson($res,ErrCode::OK,'获取列表成功');
+        if(empty($res['list'])){
+            return $this->outJson($res,ErrCode::OK,'暂无提现记录');
+        }else{
+            return $this->outJson($res,ErrCode::OK,'获取提现记录成功');
+        }
     }
 
     /**
@@ -53,10 +57,10 @@ class TakeMoney extends BG_Controller{
 		$this->load->model('TakeMoneyManager');
 		$res = $this->TakeMoneyManager->getInfo($orderNumber);
 		
-		if(empty($res)){
+        if(empty($res)){
 			return $this->outJson('', ErrCode::ERR_INVALID_PARAMS);
-		}else{
-			return $this->outJson($res, ErrCode::OK,'获取提现单信息成功');
+        }else{
+			return $this->outJson($res, ErrCode::OK,'获取提现单列表成功');
 		}
 	}
 

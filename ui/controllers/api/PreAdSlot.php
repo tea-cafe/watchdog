@@ -55,8 +55,15 @@ class PreAdSlot extends BG_Controller {
         $app_id = $arrPostParams['app_id'];
         $pre_slod_ids = $arrPostParams['slotmap_list'];
         list($slot_style,$ad_upstream,$slot_size) = $arrPostParams['slotmap_type'];
-        $arrParams = compact('app_id', 'slot_style', 'ad_upstream', 'slot_size', 'pre_slod_ids');
+
         $this->load->model('PreAdSlotManager');
+        // check media_info 的 app_id_map 是否存在此上游
+        $arrAppIdMap = $this->PreAdSlotManager->checkMediaLigal($app_id);
+        if (!array_key_exists($ad_upstream, $arrAppIdMap)) {
+            return $this->outJson('', ErrCode::ERR_SYSTEM, '您添加的预生成id对应的上游并不存在,请检查上游id是否存在');
+        }
+
+        $arrParams = compact('app_id', 'slot_style', 'ad_upstream', 'slot_size', 'pre_slod_ids');
         $arrPreAdSlotBefore = $this->PreAdSlotManager->getPreAdSlot($arrParams);
 
         $arrUpStreamSlotIds = [];

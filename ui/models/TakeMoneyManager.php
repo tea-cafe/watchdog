@@ -17,15 +17,12 @@ class TakeMoneyManager extends CI_Model{
 
         $where = array(
             'select' => 'id,time,number,money,status',
+            'order_by' => 'id desc',
             'limit' => empty($pageSize) || empty($currentPage) ? '0,20' : $currentPage.','.$pageSize,
         );
 
         $this->load->library('DbUtil');
         $tmrList = $this->dbutil->getTmr($where);
-        
-        if(empty($tmrList)){
-            return [];
-        }
         
         /* 分页信息查询 */
         $totalWhere = array(
