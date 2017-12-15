@@ -1,6 +1,5 @@
 <?php
 /**
- * $sql = 'INSERT INTO account_balance(account_id,update_time,money) (SELECT account_id,update_time,SUM(money) as money From monthly_bill WHERE create_time>=' . $timeStart . ' AND create_time<' . $timeEnd . ' group by account_id) ON DUPLICATE KEY UPDATE money=money+VALUES(money),update_time=VALUES(update_time)';
  *
  */
 class RollbackChannelBalance extends CI_Model {
