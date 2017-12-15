@@ -14,13 +14,14 @@ class StatData extends BG_Controller {
         if(empty($arrParams['startDate'])
             || empty($arrParams['endDate'])
             || empty($arrParams['type'])
-            || empty($arrParams['statId'])) {
+            || empty($arrParams['statId'])
+            || !in_array($arrParams['type'], ['Acct', 'Media', 'Slot'])) {
             return $this->outJson([], ErrCode::ERR_INVALID_PARAMS);
         }
         $arrParams['pn'] = empty($arrParams['pn']) ? 1 : $arrParams['pn'];
         $arrParams['rn'] = empty($arrParams['rn']) ? 10 : $arrParams['rn'];
         $arrParams['method'] = 'getUsr'.$arrParams['type'].'Sum';
-        $arrParams['lastday'] = date("Y-m-d",strtotime("-1 day"));
+        $arrParams['lastday'] = '2017-12-31';//date("Y-m-d",strtotime("-1 day"));
 
         $arrList = $this->StatDataModel->getSumDataList($arrParams);
         return $arrList?$this->outJson($arrList, ErrCode::OK) : $this->outJson([], ErrCode::OK);
@@ -34,7 +35,8 @@ class StatData extends BG_Controller {
         if(empty($arrParams['startDate'])
             || empty($arrParams['endDate'])
             || empty($arrParams['type'])
-            || empty($arrParams['statId'])) {
+            || empty($arrParams['statId'])
+            || !in_array($arrParams['type'], ['Acct', 'Media', 'Slot'])) {
             return $this->outJson([], ErrCode::ERR_INVALID_PARAMS);
         }
         $arrParams['pn'] = empty($arrParams['pn']) ? 1 : $arrParams['pn'];

@@ -39,7 +39,7 @@ class MediaCheckStatus extends BG_Controller {
                 }
                 break;
             default:
-                return $this->outJson('', ErrCode::ERR_INVALID_PARAMS, 'check_status 不对');
+                return $this->outJson('', ErrCode::ERR_INVALID_PARAMS, '媒体审核状态异常,请确认后在操作');
         }
 
         $arrUpdate = [
@@ -50,10 +50,10 @@ class MediaCheckStatus extends BG_Controller {
         // H5、Android媒体注册手状态是1时，编辑会上传app_key然后checkstatus，此时会提交上来app_key的地址
         if (intval($arrPostParams['check_status']) === 1
             && $arrPostParams['action'] == 1) {
-            if (empty($arrPostParams['app_verify_url'])) {
-                return $this->outJson('', ErrCode::ERR_INVALID_PARAMS, '缺少app_verify_url');
+            if (empty($arrPostParams['bg_verify_url'])) {
+                return $this->outJson('', ErrCode::ERR_INVALID_PARAMS, '请先上传app或者app_key');
             }
-            $arrUpdate['app_verify_url'] = $arrPostParams['app_verify_url']; 
+            $arrUpdate['bg_verify_url'] = $arrPostParams['bg_verify_url']; 
         }
 
         $this->load->model('MediaManager');

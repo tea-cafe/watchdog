@@ -24,7 +24,7 @@ class MediaManager extends CI_Model {
      */
     public function getMediaDetail($strAppId) {
         $arrSelect = [
-            'select' => 'media_platform,app_id,app_id_map,media_name,proportion,check_status,default_valid_style,industry,app_platform,app_package_name,app_secret,url,media_keywords,media_desc,app_detail_url,app_verify_url,update_time,create_time',
+            'select' => 'media_platform,app_id,app_id_map,media_name,proportion,check_status,default_valid_style,industry,media_delivery_method,app_platform,app_package_name,app_secret,url,media_keywords,media_desc,app_detail_url,app_verify_url,bg_verify_url,update_time,create_time',
             'where' => "app_id='" . $strAppId . "'",
         ];
 

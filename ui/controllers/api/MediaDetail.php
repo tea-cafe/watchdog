@@ -48,6 +48,7 @@ class MediaDetail extends BG_Controller {
         // app_id_map
         $arrAppIdMap = [];
         $strAppSecret = '';
+        $intAppIdMapValidMark = 0;
         foreach ($arrPostParams as $key => &$val) {
             if(!in_array($key, self::VALID_PARAMS_KEY)) {
                 return $this->outJson('', ErrCode::ERR_INVALID_PARAMS);
@@ -57,6 +58,7 @@ class MediaDetail extends BG_Controller {
                 if (empty($val)) {
                     continue;
                 }
+                $intAppIdMapValidMark += 1;
                 if (in_array('7', $arrPostParams['default_valid_style']) !== false
                     && $key === 'app_id_map_ta') {
                     $arrTmp = explode('|', $val);
@@ -71,12 +73,15 @@ class MediaDetail extends BG_Controller {
             }
         }
 
+        if ($intAppIdMapValidMark === 0) {
+            return $this->outJson('', ErrCode::ERR_INVALID_PARAMS, '提交失败,上游id不能为空');
+        }
         $strAppId = $arrPostParams['app_id'];
 
         // default_valid_style
         $strValidStyle = '';
         if (empty($arrPostParams['default_valid_style'])) {
-            return $this->outJson('', ErrCode::ERR_INVALID_PARAMS);
+            return $this->outJson('', ErrCode::ERR_INVALID_PARAMS, '样式不能为空');
         }
         foreach ($arrPostParams['default_valid_style'] as $styleId) {
 
