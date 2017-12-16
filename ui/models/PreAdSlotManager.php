@@ -69,7 +69,7 @@ class PreAdSlotManager extends CI_Model {
                                 'ad_upstream' => $strUpstream,
                                 'slot_size' => $strDisSize,
                                 'count' => count($arrSlotIds),
-                                'list' => substr($strTmp, 0, -1),
+                                'list' => empty($strTmp) ? '' : substr($strTmp, 0, -1),
                             ];
                         }
                     }
