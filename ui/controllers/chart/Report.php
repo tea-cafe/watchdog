@@ -15,8 +15,8 @@ class Report extends BG_Controller {
             || empty($arrParams['source'])) {
             return $this->outJson([], ErrCode::ERR_INVALID_PARAMS);
         }
-        $arrParams['pn'] = empty($arrParams['pn']) ? 1 : $arrParams['pn'];
-        $arrParams['rn'] = empty($arrParams['rn']) ? 10 : $arrParams['rn'];
+        $arrParams['pn'] = empty($arrParams['currentPage']) ? 1 : $arrParams['currentPage'];
+        $arrParams['rn'] = empty($arrParams['pageSize']) ? 10 : $arrParams['pageSize'];
         $arrParams['method'] = 'getOriProfit'.$arrParams['source'];
         $arrList = $this->Reports->getViewList($arrParams);
         $arrList['state'] = $this->Processes->getBtnState($arrParams);
@@ -32,8 +32,8 @@ class Report extends BG_Controller {
             || empty($arrParams['source'])) {
             return $this->outJson([], ErrCode::ERR_INVALID_PARAMS);
         }
-        $arrParams['pn'] = empty($arrParams['pn']) ? 1 : $arrParams['pn'];
-        $arrParams['rn'] = empty($arrParams['rn']) ? 10 : $arrParams['rn'];
+        $arrParams['pn'] = empty($arrParams['currentPage']) ? 1 : $arrParams['currentPage'];
+        $arrParams['rn'] = empty($arrParams['pageSize']) ? 10 : $arrParams['pageSize'];
         $arrParams['mark'] = 1;
         $arrParams['method'] = 'getOriProfit'.$arrParams['source'];
         $arrList = $this->Reports->getViewList($arrParams);
@@ -49,8 +49,8 @@ class Report extends BG_Controller {
             || empty($arrParams['type'])) {
             return $this->outJson([], ErrCode::ERR_INVALID_PARAMS);
         }
-        $arrParams['pn'] = empty($arrParams['pn']) ? 1 : $arrParams['pn'];
-        $arrParams['rn'] = empty($arrParams['rn']) ? 10 : $arrParams['rn'];
+        $arrParams['pn'] = empty($arrParams['currentPage']) ? 1 : $arrParams['currentPage'];
+        $arrParams['rn'] = empty($arrParams['pageSize']) ? 10 : $arrParams['pageSize'];
         $arrParams['mark'] = 1;
         $arrParams['method'] = 'getUsr'.$arrParams['type'].'Sum';
         $arrList = $this->Reports->getViewList($arrParams);
@@ -67,8 +67,8 @@ class Report extends BG_Controller {
             || empty($arrParams['type'])) {
             return $this->outJson([], ErrCode::ERR_INVALID_PARAMS);
         }
-        $arrParams['pn'] = empty($arrParams['pn']) ? 1 : $arrParams['pn'];
-        $arrParams['rn'] = empty($arrParams['rn']) ? 10 : $arrParams['rn'];
+        $arrParams['pn'] = empty($arrParams['currentPage']) ? 1 : $arrParams['currentPage'];
+        $arrParams['rn'] = empty($arrParams['pageSize']) ? 10 : $arrParams['pageSize'];
         $arrParams['mark'] = 1;
         $arrParams['method'] = 'getUsrMediaSum';
         $arrList = $this->Reports->getViewList($arrParams);

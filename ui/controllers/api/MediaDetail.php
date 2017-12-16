@@ -38,6 +38,7 @@ class MediaDetail extends BG_Controller {
 
     /**
      * 修改分成比例 & 默认可用样式 & app_id_map
+     * 这里会触发更新 data_for_sdk 更新
      */
     public function modifyProportionAndStyle() {
         if (empty($this->arrUser)) {
@@ -100,9 +101,11 @@ class MediaDetail extends BG_Controller {
             'where'                 => "app_id='" . $strAppId . "'",
         ];
         $arrRes = $this->dbutil->udpMedia($arrUpdate);
-        if ($arrRes['code'] === 0) {
-            return $this->outJson($arrPostParams, ErrCode::OK, '媒体合法广告位样式更新成功');
+        if ($arrRes === false
+            || $arrRes['code'] !== 0) {
+            $this->outJson('', ErrCode::ERR_SYSTEM, '数据库更新失败');
         }
-        $this->outJson('', ErrCode::ERR_SYSTEM, '数据库更新失败');
+
+        return $this->outJson($arrPostParams, ErrCode::OK, '媒体合法广告位样式更新成功');
     }
 }

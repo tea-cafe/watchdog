@@ -86,7 +86,7 @@ class Processes extends CI_Model {
         //calc slot sum()
         $intTime = time();
         $strSql = "UPDATE `tab_slot_user_profit_sum_daily` SET 
-            `click_rate` = IF(pre_exposure_num=0,0,pre_click_num/pre_exposure_num), 
+            `click_rate` = IF(pre_exposure_num=0,0,pre_click_num/pre_exposure_num*100), 
             `ecpm` = IF(pre_exposure_num=0,0,pre_profit/pre_exposure_num*1000),
             `update_time` = $intTime WHERE `date` = '".$arrParams['date']."'";
         $arrSlotRet = $this->dbutil->query($strSql);
@@ -99,6 +99,20 @@ class Processes extends CI_Model {
         $arrMediaData = $this->formatMediaData($arrParams, $strMethod);
         $boolAcctSum = $this->UsrAcctSumOrNot($arrParams, $arrMediaData, "+");
 
+        //calc media sum()
+        $intTime = time();
+        $strSql = "UPDATE `tab_media_user_profit_sum_daily` SET 
+            `click_rate` = IF(pre_exposure_num=0,0,pre_click_num/pre_exposure_num*100), 
+            `ecpm` = IF(pre_exposure_num=0,0,pre_profit/pre_exposure_num*1000),
+            `update_time` = $intTime WHERE `date` = '".$arrParams['date']."'";
+        $arrMediaRet = $this->dbutil->query($strSql);
+
+        //calc acct sum()
+        $strSql = "UPDATE `tab_acct_user_profit_sum_daily` SET 
+            `click_rate` = IF(pre_exposure_num=0,0,pre_click_num/pre_exposure_num*100), 
+            `ecpm` = IF(pre_exposure_num=0,0,pre_profit/pre_exposure_num*1000),
+            `update_time` = $intTime WHERE `date` = '".$arrParams['date']."'";
+        $arrAcctRet = $this->dbutil->query($strSql);
         //更新btn
         if($boolMediaSum && $boolAcctSum) {
             //更新btn & 置已汇总标记//TODO 加字段 
@@ -188,7 +202,7 @@ class Processes extends CI_Model {
             $arrOriData[$val['user_slot_id']]['post_click_num'] = empty($arrOriData[$val['user_slot_id']]['post_click_num'])
                 ? intval($val['post_click_num']) : intval($val['post_click_num']) + $arrOriData[$val['user_slot_id']]['post_click_num'];
             $arrOriData[$val['user_slot_id']]['pre_profit'] = empty($arrOriData[$val['user_slot_id']]['pre_profit'])
-                ? intval($val['pre_profit']) : intval($val['pre_profit']) + $arrOriData[$val['user_slot_id']]['pre_profit'];
+                ? floatval($val['pre_profit']) : floatval($val['pre_profit']) + $arrOriData[$val['user_slot_id']]['pre_profit'];
             $arrOriData[$val['user_slot_id']]['post_profit'] = empty($arrOriData[$val['user_slot_id']]['post_profit'])
                 ? floatval($val['post_profit']) : floatval($val['post_profit']) + $arrOriData[$val['user_slot_id']]['post_profit'];
             $arrOriData[$val['user_slot_id']]['click_rate'] = 0;
@@ -230,7 +244,7 @@ class Processes extends CI_Model {
             $arrOriData[$val['app_id']]['post_click_num'] = empty($arrOriData[$val['app_id']]['post_click_num'])
                 ? intval($val['post_click_num']) : intval($val['post_click_num']) + $arrOriData[$val['app_id']]['post_click_num'];
             $arrOriData[$val['app_id']]['pre_profit'] = empty($arrOriData[$val['app_id']]['pre_profit'])
-                ? intval($val['pre_profit']) : intval($val['pre_profit']) + $arrOriData[$val['app_id']]['pre_profit'];
+                ? floatval($val['pre_profit']) : floatval($val['pre_profit']) + $arrOriData[$val['app_id']]['pre_profit'];
             $arrOriData[$val['app_id']]['post_profit'] = empty($arrOriData[$val['app_id']]['post_profit'])
                 ? floatval($val['post_profit']) : floatval($val['post_profit']) + $arrOriData[$val['app_id']]['post_profit'];
             $arrOriData[$val['app_id']]['click_rate'] = 0;
@@ -271,7 +285,7 @@ class Processes extends CI_Model {
             $arrOriData[$val['account_id']]['post_click_num'] = empty($arrOriData[$val['account_id']]['post_click_num'])
                 ? intval($val['post_click_num']) : intval($val['post_click_num']) + $arrOriData[$val['account_id']]['post_click_num'];
             $arrOriData[$val['account_id']]['pre_profit'] = empty($arrOriData[$val['account_id']]['pre_profit'])
-                ? intval($val['pre_profit']) : intval($val['pre_profit']) + $arrOriData[$val['account_id']]['pre_profit'];
+                ? floatval($val['pre_profit']) : floatval($val['pre_profit']) + $arrOriData[$val['account_id']]['pre_profit'];
             $arrOriData[$val['account_id']]['post_profit'] = empty($arrOriData[$val['account_id']]['post_profit'])
                 ? floatval($val['post_profit']) : floatval($val['post_profit']) + $arrOriData[$val['account_id']]['post_profit'];
             $arrOriData[$val['account_id']]['click_rate'] = 0;

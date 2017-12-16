@@ -1,5 +1,6 @@
 <?php
 /**
+ * INSERT INTO monthly_bill(app_id,account_id,money) (SELECT app_id,acct_id,SUM(post_profit) FROM tab_media_user_profit_sum_daily WHERE create_time>2000 AND create_time<10000 GROUP BY app_id)
  *
  */
 class GeneratMonthlyBills extends CI_Model {

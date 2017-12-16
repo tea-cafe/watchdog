@@ -50,7 +50,7 @@ class UserManager extends CI_Model {
      * 退出登录,清除SESSION
 	 */
     public function clearLoginInfo() {
-        setcookie('BGSZSHUO', '', time()-1, '/');
+        setcookie('BGXDL_SSP', '', time()-1, '/');
         $_SESSION = [];
         return true;
     }
