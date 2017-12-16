@@ -47,7 +47,7 @@ class CsvAdapter extends CI_Model {
 				$row['ori_slot_id'] = $v[0];
                 $arrUserSlotInfo = $this->getUserSlotInfo($row['ori_slot_id']);
                 if($arrUserSlotInfo == false) {
-                    return false;
+                    continue;
                 }
                 $row['user_slot_id'] = $arrUserSlotInfo['slot_id'];
                 $row['app_id'] = $arrUserSlotInfo['app_id'];
@@ -112,7 +112,8 @@ class CsvAdapter extends CI_Model {
 				$row['ori_slot_id'] = $v[0];
                 $arrUserSlotInfo = $this->getUserSlotInfo($row['ori_slot_id']);
                 if($arrUserSlotInfo == false) {
-                    return false;
+                    continue;
+                    //return false;
                 }
                 $row['user_slot_id'] = $arrUserSlotInfo['slot_id'];
                 $row['app_id'] = $arrUserSlotInfo['app_id'];
@@ -177,7 +178,8 @@ class CsvAdapter extends CI_Model {
 				$row['ori_slot_id'] = $v[2];
                 $arrUserSlotInfo = $this->getUserSlotInfo($row['ori_slot_id']);
                 if($arrUserSlotInfo == false) {
-                    return false;
+                    continue;
+                    //return false;
                 }
                 $row['user_slot_id'] = $arrUserSlotInfo['slot_id'];
                 $row['app_id'] = $arrUserSlotInfo['app_id'];
@@ -240,9 +242,11 @@ class CsvAdapter extends CI_Model {
 				$v = explode(',', trim($string));
 				$row = array();
 				$row['ori_slot_id'] = $v[3];
+                // TODO  多了一行广告位，我们没有对应关系，得continue，容错
                 $arrUserSlotInfo = $this->getUserSlotInfo($row['ori_slot_id']);
                 if($arrUserSlotInfo == false) {
-                    return false;
+                    continue;
+                    //return false;
                 }
                 $row['user_slot_id'] = $arrUserSlotInfo['slot_id'];
                 $row['app_id'] = $arrUserSlotInfo['app_id'];

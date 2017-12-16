@@ -84,12 +84,12 @@ class Processes extends CI_Model {
             return false;
         }
         //calc slot sum()
-        $arrSlotSumWhere = [
-            'cpc' => "if(pre_click_num=0,0,pre_profit/pre_click_num)",
-            //'ecpm' => "if(pre_exposure_num=0,0,pre_profit/pre_exposure_num)",
-            'where' => "date='".$arrParams['date']."'",
-        ];
-        $arrSlotRet = $this->dbutil->udpUsrSlotSum($arrSlotSumWhere);
+        $intTime = time();
+        $strSql = "UPDATE `tab_slot_user_profit_sum_daily` SET 
+            `click_rate` = IF(pre_exposure_num=0,0,pre_click_num/pre_exposure_num), 
+            `ecpm` = IF(pre_exposure_num=0,0,pre_profit/pre_exposure_num*1000),
+            `update_time` = $intTime WHERE `date` = '".$arrParams['date']."'";
+        $arrSlotRet = $this->dbutil->query($strSql);
         //do media sum
         $strMethod = 'getallUsrSlotSum';
         $arrSlotData = $this->formatSlotData($arrParams, $strMethod);
@@ -296,7 +296,7 @@ class Processes extends CI_Model {
         foreach($arrOriData as $key=>$val) {
             $arrSlot = $this->AdSlotManager->getSlotBySlotId($key);
             if(!$arrSlot) {
-                return false;
+                continue;
             }
             $val['slot_name'] = $arrSlot['slot_name'];
 
