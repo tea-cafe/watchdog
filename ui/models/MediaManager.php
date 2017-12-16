@@ -34,14 +34,19 @@ class MediaManager extends CI_Model {
         }
 
         if (strpos($arrRes[0]['default_valid_style'], '7') !== false) {
-            $arrAppIdMap = json_decode($arrRes[0]['app_id_map'], true);
-            foreach ($arrAppIdMap as $appid => &$val) {
-                if ($appid === 'TUIA') {
-                    $val .= '|' . $arrRes[0]['app_secret'];
-                    break;
+            if (!empty($arrRes[0]['app_id_map'])) {
+                $arrAppIdMap = json_decode($arrRes[0]['app_id_map'], true);
+                if (!empty($arrAppIdMap)
+                    && is_array($arrAppIdMap)) {
+                    foreach ($arrAppIdMap as $appid => &$val) {
+                        if ($appid === 'TUIA') {
+                            $val .= '|' . $arrRes[0]['app_secret'];
+                            break;
+                        }
+                    }
+                    $arrRes[0]['app_id_map'] = json_encode($arrAppIdMap);
                 }
             }
-            $arrRes[0]['app_id_map'] = json_encode($arrAppIdMap);
         }
         $arrRes = $this->industryMap($arrRes);
         return $arrRes[0];

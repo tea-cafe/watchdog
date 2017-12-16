@@ -88,7 +88,11 @@ class TakeMoney extends BG_Controller{
 		//$data['shouldFillInMoney'] = $this->input->post('should_fill_in_money',true);
 
 		foreach($data as $k => $v){
-			if(empty($v)){
+		    if($action == 0){
+                break;
+            }
+
+            if(empty($v)){
 				return $this->outJson('', ErrCode::ERR_INVALID_PARAMS);
 			}
 		}

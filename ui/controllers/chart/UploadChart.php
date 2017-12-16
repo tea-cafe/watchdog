@@ -29,6 +29,8 @@ class UploadChart extends BG_Controller {
      */
     public function BAIDU($arrParams) {//{{{//
         $arrParams = $this->input->get(NULL, TRUE);
+        //$arrParams['date'] = '2017-10-01';
+        //$arrParams['source'] = 'BAIDU';
 
         if(empty($arrParams['date'])
             || empty($arrParams['source'])) {

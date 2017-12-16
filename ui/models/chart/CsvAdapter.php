@@ -47,7 +47,7 @@ class CsvAdapter extends CI_Model {
 				$row['ori_slot_id'] = $v[0];
                 $arrUserSlotInfo = $this->getUserSlotInfo($row['ori_slot_id']);
                 if($arrUserSlotInfo == false) {
-                    return false;
+                    continue;
                 }
                 $row['user_slot_id'] = $arrUserSlotInfo['slot_id'];
                 $row['app_id'] = $arrUserSlotInfo['app_id'];
@@ -73,6 +73,7 @@ class CsvAdapter extends CI_Model {
             // 导入前先清空之前的数据 mark=0
             $this->Processes->delOriProfitDaily($arrParams);
 			$result = $this->addDetail($insertRows, 'tab_slot_ori_profit_baidu_daily'); //批量将sql插入数据库。
+            unset($insertRows);
             // 更新按钮状态
             if($result) {
                 //todo user info
@@ -111,7 +112,8 @@ class CsvAdapter extends CI_Model {
 				$row['ori_slot_id'] = $v[0];
                 $arrUserSlotInfo = $this->getUserSlotInfo($row['ori_slot_id']);
                 if($arrUserSlotInfo == false) {
-                    return false;
+                    continue;
+                    //return false;
                 }
                 $row['user_slot_id'] = $arrUserSlotInfo['slot_id'];
                 $row['app_id'] = $arrUserSlotInfo['app_id'];
@@ -137,6 +139,7 @@ class CsvAdapter extends CI_Model {
             // 导入前先清空之前的数据 mark=0
             $this->Processes->delOriProfitDaily($arrParams);
 			$result = $this->addDetail($insertRows, 'tab_slot_ori_profit_gdt_daily'); //批量将sql插入数据库。
+            unset($insertRows);
             // 更新按钮状态
             if($result) {
                 //todo user info
@@ -164,7 +167,7 @@ class CsvAdapter extends CI_Model {
         $chunkData = array_chunk($arrContent , 5000);
 		$count = count($chunkData);
 		for ($i = 0; $i < $count; $i++) {
-			$insertRows = array();
+			$insertRows = [];
 			foreach($chunkData[$i] as $k => $value){
                 if($k == 0) {
                     continue;
@@ -175,7 +178,8 @@ class CsvAdapter extends CI_Model {
 				$row['ori_slot_id'] = $v[2];
                 $arrUserSlotInfo = $this->getUserSlotInfo($row['ori_slot_id']);
                 if($arrUserSlotInfo == false) {
-                    return false;
+                    continue;
+                    //return false;
                 }
                 $row['user_slot_id'] = $arrUserSlotInfo['slot_id'];
                 $row['app_id'] = $arrUserSlotInfo['app_id'];
@@ -201,6 +205,7 @@ class CsvAdapter extends CI_Model {
             // 导入前先清空之前的数据 mark=0
             $this->Processes->delOriProfitDaily($arrParams);
 			$result = $this->addDetail($insertRows, 'tab_slot_ori_profit_tuia_daily'); //批量将sql插入数据库。
+            unset($insertRows);
             // 更新按钮状态
             if($result) {
                 //todo user info
@@ -237,9 +242,11 @@ class CsvAdapter extends CI_Model {
 				$v = explode(',', trim($string));
 				$row = array();
 				$row['ori_slot_id'] = $v[3];
+                // TODO  多了一行广告位，我们没有对应关系，得continue，容错
                 $arrUserSlotInfo = $this->getUserSlotInfo($row['ori_slot_id']);
                 if($arrUserSlotInfo == false) {
-                    return false;
+                    continue;
+                    //return false;
                 }
                 $row['user_slot_id'] = $arrUserSlotInfo['slot_id'];
                 $row['app_id'] = $arrUserSlotInfo['app_id'];
@@ -265,6 +272,7 @@ class CsvAdapter extends CI_Model {
             // 导入前先清空之前的数据 mark=0
             $this->Processes->delOriProfitDaily($arrParams);
 			$result = $this->addDetail($insertRows, 'tab_slot_ori_profit_yezi_daily'); //批量将sql插入数据库。
+            unset($insertRows);
             // 更新按钮状态
             if($result) {
                 //todo user info
