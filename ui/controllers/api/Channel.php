@@ -7,6 +7,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Channel extends BG_Controller {
 	public function __construct(){
 		parent::__construct();
+        $this->load->model('ChannelManager');
 	}
 
 	/*渠道列表 搜索*/
@@ -17,14 +18,13 @@ class Channel extends BG_Controller {
 
         $pageSize = $this->input->get('pagesize',true);
 		$currentPage = $this->input->get('currentpage',true);
-		$keyWord = $this->input->get('keyword',true);
+		$keyWord = $this->input->get('channel_name',true);
 		$status = $this->input->get('status',true);
 
 		if(empty($pageSize) || empty($currentPage)){
 			$pageSize = 20;
 			$currentPage = 1;
 		}
-        $this->load->model('ChannelManager');
 		$res = $this->ChannelManager->getList($keyWord,$pageSize,$currentPage,$status);
 		
 		if(empty($res)){
@@ -39,12 +39,12 @@ class Channel extends BG_Controller {
         if(empty($this->arrUser)){
             return $this->outJson('',ErrCode::ERR_NOT_LOGIN);
         }
+
         $account_id = $this->input->get('account_id',true);
 		if(empty($account_id)){
 			return $this->outJson('',ErrCode::ERR_INVALID_PARAMS,'参数有误');
 		}
         
-        $this->load->model('ChannelManager');
 		$res = $this->ChannelManager->getInfo($account_id);
 		
 		if(empty($res)){
@@ -73,7 +73,6 @@ class Channel extends BG_Controller {
 		
         }
 
-		$this->load->model('ChannelManager');
 		$res = $this->ChannelManager->modifyFinanceStatus($accId,$status,$remark);
         
         if($res){

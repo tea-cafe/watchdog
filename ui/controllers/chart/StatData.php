@@ -18,8 +18,8 @@ class StatData extends BG_Controller {
             || !in_array($arrParams['type'], ['Acct', 'Media', 'Slot'])) {
             return $this->outJson([], ErrCode::ERR_INVALID_PARAMS);
         }
-        $arrParams['pn'] = empty($arrParams['pn']) ? 1 : $arrParams['pn'];
-        $arrParams['rn'] = empty($arrParams['rn']) ? 10 : $arrParams['rn'];
+        $arrParams['pn'] = empty($arrParams['currentPage']) ? 1 : $arrParams['currentPage'];
+        $arrParams['rn'] = empty($arrParams['pageSize']) ? 10 : $arrParams['pageSize'];
         $arrParams['method'] = 'getUsr'.$arrParams['type'].'Sum';
         $arrParams['lastday'] = $arrParams['endDate'];//date("Y-m-d",strtotime("-1 day"));
 
@@ -39,8 +39,8 @@ class StatData extends BG_Controller {
             || !in_array($arrParams['type'], ['Acct', 'Media', 'Slot'])) {
             return $this->outJson([], ErrCode::ERR_INVALID_PARAMS);
         }
-        $arrParams['pn'] = empty($arrParams['pn']) ? 1 : $arrParams['pn'];
-        $arrParams['rn'] = empty($arrParams['rn']) ? 10 : $arrParams['rn'];
+        $arrParams['pn'] = empty($arrParams['currentPage']) ? 1 : $arrParams['currentPage'];
+        $arrParams['rn'] = empty($arrParams['pageSize']) ? 10 : $arrParams['pageSize'];
 
         $arrParams['method'] = 'getUsr'.$arrParams['type'].'Sum';
         $arrList = $this->StatDataModel->getDailyDataList($arrParams);

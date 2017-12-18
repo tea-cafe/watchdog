@@ -60,9 +60,9 @@ class CsvAdapter extends CI_Model {
                 $row['post_click_num'] = intval($v[4]) * $this->discount;
 				$row['pre_profit'] = floatval($v[5]);
 				$row['post_profit'] = floatval($v[5]) * $this->discount;
-				$row['click_rate'] = (intval($v[3]) == 0) ? 0 : round($v[4]/$v[3], 3);
-				$row['cpc'] = (intval($v[4]) == 0) ? 0 : round($v[5]/$v[4], 3);
-				$row['ecpm'] = (intval($v[3]) == 0) ? 0 : round($v[5]/($v[3]*1000), 3);
+				$row['click_rate'] = (intval($v[3]) == 0) ? 0 : round($v[4]/$v[3]*100, 3);
+				$row['cpc'] = (intval($v[4]) == 0) ? 0 : round($v[5]/$v[4]*100, 3);
+				$row['ecpm'] = (intval($v[3]) == 0) ? 0 : round($v[5]/$v[3]*1000, 3);
 				$row['mark'] = 0;
                 $row['date'] = $arrParams['date'];
                 $row['create_time'] = time();
@@ -103,13 +103,14 @@ class CsvAdapter extends CI_Model {
 		for ($i = 0; $i < $count; $i++) {
 			$insertRows = array();
 			foreach($chunkData[$i] as $k => $value){
+                //var_dump($k,$value);
                 if($k == 0) {
                     continue;
                 }
 				$string = mb_convert_encoding(trim(strip_tags($value)), 'utf-8', 'gbk');
 				$v = explode(',', trim($string));
 				$row = array();
-				$row['ori_slot_id'] = $v[0];
+				$row['ori_slot_id'] = $v[2];
                 $arrUserSlotInfo = $this->getUserSlotInfo($row['ori_slot_id']);
                 if($arrUserSlotInfo == false) {
                     continue;
@@ -119,16 +120,16 @@ class CsvAdapter extends CI_Model {
                 $row['app_id'] = $arrUserSlotInfo['app_id'];
                 $row['acct_id'] = $arrUserSlotInfo['account_id'];
 				$row['ori_slot_name'] = $v[1];
-				$row['ori_slot_type'] = $v[2];
+				$row['ori_slot_type'] = $v[1];
 				$row['pre_exposure_num'] = intval($v[3]);
 				$row['post_exposure_num'] = intval($v[3]) * $this->discount;
                 $row['pre_click_num'] = intval($v[4]);
                 $row['post_click_num'] = intval($v[4]) * $this->discount;
 				$row['pre_profit'] = floatval($v[5]);
 				$row['post_profit'] = floatval($v[5]) * $this->discount;
-				$row['click_rate'] = (intval($v[3]) == 0) ? 0 : round($v[4]/$v[3], 3);
-				$row['cpc'] = (intval($v[4]) == 0) ? 0 : round($v[5]/$v[4], 3);
-				$row['ecpm'] = (intval($v[3]) == 0) ? 0 : round($v[5]/($v[3]*1000), 3);
+				$row['click_rate'] = (intval($v[3]) == 0) ? 0 : round($v[4]/$v[3]*100, 3);
+				$row['cpc'] = (intval($v[4]) == 0) ? 0 : round($v[5]/$v[4]*100, 3);
+				$row['ecpm'] = (intval($v[3]) == 0) ? 0 : round($v[5]/$v[3]*1000, 3);
 				$row['mark'] = 0;
                 $row['date'] = $arrParams['date'];
                 $row['create_time'] = time();
@@ -192,9 +193,9 @@ class CsvAdapter extends CI_Model {
                 $row['post_click_num'] = intval($v[5]) * $this->discount;
 				$row['pre_profit'] = floatval($v[7]);
 				$row['post_profit'] = floatval($v[7]) * $this->discount;
-				$row['click_rate'] = (intval($v[4]) == 0) ? 0 : round($v[5]/$v[4], 3);
-				$row['cpc'] = (intval($v[5]) == 0) ? 0 : round($v[7]/$v[5], 3);
-				$row['ecpm'] = (intval($v[4]) == 0) ? 0 : round($v[7]/($v[4]*1000), 3);
+				$row['click_rate'] = (intval($v[4]) == 0) ? 0 : round($v[5]/$v[4]*100, 3);
+				$row['cpc'] = (intval($v[5]) == 0) ? 0 : round($v[7]/$v[5]*100, 3);
+				$row['ecpm'] = (intval($v[4]) == 0) ? 0 : round($v[7]/$v[4]*1000, 3);
 				$row['mark'] = 0;
                 $row['date'] = $arrParams['date'];
                 $row['create_time'] = time();
@@ -259,9 +260,9 @@ class CsvAdapter extends CI_Model {
                 $row['post_click_num'] = intval($v[9]) * $this->discount;
 				$row['pre_profit'] = floatval($v[10]);
 				$row['post_profit'] = floatval($v[10]) * $this->discount;
-				$row['click_rate'] = (intval($v[8]) == 0) ? 0 : round($v[9]/$v[8], 3);
-				$row['cpc'] = (intval($v[9]) == 0) ? 0 : round($v[10]/$v[9], 3);
-				$row['ecpm'] = (intval($v[8]) == 0) ? 0 : round($v[10]/($v[8]*1000), 3);
+				$row['click_rate'] = (intval($v[8]) == 0) ? 0 : round($v[9]/$v[8]*100, 3);
+				$row['cpc'] = (intval($v[9]) == 0) ? 0 : round($v[10]/$v[9]*100, 3);
+				$row['ecpm'] = (intval($v[8]) == 0) ? 0 : round($v[10]/$v[8]*1000, 3);
 				$row['mark'] = 0;
                 $row['date'] = $arrParams['date'];
                 $row['create_time'] = time();

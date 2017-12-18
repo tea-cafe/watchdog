@@ -6,13 +6,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class User extends BG_Controller {
 	public function __construct(){
 		parent::__construct();
+		$this->load->model('UserManager');
 	}
 
 	public function login(){
         $arrPostParam = json_decode(file_get_contents('php://input'), true);
 		$userName = $arrPostParam['username'];
 		$passWord = $arrPostParam['password'];
-		$this->load->model('UserManager');
 		$loginRes = $this->UserManager->doLogin($userName,$passWord);
 		
 		if($loginRes){

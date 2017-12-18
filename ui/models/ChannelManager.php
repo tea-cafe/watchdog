@@ -32,7 +32,7 @@ class ChannelManager extends CI_Model{
 			'select' => 'account_id,company,contact_person,phone,email,create_time,check_status',
 			'where' => $StrKeyWord.$StrStatus,
             'order_by' => 'id desc',
-            'limit' => empty($pageSize) || empty($currentPage) ? '0,20' : $currentPage.','.$pageSize,
+            'limit' => $currentPage.','.$pageSize,
         );
 
         if(empty($listWhere['where'])){
@@ -67,7 +67,7 @@ class ChannelManager extends CI_Model{
         $paginAtion = array(
             'current' => empty($currentPage) ? '1':$currentPage,
             'pageSize' => $pageSize,
-            'total' => $totalCount[0]['count(*)'],
+            'total' => empty($totalCount[0]['count(*)']) ? '0' : $totalCount[0]['count(*)'],
         );
         $result['list'] = $data;
         $result['pagination'] = $paginAtion;

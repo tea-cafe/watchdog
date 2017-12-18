@@ -4,7 +4,8 @@
  */
 
 class TakeMoney extends BG_Controller{
-	const VALID_INVOICE_INFO_KEY = [
+    /*
+    const VALID_INVOICE_INFO_KEY = [
 		'order_number',
 		'money',
 		'code',
@@ -13,9 +14,11 @@ class TakeMoney extends BG_Controller{
 		'should_fill_in_money',
 		'number',
 	];
+    */
 
 	public function __construct(){
 		parent::__construct();
+        $this->load->model('TakeMoneyManager');
 	}
 
     public function index(){
@@ -24,11 +27,15 @@ class TakeMoney extends BG_Controller{
 		}
 
         $pageSize = $this->input->get("pagesize",true);
-        $pageSize = empty($pageSize) ? 20 : $pageSize;
         $currentPage = $this->input->get("currentpage",true);
-        $currentPage = empty($currentPage) ? 1 : $currentPage;        
-		$this->load->model('TakeMoneyManager');
-        $res = $this->TakeMoneyManager->getList($pageSize,$currentPage);
+        $keyWord = $this->input->get('number',true);
+        
+        if(empty($pageSize) || empty($currentPage)){
+			$pageSize = 20;
+			$currentPage = 1;
+		}
+
+        $res = $this->TakeMoneyManager->getList($keyWord,$pageSize,$currentPage);
 
         if(empty($res)){
 			return $this->outJson('', ErrCode::ERR_INVALID_PARAMS);
@@ -54,7 +61,6 @@ class TakeMoney extends BG_Controller{
 			return $this->outJson('', ErrCode::ERR_INVALID_PARAMS);
 		}
 
-		$this->load->model('TakeMoneyManager');
 		$res = $this->TakeMoneyManager->getInfo($orderNumber);
 		
         if(empty($res)){
@@ -104,8 +110,11 @@ class TakeMoney extends BG_Controller{
 		$this->config->load('company_invoice_info');
 		$company_invoice_info = $this->config->item('invoice');
 		
-		$this->load->model('TakeMoneyManager');
 		$res = $this->TakeMoneyManager->modifyInfo($orderNumber,$data,$action,$status,$remark);
+
+        if($res == 2){
+			return $this->outJson('', ErrCode::OK,'审核已完成,请勿重复操作');
+        }
 
         if($res){
 			return $this->outJson('', ErrCode::OK,'审核完成');
@@ -124,7 +133,6 @@ class TakeMoney extends BG_Controller{
 			return $this->outJson('',ErrCode::ERR_INVALID_PARAMS,'参数错误');
 		}
 
-		$this->load->model('TakeMoneyManager');
 		$res = $this->TakeMoneyManager->remitMoney($orderNumber);
 		if($res){
 			return $this->outJson('',ErrCode::OK,'打款状态成功');
