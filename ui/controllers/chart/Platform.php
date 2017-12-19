@@ -1,5 +1,5 @@
 <?php
-class Platform extends BG_Controller {
+class Platform extends MY_Controller {
     public function __construct() {
         parent::__construct();
     }

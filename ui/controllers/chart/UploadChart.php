@@ -1,5 +1,5 @@
 <?php
-class UploadChart extends BG_Controller {
+class UploadChart extends MY_Controller {
 
     public function __construct() {
         parent::__construct();
@@ -27,63 +27,10 @@ class UploadChart extends BG_Controller {
      * @param void
      * @return void
      */
-    public function BAIDU($arrParams) {//{{{//
-        $arrParams = $this->input->get(NULL, TRUE);
-        //$arrParams['date'] = '2017-10-01';
-        //$arrParams['source'] = 'BAIDU';
+    public function BAI() {
+        $arrData = $this->CsvAdapter->baidu();
 
-        if(empty($arrParams['date'])
-            || empty($arrParams['source'])) {
-            return $this->outJson([], ErrCode::ERR_INVALID_PARAMS);
-        }
-        $arrData = $this->CsvAdapter->process($arrParams);
+        $this->outJson($arrData, ErrCode::OK);
+    }
 
-        return $arrData ? $this->outJson($arrData, ErrCode::OK) : $this->outJson($arrData, ErrCode::ERR_UPLOAD);
-    }//}}}//
-
-    /**
-     * @param void
-     * @return void
-     */
-    public function GDT($arrParams) {//{{{//
-        $arrParams = $this->input->get(NULL, TRUE);
-        if(empty($arrParams['date'])
-            || empty($arrParams['source'])) {
-            return $this->outJson([], ErrCode::ERR_INVALID_PARAMS);
-        }
-        $arrData = $this->CsvAdapter->process($arrParams);
-
-        return $arrData ? $this->outJson($arrData, ErrCode::OK) : $this->outJson($arrData, ErrCode::ERR_UPLOAD);
-    }//}}}//
-
-    /**
-     * @param void
-     * @return void
-     */
-    public function TUIA($arrParams) {//{{{//
-        $arrParams = $this->input->get(NULL, TRUE);
-        if(empty($arrParams['date'])
-            || empty($arrParams['source'])) {
-            return $this->outJson([], ErrCode::ERR_INVALID_PARAMS);
-        }
-        $arrData = $this->CsvAdapter->process($arrParams);
-
-        return $arrData ? $this->outJson($arrData, ErrCode::OK) : $this->outJson($arrData, ErrCode::ERR_UPLOAD);
-    }//}}}//
-
-    /**
-     * @param void
-     * @return void
-     */
-    public function YEZI($arrParams) {//{{{//
-        $arrParams = $this->input->get(NULL, TRUE);
-
-        if(empty($arrParams['date'])
-            || empty($arrParams['source'])) {
-            return $this->outJson([], ErrCode::ERR_INVALID_PARAMS);
-        }
-        $arrData = $this->CsvAdapter->process($arrParams);
-
-        return $arrData ? $this->outJson($arrData, ErrCode::OK) : $this->outJson($arrData, ErrCode::ERR_UPLOAD);
-    }//}}}//
 }

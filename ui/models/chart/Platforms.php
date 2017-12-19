@@ -10,7 +10,7 @@ class Platforms extends CI_Model {
         $arrSelect = [
             'select' => '*',
         ];
-        $arrRes = $this->dbutil->getallPlatform($arrSelect);
+        $arrRes = $this->dbutil->getPlatform($arrSelect);
         if(empty($arrRes[0])) {
             return false;
         }

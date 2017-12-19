@@ -1,168 +1,87 @@
 <?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+
 /**
- * 提现审核
+ * 获取提现明细信息
  */
 
-class TakeMoney extends BG_Controller{
-    /*
-    const VALID_INVOICE_INFO_KEY = [
-		'order_number',
-		'money',
-		'code',
-		'photo',
-		'fill_in_money',
-		'should_fill_in_money',
-		'number',
-	];
-    */
-
+class TakeMoney extends MY_Controller{
 	public function __construct(){
 		parent::__construct();
-        $this->load->model('TakeMoneyManager');
-	}
-
-    public function index(){
-        if(empty($this->arrUser)){
-            return $this->outJson('',ErrCode::ERR_NOT_LOGIN);
-		}
-
-        $pageSize = $this->input->get("pagesize",true);
-        $currentPage = $this->input->get("currentpage",true);
-        $keyWord = $this->input->get('number',true);
-        
-        if(empty($pageSize) || empty($currentPage)){
-			$pageSize = 20;
-			$currentPage = 1;
-		}
-
-        $res = $this->TakeMoneyManager->getList($keyWord,$pageSize,$currentPage);
-
-        if(empty($res)){
-			return $this->outJson('', ErrCode::ERR_INVALID_PARAMS);
-        }
-
-        if(empty($res['list'])){
-            return $this->outJson($res,ErrCode::OK,'暂无提现记录');
-        }else{
-            return $this->outJson($res,ErrCode::OK,'获取提现记录成功');
-        }
+		$this->load->model("Finance");
     }
 
-    /**
-     * 审核详情页
-     */
+    /* 获取提现单列表 */
+	public function index(){
+        if(empty($this->arrUser)){
+            return $this->outJson('',ErrCode::ERR_NOT_LOGIN);
+        }
+        
+        $startDate = strtotime($this->input->get("startdate",true));
+        $endDate = strtotime($this->input->get("enddate",true));
+        $pageSize = $this->input->get("pagesize",true);
+		$currentPage = $this->input->get("currentpage",true);
+        
+        $startDate = empty($startDate) ? 1483200000 : $startDate-1;
+        $endDate = empty($endDate) ? time() : $endDate+86401;
+        $pageSize = empty($pageSize) ? 20 : $pageSize;
+        $currentPage = empty($currentPage) ? 1 : $currentPage;
+
+        /**
+         * 状态筛选
+        $status = $this->input->get("status",true);
+
+		$statusCode = array(
+			'0' => '0',
+			'1' => '1',
+			'2' => '2',
+			'3' => '3',
+		);
+
+		if(!isset($status) && empty($statusCode[$status])){
+			$status = '';
+		}
+        */
+
+        $email = $this->arrUser['email'];
+        $accId = $this->arrUser['account_id'];
+
+		$result = $this->Finance->getTakeMoneyList($accId,$startDate,$endDate,$pageSize,$currentPage);
+        
+        if(empty($result)){
+            return $this->outJson('',ErrCode::ERR_INVALID_PARAMS,'数据获取失败');
+        }
+
+        if(empty($result['list'])){
+            return $this->outJson($result,ErrCode::OK,'暂无提现记录');
+        }else{
+            return $this->outJson($result,ErrCode::OK,'获取提现记录成功');
+        }    
+    }
+
+	/**
+	 * 提现单详情,如：地址等等
+	 */
 	public function content(){
         if(empty($this->arrUser)){
             return $this->outJson('',ErrCode::ERR_NOT_LOGIN);
-		}
-
-		$orderNumber = $this->input->get('order_number',true);
-		if(empty($orderNumber)){
-			return $this->outJson('', ErrCode::ERR_INVALID_PARAMS);
-		}
-
-		$res = $this->TakeMoneyManager->getInfo($orderNumber);
-		
-        if(empty($res)){
-			return $this->outJson('', ErrCode::ERR_INVALID_PARAMS);
-        }else{
-			return $this->outJson($res, ErrCode::OK,'获取提现单列表成功');
-		}
-	}
-
-	/**
-	 * 审核提现订单
-	 * 发票可能为多张,存为数组
-	 */
-
-	public function examine(){
-        if(empty($this->arrUser)){
-            return $this->outJson('',ErrCode::ERR_NOT_LOGIN);
-		}
-        
-        $arrPostParams = json_decode(file_get_contents('php://input'), true);
-        $orderNumber = $arrPostParams['order_number'];
-        $data['money'] = $arrPostParams['money'];
-		$data['code'] = $arrPostParams['code'];
-		$data['number'] = $arrPostParams['number'];
-		$status = $arrPostParams['status'];
-        $remark = $arrPostParams['remark'];
-        $action = $arrPostParams['action'];
-
-		//$data['photo'][0] = $this->input->post('photo',true);
-		//$data['fillInMoney'] = $this->input->post('fill_in_money',true);
-		//$data['shouldFillInMoney'] = $this->input->post('should_fill_in_money',true);
-
-		foreach($data as $k => $v){
-		    if($action == 0){
-                break;
-            }
-
-            if(empty($v)){
-				return $this->outJson('', ErrCode::ERR_INVALID_PARAMS);
-			}
-		}
-
-		if($action == 0 && empty($remark)){
-			return $this->outJson('', ErrCode::ERR_INVALID_PARAMS,'未填写审核失败原因');
-		}
-
-		$this->config->load('company_invoice_info');
-		$company_invoice_info = $this->config->item('invoice');
-		
-		$res = $this->TakeMoneyManager->modifyInfo($orderNumber,$data,$action,$status,$remark);
-
-        if($res == 2){
-			return $this->outJson('', ErrCode::OK,'审核已完成,请勿重复操作');
         }
 
-        if($res){
-			return $this->outJson('', ErrCode::OK,'审核完成');
-		}else{
-			return $this->outJson('', ErrCode::ERR_INVALID_PARAMS,'审核失败,请重新审核');
-		}
-	}
+        $number = $this->input->get("number",true);
 
-	public function confirmRemitMoney(){
-        if(empty($this->arrUser)){
-            return $this->outJson('',ErrCode::ERR_NOT_LOGIN);
+		if(empty($number) || strlen($number) != 15){
+			return $this->outJson('',ErrCode::ERR_INVALID_PARAMS);
 		}
 
-		$orderNumber = $this->input->get('order_number',true);
-		if(empty($orderNumber) || strlen($orderNumber) != 15){
+        $accId = $this->arrUser['account_id'];
+        $email = $this->arrUser['email'];
+
+		$result = $this->Finance->getTakeMoneyInfo($accId,$number);
+
+		if(empty($result) || count($result) == 0){
 			return $this->outJson('',ErrCode::ERR_INVALID_PARAMS,'参数错误');
 		}
-
-		$res = $this->TakeMoneyManager->remitMoney($orderNumber);
-		if($res){
-			return $this->outJson('',ErrCode::OK,'打款状态成功');
-		}else{
-			return $this->outJson('',ErrCode::ERR_INVALID_PARAMS,'打款状态失败');
-		}
-	}
-
-	/*上传发票照片*/
-	public function UpInvoicePhoto(){
-        if(empty($this->arrUser)){
-            return $this->outJson('',ErrCode::ERR_NOT_LOGIN);
-		}
-
-        $this->load->library('UploadTools');
-        $arrUdpImgConf = $this->config->item('img');
-		$newName = '/invoice_'.time().mt_rand(100,999).str_replace('image/','.',$_FILES['file']['type']);
-        $arrUdpImgConf['file_name'] = $newName; 
-
-        $strUrl = $this->uploadtools->upload($arrUdpImgConf);
 		
-        if (empty($strUrl)) {
-            return $this->outJson('', ErrCode::ERR_UPLOAD, '发票上传失败，请重试');
-        }
-        return $this->outJson(
-            ['url' => $strUrl],
-            ErrCode::OK,
-            '发票上传成功'
-        );
+		return $this->outJson($result,ErrCode::OK,'提现单信息获取成功');
 	}
 }
-
-?>

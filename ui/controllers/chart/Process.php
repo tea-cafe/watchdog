@@ -17,7 +17,7 @@ class Process extends BG_Controller {
         $boolRet = $this->Processes->doConfirmLoad($arrParams);
 
         //get btn state
-        $arrParams['account_id'] = 1;//$this->arrUser['account_id'];//TODO user info
+        $arrParams['account_id'] = $this->arrUser['account_id'];
         $arrStateRet['state'] = $this->Processes->getBtnState($arrParams);
         return $boolRet?$this->outJson($arrStateRet, ErrCode::OK) : $this->outJson($arrStateRet, ErrCode::ERR_SYSTEM);
     }//}}}//
@@ -35,7 +35,7 @@ class Process extends BG_Controller {
         $boolRet = $this->Processes->doCancelLoad($arrParams);
 
         //get btn state
-        $arrParams['account_id'] = 1;//$this->arrUser['account_id'];//TODO user info
+        $arrParams['account_id'] = $this->arrUser['account_id'];
         $arrStateRet['state'] = $this->Processes->getBtnState($arrParams);
         return $boolRet?$this->outJson($arrStateRet, ErrCode::OK) : $this->outJson($arrStateRet, ErrCode::ERR_SYSTEM);
     }//}}}//
@@ -48,7 +48,7 @@ class Process extends BG_Controller {
         if(empty($arrParams['date'])) {
             return $this->outJson([], ErrCode::ERR_INVALID_PARAMS);
         }
-        $arrParams['account_id'] = 1;//$this->arrUser['account_id'];//TODO user info
+        $arrParams['account_id'] = $this->arrUser['account_id'];
         $boolRet = $this->Processes->doSummary($arrParams);
 
         //get btn state
@@ -65,6 +65,7 @@ class Process extends BG_Controller {
             return $this->outJson([], ErrCode::ERR_INVALID_PARAMS);
         }
         $boolRet = $this->Processes->doCancelSummary($arrParams);
+        $arrParams['account_id'] = $this->arrUser['account_id'];
 
         //get btn state
         $arrStateRet['state'] = $this->Processes->getBtnState($arrParams);
