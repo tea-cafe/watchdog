@@ -145,8 +145,22 @@ class StatDataModel extends CI_Model {
         } else {
             $arrSelect = [
                 'select' => 'count(*) as total',
-                'where' => "date>'" .$arrParams['startDate']. "' AND date< '".$arrParams['endDate']."'",
+                //'where' => "date>='" .$arrParams['startDate']. "' AND date<= '".$arrParams['endDate']."'",
             ];
+            if($arrParams['type'] == 'Acct') {
+                $arrSelect['where'] = "date>='" .$arrParams['startDate']. "' AND date<= '".$arrParams['endDate']."'
+                    AND account_id='". $arrParams['statId']."'";
+            }
+            
+            if($arrParams['type'] == 'Media') {
+                $arrSelect['where'] = "date>='" .$arrParams['startDate']. "' AND date<= '".$arrParams['endDate']."'
+                    AND app_id='". $arrParams['statId']."'";
+            }
+
+            if($arrParams['type'] == 'Slot') {
+                $arrSelect['where'] = "date>='" .$arrParams['startDate']. "' AND date<= '".$arrParams['endDate']."'
+                    AND user_slot_id='". $arrParams['statId']."'";
+            }
         }
         $method = $arrParams['method'];
         $arrRes = $this->dbutil->$method($arrSelect);
