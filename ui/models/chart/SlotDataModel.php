@@ -16,7 +16,7 @@ class SlotDataModel extends CI_Model {
         $arrSelect = [
             'select' => '*',
             'where' => "date>='" .$arrParams['startDate']. "' AND date<='".$arrParams['endDate']."'",
-            'order_by' => 'date DESC',
+            'order_by' => 'date ASC',
             'limit' => $rn*($pn-1) . ',' . $rn,
         ];
         $method = $arrParams['method'];
@@ -33,8 +33,9 @@ class SlotDataModel extends CI_Model {
             ];
         }
 
-        $arrCurve = $this->formatCurve($arrRes);
         $arrRet = $this->formatSlotData($arrRes);
+        $arrDate = $this->formatSlotDataByDate($arrRes);
+        $arrCurve = $this->formatCurve($arrDate);
 
         return [
             'list' => $arrRet,
@@ -125,19 +126,55 @@ class SlotDataModel extends CI_Model {
         }
         return array_values($arrOriData);
     }//}}}//
+    
+    private function formatSlotDataByDate($arrRes) {//{{{//
+        $arrOriData = [];
+        foreach($arrRes as $key=>$val) {
+            $arrOriData[$val['date']]['pre_exposure_num'] = empty($arrOriData[$val['date']]['pre_exposure_num'])
+                ? intval($val['pre_exposure_num']) : intval($val['pre_exposure_num']) + $arrOriData[$val['date']]['pre_exposure_num'];
+            $arrOriData[$val['date']]['post_exposure_num'] = empty($arrOriData[$val['date']]['post_exposure_num'])
+                ? intval($val['post_exposure_num']) : intval($val['post_exposure_num']) + $arrOriData[$val['date']]['post_exposure_num'];
+            $arrOriData[$val['date']]['pre_click_num'] = empty($arrOriData[$val['date']]['pre_click_num'])
+                ? intval($val['pre_click_num']) : intval($val['pre_click_num']) + $arrOriData[$val['date']]['pre_click_num'];
+            $arrOriData[$val['date']]['post_click_num'] = empty($arrOriData[$val['date']]['post_click_num'])
+                ? intval($val['post_click_num']) : intval($val['post_click_num']) + $arrOriData[$val['date']]['post_click_num'];
+            $arrOriData[$val['date']]['pre_profit'] = empty($arrOriData[$val['date']]['pre_profit'])
+                ? intval($val['pre_profit']) : intval($val['pre_profit']) + $arrOriData[$val['date']]['pre_profit'];
+            $arrOriData[$val['date']]['post_profit'] = empty($arrOriData[$val['date']]['post_profit'])
+                ? floatval($val['post_profit']) : floatval($val['post_profit']) + $arrOriData[$val['date']]['post_profit'];
+            $arrOriData[$val['date']]['click_rate'] = 0;
+            $arrOriData[$val['date']]['cpc'] = 0;
+            $arrOriData[$val['date']]['ecpm'] = 0;
+            $arrOriData[$val['date']]['mark'] = 1;
+            $arrOriData[$val['date']]['date'] = $val['date'];
+            $arrOriData[$val['date']]['create_time'] = time();
+            $arrOriData[$val['date']]['update_time'] = time();
+
+        }
+        return array_values($arrOriData);
+    }//}}}//
 
     private function formatCurve($arrRes) {//{{{//
         $arrRet['exposureCount'] = [];
         $arrRet['clickCount'] = [];
         $arrRet['curDate'] = [];
+        $arrRet['clickRate'] = [];
+        $arrRet['eCpm'] = [];
+        $arrRet['profit'] = [];
         foreach($arrRes as $key => $val) {
             array_push($arrRet['exposureCount'], $val['pre_exposure_num']);  
             array_push($arrRet['clickCount'], $val['pre_click_num']);  
+            array_push($arrRet['clickRate'], $val['click_rate']);  
+            array_push($arrRet['eCpm'], $val['ecpm']);  
+            array_push($arrRet['profit'], $val['pre_profit']);  
             array_push($arrRet['curDate'], $val['date']);  
         }
 
          $arrRet['exposureCount'] = array_values($arrRet['exposureCount']);
          $arrRet['clickCount'] = array_values($arrRet['clickCount']);
+         $arrRet['clickRate'] = array_values($arrRet['clickRate']);
+         $arrRet['eCpm'] = array_values($arrRet['eCpm']);
+         $arrRet['profit'] = array_values($arrRet['profit']);
          $arrRet['curDate'] = array_values($arrRet['curDate']);
         return $arrRet;
     }//}}}//

@@ -22,7 +22,7 @@ class UserManager extends CI_Model {
 			return false;
 		}
 		$_SESSION['bg_login_time'] = time();
-		$_SESSION['bg_account_id'] = $userRes[0]['id'];
+		$_SESSION['account_id'] = $userRes[0]['id'];
 		$_SESSION['bg_email'] = $userRes[0]['username'];
         return true;
 	}
@@ -32,14 +32,14 @@ class UserManager extends CI_Model {
 	 */
     public function checkLogin() {
         if (isset($_SESSION['bg_login_time'])
-            && isset($_SESSION['bg_account_id'])
+            && isset($_SESSION['account_id'])
             && isset($_SESSION['bg_email'])
             && (time() - $_SESSION['bg_login_time']) <= self::EXPIRE_SESSION) {
             /* 更新session时间 */
             $_SESSION['bg_login_time'] = time();
             
             return [
-                'bg_account_id' => $_SESSION['bg_account_id'],
+                'account_id' => $_SESSION['account_id'],
                 'bg_email' => $_SESSION['bg_email'],
             ];
         }

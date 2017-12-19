@@ -21,21 +21,13 @@ class StatDataModel extends CI_Model {
             'limit' => $rn*($pn-1) . ',' . $rn,
         ];
         if($arrParams['type'] == 'Media') {
-            $arrDailySelect['select'] = 'app_id,media_name,post_exposure_num,post_click_num,post_profit,click_rate,ecpm,date,create_time';
             $arrDailySelect['where'] = "date='" .$arrParams['lastday']. "'
-                AND account_id='". $arrParams['account_id']."'";
+                AND account_id='". $arrParams['statId']."'";
         }
 
         if($arrParams['type'] == 'Slot') {
-            $arrDailySelect['select'] = 'user_slot_id,slot_name,app_id,post_exposure_num,post_click_num,post_profit,click_rate,ecpm,date,create_time';
-            if($arrParams['statId'] == 'all') {
-                $arrDailySelect['where'] = "date='". $arrParams['lastday']. "'
-                    AND acct_id='". $arrParams['account_id']."'";
-            } else {
-                $arrDailySelect['where'] = "date='". $arrParams['lastday']. "'
-                    AND app_id='". $arrParams['statId']."'
-                    AND acct_id='". $arrParams['account_id']."'";
-            }
+            $arrDailySelect['where'] = "date='". $arrParams['lastday']. "'
+                 AND app_id='". $arrParams['statId']."'";
         }
 
         $method = $arrParams['method'];
@@ -49,12 +41,8 @@ class StatDataModel extends CI_Model {
             'select' => '*',
             'where' => "date>='" .$arrParams['startDate']. "' AND date<='".$arrParams['endDate']."'",
             'order_by' => 'date ASC',
+            'limit' => $rn*($pn-1) . ',' . $rn,
         ];
-        if($arrParams['type'] == 'Media') {
-            $arrSelect['where'] .= " AND account_id='".$arrParams['account_id']."'";
-        } elseif ($arrParams['type'] == 'Slot') {
-            $arrSelect['where'] .= " AND acct_id='".$arrParams['account_id']."'";
-        }
         $method = $arrParams['method'];
         $arrRes = $this->dbutil->$method($arrSelect);
         if(empty($arrRes[0])) {
@@ -102,12 +90,10 @@ class StatDataModel extends CI_Model {
                 AND date<='".$arrParams['endDate']."'
                 AND account_id= '".$arrParams['statId']."'";
         } else if($arrParams['type'] == 'Media') {
-            $arrDailySelect['select'] = 'app_id,media_name,post_exposure_num,post_click_num,post_profit,click_rate,ecpm,date,create_time';
             $arrSelect['where'] = "date>='" .$arrParams['startDate']. "'
                 AND date<='".$arrParams['endDate']."'
                 AND app_id= '".$arrParams['statId']."'";
         } else if($arrParams['type'] == 'Slot') {
-            $arrDailySelect['select'] = 'user_slot_id,slot_name,app_id,post_exposure_num,post_click_num,post_profit,click_rate,ecpm,date,create_time';
             $arrSelect['where'] = "date>='" .$arrParams['startDate']. "'
                 AND date<='".$arrParams['endDate']."'
                 AND user_slot_id= '".$arrParams['statId']."'";
@@ -149,35 +135,18 @@ class StatDataModel extends CI_Model {
 
             if($arrParams['type'] == 'Media') {
                 $arrSelect['where'] = "date='" .$arrParams['lastday']. "'
-                    AND account_id='". $arrParams['account_id']."'";
+                    AND account_id='". $arrParams['statId']."'";
             }
 
             if($arrParams['type'] == 'Slot') {
-                if($arrParams['statId'] == 'all') {
-                    $arrSelect['where'] = "date='". $arrParams['lastday']. "'
-                        AND acct_id='". $arrParams['account_id']."'";
-                } else {
-                    $arrSelect['where'] = "date='". $arrParams['lastday']. "'
-                        AND app_id='". $arrParams['statId']."'
-                        AND acct_id='". $arrParams['account_id']."'";
-                }
+                $arrSelect['where'] = "date='". $arrParams['lastday']. "'
+                    AND app_id='". $arrParams['statId']."'";
             }
         } else {
-            if($arrParams['type'] == 'Slot') {
-                $arrSelect = [
-                    'select' => 'count(*) as total',
-                    'where' => "date>'" .$arrParams['startDate']. "'
-                        AND date< '".$arrParams['endDate']."'
-                        AND acct_id='". $arrParams['account_id']."'",
-                 ];
-            } else {
-                $arrSelect = [
-                    'select' => 'count(*) as total',
-                    'where' => "date>'" .$arrParams['startDate']. "'
-                        AND date< '".$arrParams['endDate']."'
-                        AND account_id='". $arrParams['account_id']."'",
-                    ];
-            }
+            $arrSelect = [
+                'select' => 'count(*) as total',
+                'where' => "date>'" .$arrParams['startDate']. "' AND date< '".$arrParams['endDate']."'",
+            ];
         }
         $method = $arrParams['method'];
         $arrRes = $this->dbutil->$method($arrSelect);

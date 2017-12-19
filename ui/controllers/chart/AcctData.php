@@ -14,8 +14,8 @@ class AcctData extends BG_Controller {
             || empty($arrParams['endDate'])) {
             return $this->outJson([], ErrCode::ERR_INVALID_PARAMS);
         }
-        $arrParams['pn'] = empty($arrParams['pn']) ? 1 : $arrParams['pn'];
-        $arrParams['rn'] = empty($arrParams['rn']) ? 10 : $arrParams['rn'];
+        $arrParams['pn'] = empty($arrParams['currentPage']) ? 1 : $arrParams['currentPage'];
+        $arrParams['rn'] = empty($arrParams['pageSize']) ? 10 : $arrParams['pageSize'];
         $arrParams['method'] = 'getUsrAcctSum';
 
         $arrList = $this->AcctDataModel->getAcctSumDataList($arrParams);
@@ -32,8 +32,8 @@ class AcctData extends BG_Controller {
             || empty($arrParams['account_id'])) {
             return $this->outJson([], ErrCode::ERR_INVALID_PARAMS);
         }
-        $arrParams['pn'] = empty($arrParams['pn']) ? 1 : $arrParams['pn'];
-        $arrParams['rn'] = empty($arrParams['rn']) ? 10 : $arrParams['rn'];
+        $arrParams['pn'] = empty($arrParams['currentPage']) ? 1 : $arrParams['currentPage'];
+        $arrParams['rn'] = empty($arrParams['pageSize']) ? 10 : $arrParams['pageSize'];
 
         $arrParams['method'] = 'getUsrAcctSum';
         $arrList = $this->AcctDataModel->getAcctDailyDataList($arrParams);

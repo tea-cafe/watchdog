@@ -38,4 +38,9 @@ class BtnState extends CI_Model {
         $arrRes = $this->dbutil->getProcessState($arrParams);
         return $arrRes;
     }
+
+    public function delBtnState($arrParams) {
+        $arrRes = $this->dbutil->delProcessState($arrParams);
+        return $arrRes;
+    }
 }

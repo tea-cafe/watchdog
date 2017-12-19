@@ -34,10 +34,11 @@ class Processes extends CI_Model {
                     'btn_load' => 0,
                     'btn_load_cancel' => 1,
                     'btn_select' => 0,
+                    'btn_sum' => 1,
                     'where' => "date='".$arrParams['date']."' AND platform_en='".$arrParams['source']."'",
                 ];
                 $arrBtnState = $this->BtnState->updateBtnState($arrStateWhere);
-                $boolBtnRet = $this->checkBtnSumState($arrParams);
+                //$boolBtnRet = $this->checkBtnSumState($arrParams);
                 return true;
             }
         }
@@ -63,12 +64,9 @@ class Processes extends CI_Model {
             //更新btn & 置已汇总标记//TODO 加字段 
             if($boolDel && $boolNoSum) {
                 $arrStateWhere = [
-                    'btn_load' => 0,
-                    'btn_load_cancel' => 0,
-                    'btn_select' => 1,
                     'where' => "date='".$arrParams['date']."' AND platform_en='".$arrParams['source']."'",
                 ];
-                $arrBtnState = $this->BtnState->updateBtnState($arrStateWhere);
+                $arrBtnState = $this->BtnState->delBtnState($arrStateWhere);
                 return true;
             }
         }
@@ -161,14 +159,9 @@ class Processes extends CI_Model {
             && $boolSlot && $boolOriBaiDu
             && $boolOriGdt && $boolOriTuia && $boolOriYezi) {
             $arrStateWhere = [
-                'btn_load' => 0,
-                'btn_load_cancel' => 0,
-                'btn_select' => 1,
-                'btn_sum' => 0,
-                'btn_sum_cancel' => 0,
                 'where' => "date='".$arrParams['date']."'",
             ];
-            $arrBtnState = $this->BtnState->updateBtnState($arrStateWhere);
+            $arrBtnState = $this->BtnState->delBtnState($arrStateWhere);
             return true;
         }
         return false;
@@ -450,15 +443,10 @@ class Processes extends CI_Model {
         $boolRet = false;
         $arrSelect = [
             'select' => '*',
-            'where' => "date='".$arrParams['date']."'",
+            'where' => "date='".$arrParams['date']."' AND btn_sum=1",
         ];
         $arrRes = $this->BtnState->getBtnState($arrSelect);
-        if(count($arrRes) == 2) {//TODO change->4
-             $arrWhere = [
-                'btn_sum' => 1,
-                'where' => "date='".$arrParams['date']."'",
-            ];
-            $boolRet = $this->BtnState->updateBtnState($arrWhere);           
+        if(count($arrRes) > 0) {
             return true;
         }
         return $boolRet;
