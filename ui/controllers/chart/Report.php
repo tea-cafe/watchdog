@@ -4,6 +4,9 @@ class Report extends BG_Controller {
         parent::__construct();
         $this->load->model('chart/Reports');
         $this->load->model('chart/Processes');
+        if (empty($this->arrUser)) {
+            return $this->outJson([], ErrCode::ERR_NOT_LOGIN);
+        }
     }
 
     /**

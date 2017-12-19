@@ -5,6 +5,9 @@ class UploadChart extends BG_Controller {
         parent::__construct();
         $this->load->helper(['form', 'url']);
         $this->load->model('chart/CsvAdapter');
+        if (empty($this->arrUser)) {
+            return $this->outJson([], ErrCode::ERR_NOT_LOGIN);
+        }
     }
 
     public function index() {

@@ -3,6 +3,9 @@ class StatData extends BG_Controller {
     public function __construct() {
         parent::__construct();
         $this->load->model('chart/StatDataModel');
+        if (empty($this->arrUser)) {
+            return $this->outJson([], ErrCode::ERR_NOT_LOGIN);
+        }
     }
 
     /**

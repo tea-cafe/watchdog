@@ -3,6 +3,9 @@ class Process extends BG_Controller {
     public function __construct() {
         parent::__construct();
         $this->load->model('chart/Processes');
+        if (empty($this->arrUser)) {
+            return $this->outJson([], ErrCode::ERR_NOT_LOGIN);
+        }
     }
 
     /**
