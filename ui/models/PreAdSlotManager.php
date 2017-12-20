@@ -82,7 +82,7 @@ class PreAdSlotManager extends CI_Model {
             'list' => $arrPreAdSlotIdsDisplay,
             'pagination' => [
                 'total' => count($arrPreAdSlotIdsDisplay),
-                'pageSize' => $rn,
+                'pageSize' => count($arrPreAdSlotIdsDisplay),
                 'current' => $pn,
             ],
         ];
