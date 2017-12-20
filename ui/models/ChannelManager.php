@@ -93,7 +93,18 @@ class ChannelManager extends CI_Model{
 
 	/*修改财务认证*/
 	public function modifyFinanceStatus($accId,$status,$remark){
-		$where = array(
+        $statusWhere = array(
+            'select' => 'check_status',
+            'where' => 'account_id = "'.$accId.'"',
+        );
+
+        $statusArr = $this->dbutil->getAccount($statusWhere);
+
+        if($statusArr[0]['check_status'] == '0'){
+            return '2';
+        }
+
+        $where = array(
 			'check_status' => $status,
 			'auth_finance_remark' => $remark,
 			'where' => 'account_id = "'.$accId.'" AND check_status = 1',

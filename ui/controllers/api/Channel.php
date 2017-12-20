@@ -76,7 +76,10 @@ class Channel extends BG_Controller {
 		$res = $this->ChannelManager->modifyFinanceStatus($accId,$status,$remark);
         
         if($res){
-			return $this->outJson('',ErrCode::OK,'审核完成');
+            if($res == '2'){
+			    return $this->outJson('',ErrCode::ERR_INVALID_PARAMS,'此账号未提交财务信息,无法审核');
+            }
+            return $this->outJson('',ErrCode::OK,'审核完成');
         }else{
             if($status == '2'){
 			    return $this->outJson('',ErrCode::ERR_INVALID_PARAMS,'此账号已通过审核,请勿重复操作');
