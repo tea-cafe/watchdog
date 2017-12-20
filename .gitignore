@@ -2,6 +2,10 @@
 # web
 scripts
 ui/logs
+web/upload/
+web/apps/
+web/txt/
+            
 
 # files
 *.DS_Store
