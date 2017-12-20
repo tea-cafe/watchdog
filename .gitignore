@@ -1,10 +1,10 @@
 # folders
 # web
-scripts
 ui/logs
 web/upload/
 web/apps/
 web/txt/
+ui/scripts/
             
 
 # files
