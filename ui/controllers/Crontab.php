@@ -18,7 +18,8 @@ class Crontab extends CI_Controller {
             exit('task not regist in watchdog/ui/config/scripts.php'); 
         }
         $this->load->model('scripts/' . $task);    
-        $this->$task->do_execute();
+        $arrRes = $this->$task->do_execute();
+        var_dump($arrRes);
     }
 
 }

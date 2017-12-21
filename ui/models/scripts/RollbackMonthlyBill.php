@@ -24,11 +24,17 @@ class RollbackMonthlyBill extends CI_Model {
             ];
         }
         $arrRes = $objRes->result_array();
+        if (empty($arrRes)) {
+            return [
+                'code' => 1,
+                'message' => 'ERROR: 月账单' . date('Y-m', $date) . '还未生成,禁止回滚',
+            ];
+        }
         if (!empty($arrRes)
             && $arrRes[0]['action'] != 1) {
             return [
                 'code' => 1,
-                'message' => 'ERROR: monthly bill for ' . date('Y-m', $date) . '禁止回滚',
+                'message' => 'ERROR: 月账单' . date('Y-m', $date) . '禁止回滚,如果要回滚月账单，请先确保账户余额已回滚完成',
             ];
             return;
         }

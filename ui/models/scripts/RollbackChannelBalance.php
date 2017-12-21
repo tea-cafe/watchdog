@@ -20,12 +20,18 @@ class RollbackChannelBalance extends CI_Model {
             ];
         }
         $arrRes = $objRes->result_array();
-        if (!empty($arrRes)
-            && $arrRes[0]['action'] != 2) {
+        if (empty($arrRes)) {
             return [
                 'code' => 1,
-                'message' => 'ERROR: ' . date('Y-m', $date) . '的账单未合入余额，请勿回滚',
+                'message' => 'ERROR: ' . date('Y-m', $date) . '的账单还未产出',
             ];
+        }
+        if (!empty($arrRes) 
+           && $arrRes[0]['action'] != 2) {
+                return [
+                    'code' => 1,
+                    'message' => 'ERROR: ' . date('Y-m', $date) . '的账单未合入余额或者未产出,请勿回滚',
+                ];
         }
             
         $timeNow = time();

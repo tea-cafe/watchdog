@@ -1,7 +1,9 @@
 <?php
 /**
- * $sql = 'INSERT INTO account_balance(account_id,update_time,money) (SELECT account_id,update_time,SUM(money) as money From monthly_bill WHERE create_time>=' . $timeStart . ' AND create_time<' . $timeEnd . ' group by account_id) ON DUPLICATE KEY UPDATE money=money+VALUES(money),update_time=VALUES(update_time)';
- *
+ * monthly_action action 状态说明: (月账单 指 上月的账单)
+ * 0 : 月账单未生成
+ * 1 : 月账单已生成
+ * 2 : 月账单已合入余额表
  */
 class GeneratChannelBalance extends CI_Model {
 
@@ -24,20 +26,25 @@ class GeneratChannelBalance extends CI_Model {
             ];
         }
         $arrRes = $objRes->result_array();
-        if (!empty($arrRes)
-            && $arrRes[0]['action'] == 2) {
+        if (empty($arrRes)) {
             return [
-                'code' => 3,
-                'message' => 'ERROR: ' . date('Y-m', $date) . '的账单已经合入余额，请勿重复操作',
+                'code' => 1,
+                'message' => 'ERROR: ' . date('Y-m', $date) . '的账单还未生成，请生成后再操作',
             ];
         }
-
+        if (!empty($arrRes)) {
+            if ($arrRes[0]['action'] != 1) {
+                return [
+                    'code' => 1,
+                    'message' => 'ERROR: ' . date('Y-m', $date) . '的账单未生成或者已经合入余额，请勿重复操作',
+                ];
+            }
+        }
 
         $timeNow = time();
-        $timeStart = mktime(0,0,0,date("m",$timeNow)-1,1,date("Y",$timeNow));
-        $timeEnd = mktime(0,0,0,date("m",$timeNow),1,date("Y",$timeNow));
+        $timeLastMonth = mktime(0,0,0,date("m",$timeNow)-1,1,date("Y",$timeNow));
 
-        $sql = 'SELECT account_id,create_time,SUM(money) as money From monthly_bill WHERE create_time>=' . $timeStart . 'AND create_time<=' . $timeEnd . ' group by account_id';
+        $sql = 'SELECT account_id,time,SUM(money) as money FROM monthly_bill WHERE time=' . $timeLastMonth . ' group by account_id';
         $arrRes = $this->db->query($sql);
         if ($this->db->error()['code'] !== 0) {
             return [
@@ -46,16 +53,17 @@ class GeneratChannelBalance extends CI_Model {
             ];
         }
 
-        $sqlForAccountBalance = 'INSERT INTO account_balance(account_id,update_time,money) VALUES'; 
+        $sqlForAccountBalance = 'INSERT INTO account_balance(account_id,create_time,update_time,money) VALUES'; 
         foreach ($arrRes->result_array() as $k => $val) {
             $sqlForAccountBalance  .= "('" . $val['account_id'] . "',"
-                . $val['create_time'] . ","
+                . $val['time'] . ","
+                . $val['time'] . ","
                 . $val['money'] . "),"; 
         }
         $sqlForAccountBalance  = substr($sqlForAccountBalance , 0, -1);
         $sqlForAccountBalance .= ' ON DUPLICATE KEY UPDATE update_time=VALUES(create_time),money=money+VALUES(money)';
 
-        $sqlForMonthlyAction = 'INSERT INTO monthly_action(action_time, action) VALUES(' . $date . ',2)  ON DUPLICATE KEY UPDATE action=VALUES(action)';
+        $sqlForMonthlyAction = 'INSERT INTO monthly_action(action_time, action, update_time) VALUES(' . $date . ',2,' . time() . ')  ON DUPLICATE KEY UPDATE action=VALUES(action)';
 
         // 事务 start
         $this->db->trans_begin();

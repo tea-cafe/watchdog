@@ -1,9 +1,11 @@
 <?php
 /**
- * INSERT INTO monthly_bill(app_id,account_id,money) (SELECT app_id,acct_id,SUM(post_profit) FROM tab_media_user_profit_sum_daily WHERE create_time>2000 AND create_time<10000 GROUP BY app_id)
- *
+ * monthly_action action 状态说明: (月账单 指 上月的账单)
+ * 0 : 月账单未生成
+ * 1 : 月账单已生成
+ * 2 : 月账单已合入余额表
  */
-class GeneratMonthlyBills extends CI_Model {
+class GeneratMonthlyBill extends CI_Model {
 
     public function __construct() {
         parent::__construct();
@@ -12,16 +14,16 @@ class GeneratMonthlyBills extends CI_Model {
     public function do_execute() {
 
         $this->load->database();
+        $date = strtotime(date('Y-m-01') . ' -1 month');
 
         // 查询 monthly_action 获取月账单操作状态, 时间以上月1号0点时间戳为基准
-        $date = strtotime(date('Y-m-01') . ' -1 month');
         $sqlCheck = 'SELECT action FROM monthly_action WHERE action_time=' . $date;
         $objRes = $this->db->query($sqlCheck);
         $arrErr = $this->db->error();
         if ($arrErr['code'] !== 0) {
             return [
                 'code' => -1,
-                'message' => 'Error : check monthly_action action ' . $arrErr['message'],
+                'message' => 'Error : 请检查 monthly_action的action状态 ' . $arrErr['message'],
             ];
         }
         $arrRes = $objRes->result_array();
@@ -29,7 +31,7 @@ class GeneratMonthlyBills extends CI_Model {
             && $arrRes[0]['action'] > 0) {
             return [
                 'code' => 1,
-                'mssage' => 'ERROR: monthly bill for ' . date('Y-m', $date) . 'has generaged',
+                'mssage' => 'ERROR: 月账单' . date('Y-m', $date) . '已生成，请勿重复操作',
             ];
         }
 
@@ -40,7 +42,7 @@ class GeneratMonthlyBills extends CI_Model {
         $sqlForMonthlyBill = 'INSERT INTO monthly_bill(app_id,time,account_id,media_name,media_platform,create_time,money) (SELECT app_id,UNIX_TIMESTAMP(`date`),account_id,platform,media_name,UNIX_TIMESTAMP(`date`),SUM(post_profit) From tab_media_user_profit_sum_daily  WHERE `date` BETWEEN \'' . $dateStart . '\' AND \'' . $dateLast . '\' group by app_id)';
 
         // 更新monthly_action 为1
-        $sqlForMonthlyAction = 'INSERT INTO monthly_action(action_time, action) VALUES(' . $date . ',1) ON DUPLICATE KEY UPDATE action=VALUES(action)';
+        $sqlForMonthlyAction = 'INSERT INTO monthly_action(action_time,create_time,update_time,action) VALUES(' . $date . ',' . time() . ',' . time() . ',1) ON DUPLICATE KEY UPDATE action=VALUES(action)';
 
         $this->db->trans_begin();
         $this->db->query($sqlForMonthlyBill);
@@ -60,6 +62,17 @@ class GeneratMonthlyBills extends CI_Model {
             ];
             return;
         }
+
+        //$arrRes = $this->db->query('select action from monthly_action')->result_array();
+        //if ($arrRes[0]['action'] == 1) {
+        //    $this->db->trans_rollback();
+        //    return [
+        //        'code' => -1,
+        //        'message' => '测试失败专用，看月账单是否插入',
+        //    ];
+
+        //}
+
         if ($this->db->trans_status() === FALSE) {
             $this->db->trans_rollback();
             return [
@@ -73,6 +86,5 @@ class GeneratMonthlyBills extends CI_Model {
                 'message' => '月账单生成成功',
             ];
         }
-
     }
 }
