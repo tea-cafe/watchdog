@@ -1,7 +1,9 @@
 <?php
 /**
- * $sql = 'INSERT INTO account_balance(account_id,update_time,money) (SELECT account_id,update_time,SUM(money) as money From monthly_bill WHERE create_time>=' . $timeStart . ' AND create_time<' . $timeEnd . ' group by account_id) ON DUPLICATE KEY UPDATE money=money+VALUES(money),update_time=VALUES(update_time)';
- *
+ * monthly_action action 状态说明: (月账单 指 上月的账单)
+ * 0 : 月账单未生成
+ * 1 : 月账单已生成
+ * 2 : 月账单已合入余额表
  */
 class RollbackChannelBalance extends CI_Model {
         
