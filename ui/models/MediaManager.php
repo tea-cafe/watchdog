@@ -140,7 +140,7 @@ class MediaManager extends CI_Model {
      */
     public function getMediaByAppId($strAppId) {//{{{//
         $arrSelect = [
-            'select' => 'media_platform,media_name',
+            'select' => 'media_platform,media_name,proportion',
             'where' => "app_id='" . $strAppId . "'",
         ];
 
