@@ -49,6 +49,14 @@ class CsvAdapter extends CI_Model {
                 if($arrUserSlotInfo == false) {
                     continue;
                 }
+                // get discount
+
+                $arrMedia = $this->MediaManager->getMediaByAppId($arrUserSlotInfo['app_id']);
+                if(!$arrMedia) {
+                    $this->discount = 0.8;
+                }
+                $this->discount = intval($arrMedia[0]['proportion'])/100;
+
                 $row['user_slot_id'] = $arrUserSlotInfo['slot_id'];
                 $row['app_id'] = $arrUserSlotInfo['app_id'];
                 $row['acct_id'] = $arrUserSlotInfo['account_id'];
@@ -116,6 +124,13 @@ class CsvAdapter extends CI_Model {
                     continue;
                     //return false;
                 }
+                // get discount
+                $arrMedia = $this->MediaManager->getMediaByAppId($arrUserSlotInfo['app_id']);
+                if(!$arrMedia) {
+                    $this->discount = 0.8;
+                }
+                $this->discount = intval($arrMedia[0]['proportion'])/100;
+
                 $row['user_slot_id'] = $arrUserSlotInfo['slot_id'];
                 $row['app_id'] = $arrUserSlotInfo['app_id'];
                 $row['acct_id'] = $arrUserSlotInfo['account_id'];
@@ -182,6 +197,13 @@ class CsvAdapter extends CI_Model {
                     continue;
                     //return false;
                 }
+                // get discount
+                $arrMedia = $this->MediaManager->getMediaByAppId($arrUserSlotInfo['app_id']);
+                if(!$arrMedia) {
+                    $this->discount = 0.8;
+                }
+                $this->discount = intval($arrMedia[0]['proportion'])/100;
+
                 $row['user_slot_id'] = $arrUserSlotInfo['slot_id'];
                 $row['app_id'] = $arrUserSlotInfo['app_id'];
                 $row['acct_id'] = $arrUserSlotInfo['account_id'];
@@ -249,6 +271,13 @@ class CsvAdapter extends CI_Model {
                     continue;
                     //return false;
                 }
+                // get discount
+                $arrMedia = $this->MediaManager->getMediaByAppId($arrUserSlotInfo['app_id']);
+                if(!$arrMedia) {
+                    $this->discount = 0.8;
+                }
+
+                $this->discount = intval($arrMedia[0]['proportion'])/100;
                 $row['user_slot_id'] = $arrUserSlotInfo['slot_id'];
                 $row['app_id'] = $arrUserSlotInfo['app_id'];
                 $row['acct_id'] = $arrUserSlotInfo['account_id'];
