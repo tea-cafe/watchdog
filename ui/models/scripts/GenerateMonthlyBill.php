@@ -5,7 +5,13 @@
  * 1 : 月账单已生成
  * 2 : 月账单已合入余额表
  */
-class GeneratMonthlyBill extends CI_Model {
+class GenerateMonthlyBill extends CI_Model {
+
+    const MAIL_RECEIVERS = [
+        '345627116@qq.com',
+        'szishuo@163.com',
+        '719559506@qq.com',
+    ];
 
     public function __construct() {
         parent::__construct();
@@ -14,6 +20,9 @@ class GeneratMonthlyBill extends CI_Model {
     public function do_execute() {
 
         $this->load->database();
+
+        $this->load->library('Mailer');
+
         $date = strtotime(date('Y-m-01') . ' -1 month');
 
         // 查询 monthly_action 获取月账单操作状态, 时间以上月1号0点时间戳为基准
@@ -37,7 +46,6 @@ class GeneratMonthlyBill extends CI_Model {
 
         $dateStart =  date('Y-m-d', strtotime(date('Y-m-01') . ' -1 month'));
         $dateLast = date('Y-m-d', strtotime(date('Y-m-01') . ' -1 day'));
-
 
         $sqlForMonthlyBill = 'INSERT INTO monthly_bill(app_id,time,account_id,media_name,media_platform,create_time,money) (SELECT app_id,UNIX_TIMESTAMP(`date`),account_id,platform,media_name,UNIX_TIMESTAMP(`date`),SUM(post_profit) From tab_media_user_profit_sum_daily  WHERE `date` BETWEEN \'' . $dateStart . '\' AND \'' . $dateLast . '\' group by app_id)';
 
@@ -75,12 +83,22 @@ class GeneratMonthlyBill extends CI_Model {
 
         if ($this->db->trans_status() === FALSE) {
             $this->db->trans_rollback();
+            $this->mailer->sendMails(
+                self::MAIL_RECEIVERS, 
+                'WARNING:月账单生成失败报警', 
+                '月账单'. date('Y-m', $date) . '生成失败',
+                '月账单'. date('Y-m', $date) . '生成失败.');
             return [
                 'code' => -1,
                 'message' => '月账单生事务失败，请重试',
             ];
         } else {
             $this->db->trans_commit();
+            $this->mailer->sendMails(
+                self::MAIL_RECEIVERS, 
+                'SUCCESS:月账单生成失败报警', 
+                '月账单'. date('Y-m', $date) . '生成成功',
+                '月账单'. date('Y-m', $date) . '生成成功.');
             return [
                 'code' => 0,
                 'message' => '月账单生成成功',

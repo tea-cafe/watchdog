@@ -5,7 +5,7 @@
  * 1 : 月账单已生成
  * 2 : 月账单已合入余额表
  */
-class GeneratChannelBalance extends CI_Model {
+class GenerateChannelBalance extends CI_Model {
 
     public function __construct() {
         parent::__construct();
