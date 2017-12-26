@@ -3,7 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 /**
  * 月账单合入余额
  */
-class GenerateChannelBalance extends BG_Controller {
+class GenerateAccountBalance extends BG_Controller {
 
     public function __construct() {
         parent::__construct();
@@ -20,6 +20,15 @@ class GenerateChannelBalance extends BG_Controller {
             return $this->outJson('', ErrCode::OK, $arrRes['message']);
         }
         $this->outJson('', ErrCode::ERR_SYSTEM, $arrRes['message']);
+    }
+
+    public function getPreAccountBalanceList() {
+        $this->load->model('AccountBalanceManager');
+        $arrRes = $this->AccountBalanceManager->getPreAccountBalanceList();
+        if (empty($arrRes)) {
+            return $this->outJson('', ErrCode::ERR_SYSTEM, ErrCode::$msg);
+        }
+        $this->outJson($arrRes, ErrCode::OK);
     }
 
 }
