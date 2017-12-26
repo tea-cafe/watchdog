@@ -14,7 +14,6 @@ class GenerateAccountBalance extends BG_Controller {
             return $this->outJson('', ErrCode::ERR_NOT_LOGIN);
         } 
 
-
         $this->load->model('scripts/GenerateChannelBalance');
         $arrRes = $this->GenerateChannelBalance->do_execute();
         if ($arrRes['code'] === 0) {
@@ -24,6 +23,9 @@ class GenerateAccountBalance extends BG_Controller {
     }
 
     public function getPreAccountBalanceList() {
+        if (empty($this->arrUser)) {
+            return $this->outJson('', ErrCode::ERR_NOT_LOGIN);
+        } 
         $pn = isset($_GET['currentPage']) ? intval($this->input->get('currentPage', true)) : 1;
         $rn = isset($_GET['pageSize']) ? intval($this->input->get('pageSize', true)) : 10;
         $this->load->model('AccountBalanceManager');

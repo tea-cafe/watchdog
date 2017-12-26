@@ -5,9 +5,9 @@ class MonthlyBill extends BG_Controller {
 	}
 
     public function index() {
-        //if (empty($this->arrUser)) {
-        //    return $this->outJson('', ErrCode::ERR_NOT_LOGIN); 
-        //}
+        if (empty($this->arrUser)) {
+            return $this->outJson('', ErrCode::ERR_NOT_LOGIN); 
+        }
         $account_id = $this->input->get('account_id', true);
         if (empty($account_id)) {
             return $this->outJson('', ErrCode::ERR_INVALID_PARAMS);
