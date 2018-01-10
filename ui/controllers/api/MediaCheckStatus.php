@@ -65,17 +65,26 @@ class MediaCheckStatus extends BG_Controller {
     }
 
     /*
-     * 修改app_verify_url
+     * 修改bg_verify_url
      */
-    public funciton modifyAppVerifyUrl() {
+    public function modifyBgVerifyUrl() {
         if (empty($this->arrUser)) {
             return $this->outJson('', ErrCode::ERR_NOT_LOGIN); 
         }
         $arrPostParams = json_decode(file_get_contents('php://input'), true);
         if (empty($arrPostParams['app_id'])
-            || !isset($arrPostParams['check_status'])) {
+            || empty($arrPostParams['bg_verify_url'])) {
             return $this->outJson('', ErrCode::ERR_INVALID_PARAMS); 
         }
-         
+        $arrUpdate = [
+            'bg_verify_url' => $arrPostParams['bg_verify_url'], 
+            'where' => "app_id='" . $arrPostParams['app_id'] . "'",
+        ];
+        $this->load->model('MediaManager');
+        $bolRes = $this->MediaManager->updateMediaInfo($arrUpdate);
+        if (!$bolRes) {
+            return $this->outJson('', ErrCode::ERR_SYSTEM, '操作失败');
+        }
+        return $this->outJson('', ErrCode::OK);
     }
 }
