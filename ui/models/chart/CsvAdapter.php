@@ -71,6 +71,10 @@ class CsvAdapter extends CI_Model {
 				$row['click_rate'] = (intval($v[3]) == 0) ? 0 : round($v[4]/$v[3]*100, 3);
 				$row['cpc'] = (intval($v[4]) == 0) ? 0 : round($v[5]/$v[4]*100, 3);
 				$row['ecpm'] = (intval($v[3]) == 0) ? 0 : round($v[5]/$v[3]*1000, 3);
+                // re calc post_exposure_num & post_click_num
+                $row['post_exposure_num'] = $row['ecpm'] == 0 ? 0 : intval($row['post_profit'] * 1000 / $row['ecpm']);
+                $row['post_click_num'] = intval($row['post_exposure_num'] * $row['click_rate'] / 100);
+
 				$row['mark'] = 0;
                 $row['date'] = $arrParams['date'];
                 $row['create_time'] = time();
@@ -146,6 +150,11 @@ class CsvAdapter extends CI_Model {
 				$row['cpc'] = (intval($v[4]) == 0) ? 0 : round($v[5]/$v[4]*100, 3);
 				$row['ecpm'] = (intval($v[3]) == 0) ? 0 : round($v[5]/$v[3]*1000, 3);
 				$row['mark'] = 0;
+
+                // re calc post_exposure_num & post_click_num
+                $row['post_exposure_num'] = $row['ecpm'] == 0 ? 0 : intval($row['post_profit'] * 1000 / $row['ecpm']);
+                $row['post_click_num'] = intval($row['post_exposure_num'] * $row['click_rate'] / 100);
+
                 $row['date'] = $arrParams['date'];
                 $row['create_time'] = time();
                 $row['update_time'] = time();
@@ -219,6 +228,11 @@ class CsvAdapter extends CI_Model {
 				$row['cpc'] = (intval($v[5]) == 0) ? 0 : round($v[7]/$v[5]*100, 3);
 				$row['ecpm'] = (intval($v[4]) == 0) ? 0 : round($v[7]/$v[4]*1000, 3);
 				$row['mark'] = 0;
+
+                // re calc post_exposure_num & post_click_num
+                $row['post_exposure_num'] = $row['ecpm'] == 0 ? 0 : intval($row['post_profit'] * 1000 / $row['ecpm']);
+                $row['post_click_num'] = intval($row['post_exposure_num'] * $row['click_rate'] / 100);
+
                 $row['date'] = $arrParams['date'];
                 $row['create_time'] = time();
                 $row['update_time'] = time();
@@ -292,6 +306,11 @@ class CsvAdapter extends CI_Model {
 				$row['click_rate'] = (intval($v[8]) == 0) ? 0 : round($v[9]/$v[8]*100, 3);
 				$row['cpc'] = (intval($v[9]) == 0) ? 0 : round($v[10]/$v[9]*100, 3);
 				$row['ecpm'] = (intval($v[8]) == 0) ? 0 : round($v[10]/$v[8]*1000, 3);
+
+                // re calc post_exposure_num & post_click_num
+                $row['post_exposure_num'] = $row['ecpm'] == 0 ? 0 : intval($row['post_profit'] * 1000 / $row['ecpm']);
+                $row['post_click_num'] = intval($row['post_exposure_num'] * $row['click_rate'] / 100);
+
 				$row['mark'] = 0;
                 $row['date'] = $arrParams['date'];
                 $row['create_time'] = time();

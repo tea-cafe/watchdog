@@ -63,4 +63,19 @@ class MediaCheckStatus extends BG_Controller {
         }
         return $this->outJson('', ErrCode::OK);
     }
+
+    /*
+     * 修改app_verify_url
+     */
+    public funciton modifyAppVerifyUrl() {
+        if (empty($this->arrUser)) {
+            return $this->outJson('', ErrCode::ERR_NOT_LOGIN); 
+        }
+        $arrPostParams = json_decode(file_get_contents('php://input'), true);
+        if (empty($arrPostParams['app_id'])
+            || !isset($arrPostParams['check_status'])) {
+            return $this->outJson('', ErrCode::ERR_INVALID_PARAMS); 
+        }
+         
+    }
 }

@@ -83,7 +83,6 @@ class GenerateMonthlyBill extends CI_Model {
 
         if ($this->db->trans_status() === FALSE) {
             $this->db->trans_rollback();
-            echo 'failed';
             $this->mailer->sendMails(
                 self::MAIL_RECEIVERS, 
                 'WARNING:月账单生成失败报警', 
@@ -94,7 +93,6 @@ class GenerateMonthlyBill extends CI_Model {
                 'message' => '月账单生事务失败，请重试',
             ];
         } else {
-            echo 'success';
             $this->db->trans_commit();
             $this->mailer->sendMails(
                 self::MAIL_RECEIVERS, 
