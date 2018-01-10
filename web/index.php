@@ -55,10 +55,12 @@
  */
 
     ini_set('date.timezone','Asia/Shanghai');
-    ini_set('session.cookie_domain', 'admin.zhiweihl.com');
 	define('ENVIRONMENT', 'development');
     define('WEBROOT', '/home/work/watchdog/web');
     define('DEBUG', $_SERVER['HTTP_X_LOCATION'] == 'rd' ? true : false );
+    if (!DEBUG) {
+        ini_set('session.cookie_domain', 'admin.zhiweihl.com');
+    }
 
 /*
  *---------------------------------------------------------------
