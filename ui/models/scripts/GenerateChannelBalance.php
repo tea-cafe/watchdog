@@ -44,7 +44,7 @@ class GenerateChannelBalance extends CI_Model {
         $timeNow = time();
         $timeLastMonth = mktime(0,0,0,date("m",$timeNow)-1,1,date("Y",$timeNow));
 
-        $sql = 'SELECT account_id,time,SUM(money) as money FROM monthly_bill WHERE time=' . $timeLastMonth . ' group by account_id';
+        $sql = 'SELECT account_id,time,SUM(money) as money FROM monthly_bill WHERE time>=' . $timeLastMonth . ' group by account_id';
         $arrRes = $this->db->query($sql);
         if ($this->db->error()['code'] !== 0) {
             return [
