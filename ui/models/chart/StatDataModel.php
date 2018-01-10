@@ -41,7 +41,7 @@ class StatDataModel extends CI_Model {
             'select' => '*',
             'where' => "date>='" .$arrParams['startDate']. "' AND date<='".$arrParams['endDate']."'",
             'order_by' => 'date ASC',
-            'limit' => $rn*($pn-1) . ',' . $rn,
+            #'limit' => $rn*($pn-1) . ',' . $rn,
         ];
         $method = $arrParams['method'];
         $arrRes = $this->dbutil->$method($arrSelect);
