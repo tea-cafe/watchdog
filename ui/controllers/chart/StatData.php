@@ -3,9 +3,6 @@ class StatData extends BG_Controller {
     public function __construct() {
         parent::__construct();
         $this->load->model('chart/StatDataModel');
-        if (empty($this->arrUser)) {
-            return $this->outJson([], ErrCode::ERR_NOT_LOGIN);
-        }
     }
 
     /**
@@ -13,6 +10,9 @@ class StatData extends BG_Controller {
      * type 取值Acct, Media, Slot
      */
     public function getStatSumDataList() {//{{{//
+        if (empty($this->arrUser)) {
+            return $this->outJson([], ErrCode::ERR_NOT_LOGIN);
+        }
         $arrParams = $this->input->get(NULL, TRUE);
         if(empty($arrParams['startDate'])
             || empty($arrParams['endDate'])
@@ -34,6 +34,9 @@ class StatData extends BG_Controller {
      * 获取daily数据列表
      */
     public function getStatDailyDataList() {//{{{//
+        if (empty($this->arrUser)) {
+            return $this->outJson([], ErrCode::ERR_NOT_LOGIN);
+        }
         $arrParams = $this->input->get(NULL, TRUE);
         if(empty($arrParams['startDate'])
             || empty($arrParams['endDate'])
