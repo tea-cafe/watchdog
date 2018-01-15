@@ -120,7 +120,13 @@ class CsvAdapter extends CI_Model {
                     continue;
                 }
 				$string = mb_convert_encoding(trim(strip_tags($value)), 'utf-8', 'gbk');
-				$v = explode(',', trim($string));
+                $regex="/(\".*?),(.*?\")/i";
+                $replace = '$1$2';
+                $v = explode(',', trim(preg_replace($regex, $replace, $string)));
+				//$v = explode(',', trim($string));
+                $v[3] = intval(trim($v[3], '"'));
+                $v[4] = intval(trim($v[4], '"'));
+                $v[5] = floatval(trim($v[5], '"'));
 				$row = array();
 				$row['ori_slot_id'] = $v[2];
                 $arrUserSlotInfo = $this->getUserSlotInfo($row['ori_slot_id']);

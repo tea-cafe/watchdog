@@ -212,9 +212,9 @@ class StatDataModel extends CI_Model {
                 ? intval($val['pre_profit']) : intval($val['pre_profit']) + $arrOriData[$val['date']]['pre_profit'];
             $arrOriData[$val['date']]['post_profit'] = empty($arrOriData[$val['date']]['post_profit'])
                 ? floatval($val['post_profit']) : floatval($val['post_profit']) + $arrOriData[$val['date']]['post_profit'];
-            $arrOriData[$val['date']]['click_rate'] = 0;
+            $arrOriData[$val['date']]['click_rate'] = $val['click_rate'];
             $arrOriData[$val['date']]['cpc'] = 0;
-            $arrOriData[$val['date']]['ecpm'] = 0;
+            $arrOriData[$val['date']]['ecpm'] = $val['ecpm'];
             $arrOriData[$val['date']]['mark'] = 1;
             $arrOriData[$val['date']]['date'] = $val['date'];
 
