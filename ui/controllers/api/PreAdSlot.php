@@ -15,6 +15,95 @@ class PreAdSlot extends BG_Controller {
     ];
 
     /**
+     *
+     */
+    public function modifyPreSlot() {
+        //if (empty($this->arrUser)) {
+        //    return $this->outJson('', ErrCode::ERR_NOT_LOGIN);
+        //}
+        $arrPostParams = json_decode(file_get_contents('php://input'), true);
+
+        if (empty($arrPostParams['app_id'])
+            || empty($arrPostParams['slotmap_type'])
+            || !is_array($arrPostParams['slotmap_type'])
+            || count($arrPostParams['slotmap_type']) !== 3
+            || empty($arrPostParams['slotmap_list'])) {
+            return $this->outJson('', ErrCode::ERR_INVALID_PARAMS);
+        }
+        if (preg_match('#[^a-zA-Z0-9,]#', $arrPostParams['slotmap_list'])) {
+            return $this->outJson('', ErrCode::ERR_INVALID_PARAMS, '预生成id列表请确保只有数字字母和英文逗号');
+        }
+        $app_id = $arrPostParams['app_id'];
+        $pre_slod_ids = $arrPostParams['slotmap_list'];
+        list($slot_style,$ad_upstream,$slot_size) = $arrPostParams['slotmap_type'];
+
+        $this->load->model('PreAdSlotManager');
+        // check media_info 的 app_id_map 是否存在此上游
+        $arrAppIdMap = $this->PreAdSlotManager->checkMediaLigal($app_id);
+        if (!array_key_exists($ad_upstream, $arrAppIdMap)) {
+            return $this->outJson('', ErrCode::ERR_SYSTEM, '您添加的预生成id对应的上游并不存在,请检查上游id是否存在');
+        }
+
+        $arrParams = compact('app_id', 'slot_style', 'ad_upstream', 'slot_size', 'pre_slod_ids');
+        $arrPreAdSlotBefore = $this->PreAdSlotManager->getPreAdSlot($arrParams);
+
+        $arrUpStreamSlotIds = [];
+        $arrFormatSlotIds = explode(',', $arrParams['pre_slod_ids']);
+        foreach ($arrFormatSlotIds as $key => &$val) {
+            if (empty($val)) {
+                unset($arrFormatSlotIds[$key]);
+                continue;
+            }
+            $val = trim($val);
+        }
+        if (empty($arrFormatSlotIds)
+            || !is_array($arrFormatSlotIds)) {
+            return $this->outJson($arrFormatSlotIds, ErrCode::ERR_INVALID_PARAMS, 'pre_slod_ids 错误');
+        }
+
+        if (empty($arrPreAdSlotBefore[$ad_upstream])
+            || empty($arrPreAdSlotBefore[$ad_upstream][$slot_style])
+            || empty($arrPreAdSlotBefore[$ad_upstream][$slot_style][$slot_size])) {
+            return $this->outJson($arrFormatSlotIds, ErrCode::ERR_INVALID_PARAMS, '要删除的pre_slod_id不存在，请确认后重试');
+        }
+
+        $arrSlotIdsToDelete = [];
+        foreach($arrFormatSlotIds as $strSlotId) {
+            if ($arrPreAdSlotBefore[$ad_upstream][$slot_style][$slot_size][$strSlotId] === 1) {
+                $arrSlotIdsToDelete[] = $strSlotId; 
+            }
+            unset($arrPreAdSlotBefore[$ad_upstream][$slot_style][$slot_size][$strSlotId]);
+        }
+        $arrPreAdSlotAfter = $arrPreAdSlotBefore;
+
+        //ps : 如果给定的pre_slot_id标记为1，已被分配使用，需要删除 data_for_sdk 表的记录, 使用另一个接口删除
+
+        $bolRes = $this->PreAdSlotManager->insertPreAdSlot($arrParams['app_id'], json_encode($arrPreAdSlotAfter));
+        if (!$bolRes) {
+            return $this->outJson($arrPreAdSlotAfter, ErrCode::ERR_SYSTEM, '预生成广告位更新失败');
+        }
+
+        // 直接返回给前端展示
+        $arrPreAdSlotIdsDisplay = [];
+        $this->config->load('style2platform_map');
+        $arrStyleMap = $this->config->item('style2platform_map');
+        foreach ($arrPreAdSlotAfter as $strUpstream => $arrStyle) {
+            foreach ($arrStyle as $intStyleId => $arrSize) {
+                foreach ($arrSize as $intSizeId => $arrSlotIds) {
+                    if (empty($arrStyleMap[$intStyleId])) {
+                        continue;
+                    }
+                    $strDisStyle = $arrStyleMap[$intStyleId]['des'];
+                    $strDisSize = $arrStyleMap[$intStyleId][$strUpstream]['size'][$intSizeId];
+                    $arrPreAdSlotIdsDisplay[$strUpstream][$strDisStyle][$strDisSize] = $arrSlotIds;
+                }
+            }
+        }
+        return $this->outJson($arrPreAdSlotIdsDisplay, ErrCode::OK, '预生成广告位更新成功');
+
+    }
+
+    /**
      * 获取可用的上游广告位id列表
      */
     public function getList() {
