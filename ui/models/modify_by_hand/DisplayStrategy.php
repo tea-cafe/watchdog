@@ -14,13 +14,13 @@ class DisplayStrategy extends CI_Model {
     }
         
     public function do_execute() {
-        /*******这里放要修改的数据*********/
+        /*******这里放要修改的数据*********
         $display_strategy = [ // 要修改成的数据
             'BAIDU' => 100,
             'GDT' => 100,
         ];
         $slot_style = '1,2,3'; // 受影响的slot_style，最后不要加","
-        /**********************************/
+        **********************************/
         
         if (empty($display_strategy)
             || empty($slot_style)) {
