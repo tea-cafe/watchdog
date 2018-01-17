@@ -82,6 +82,10 @@ class AccountBalanceManager extends CI_Model {
         $arrRes = [];
         $arrTmp = [];
         foreach($arrProfitLastMonth as $arrBillList) {
+            if (empty($arrBillList['account_id'])
+                || empty($arrFormatEmails[$arrBillList['account_id']])) {
+                continue;
+            }
             $arrTmp['account_id'] = $arrBillList['account_id'];
             $arrTmp['email'] = $arrFormatEmails[$arrBillList['account_id']];
             if (empty($arrFormatAccountBalance[$arrBillList['account_id']])) {
