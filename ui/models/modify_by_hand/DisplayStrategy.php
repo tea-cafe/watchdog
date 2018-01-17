@@ -1,6 +1,8 @@
 <?php
 /**
  * 修改 display_strategy
+ * 线下执行：/usr/local/src/php/bin/php /home/work/watchdog/web/index.php ModifyByHand execute "display_strategy"
+ * 线上执行：/usr/local/php/bin/php /home/work/watchdog/web/index.php ModifyByHand execute "display_strategy"
  * display_strategy 记录在adslot_style_info
  * 第一步：确定要修改的display_strategy 对应的slot_style
  * 第二步：修改slot_style记录
@@ -14,10 +16,10 @@ class DisplayStrategy extends CI_Model {
     }
         
     public function do_execute() {
-        /*******这里放要修改的数据*********
+        /*******这里放要修改的数据,添加完后记得删掉修改*********
         $display_strategy = [ // 要修改成的数据
-            'BAIDU' => 100,
-            'GDT' => 100,
+            'BAIDU' => 20,
+            'GDT' => 80,
         ];
         $slot_style = '1,2,3'; // 受影响的slot_style，最后不要加","
         **********************************/
