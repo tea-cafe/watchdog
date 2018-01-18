@@ -81,6 +81,11 @@ class Processes extends CI_Model {
         if(!$boolBtnRet) {
             return false;
         }
+        // all slot id need update in tab_slot_user_profit_sum_daily
+        $strMethod = 'getallAdslot';
+        $arrAllSlotData = $this->formatAllSlotData($arrParams, $strMethod);
+        $boolAllSlot = $this->AllSlotSum($arrParams, $arrAllSlotData, "+");
+
         //calc slot sum()
         $intTime = time();
         $strSql = "UPDATE `tab_slot_user_profit_sum_daily` SET 
@@ -211,6 +216,41 @@ class Processes extends CI_Model {
     }//}}}//
 
     /**
+     * formatAllSlotData
+     */
+    private function formatAllSlotData($arrParams, $strMethod) {//{{{//
+        //get all data, then do summary
+        $arrSelect = [
+            'select' => 'slot_id,account_id,app_id',
+            'order_by' => 'create_time DESC',
+        ];
+        $arrRes = $this->dbutil->$strMethod($arrSelect);
+        if(empty($arrRes)) {
+            return false;
+        }
+        $arrOriData = [];
+        foreach($arrRes as $key=>$val) {
+            $arrOriData[$val['slot_id']]['user_slot_id'] = $val['slot_id'];
+            $arrOriData[$val['slot_id']]['app_id'] = $val['app_id'];
+            $arrOriData[$val['slot_id']]['acct_id'] = $val['account_id'];
+            $arrOriData[$val['slot_id']]['pre_exposure_num'] = 0;
+            $arrOriData[$val['slot_id']]['post_exposure_num'] = 0;
+            $arrOriData[$val['slot_id']]['pre_click_num'] = 0;
+            $arrOriData[$val['slot_id']]['post_click_num'] = 0;
+            $arrOriData[$val['slot_id']]['pre_profit'] = 0;
+            $arrOriData[$val['slot_id']]['post_profit'] = 0;
+            $arrOriData[$val['slot_id']]['click_rate'] = 0;
+            $arrOriData[$val['slot_id']]['cpc'] = 0;
+            $arrOriData[$val['slot_id']]['ecpm'] = 0;
+            $arrOriData[$val['slot_id']]['mark'] = 1;
+            $arrOriData[$val['slot_id']]['date'] = $arrParams['date'];
+            $arrOriData[$val['slot_id']]['create_time'] = time();
+            $arrOriData[$val['slot_id']]['update_time'] = time();
+        }
+        return $arrOriData;
+    }//}}}//
+
+    /**
      * formatSlotData
      */
     private function formatSlotData($arrParams, $strMethod) {//{{{//
@@ -292,6 +332,37 @@ class Processes extends CI_Model {
         }
         return $arrOriData;
     }//}}}//
+
+    /**
+     * sum all slot id
+     */
+    private function AllSlotSum($arrParams, $arrOriData, $label) {//{{{//
+        if($arrOriData == false) {
+            return false;
+        }
+        foreach($arrOriData as $key=>$val) {
+            $arrSlot = $this->AdSlotManager->getSlotBySlotId($key);
+            if(!$arrSlot) {
+                continue;
+            }
+            $val['slot_name'] = $arrSlot['slot_name'];
+
+			$time = time();
+            $sqlKeys = " (`".implode("`, `", array_keys($val))."`)";
+            $sqlString = '('."'".implode( "','", $val ) . "'".')'; //批量
+            $insertRows[] = $sqlString;
+            $strValues = implode(',', $insertRows);
+			$sql = "INSERT INTO tab_slot_user_profit_sum_daily {$sqlKeys} 
+ VALUES {$strValues} ON DUPLICATE KEY UPDATE 
+                update_time='". $time ."'";
+			$boolRes = $this->dbutil->query($sql);
+			if(!$boolRes) {
+				return false;
+			}
+            unset($insertRows);
+		}
+        return true; 
+	}//}}}//
 
     /**
      * slot sum
