@@ -75,10 +75,25 @@ class TakeMoneyManager extends CI_Model{
 		$res[0]['bill_list'] = unserialize($res[0]['bill_list']);
 		$res[0]['info'] = unserialize($res[0]['info']);
         
+        $res[0]['info']['invoice_total_money'] = array_sum($res[0]['info']['invoice_info']);
+        $res[0]['info']['invoice_total_page'] = count($res[0]['info']['invoice_info']);
+
+        if(empty($res[0]['info']['invoice_info'])){
+            return $res[0];
+        }
+
+        $i = 0;
+        foreach($res[0]['info']['invoice_info'] as $k => $v){
+            $tmpInvoiceArr[$i]['number'] = strval($k);
+            $tmpInvoiceArr[$i]['money'] = strval($v);
+            $i++; 
+        }
+        $res[0]['info']['invoice_info'] = $tmpInvoiceArr;
+   
         return $res[0];
 	}
 
-	public function modifyInfo($orderNumber,$params,$action,$status,$remark){
+	public function modifyInfo($orderNumber,$action,$status,$remark){
 		/*获取账单用户唯一标识：account_id*/
 		$accWhere = array(
 			'select' => 'account_id',
@@ -100,23 +115,15 @@ class TakeMoneyManager extends CI_Model{
         }
 
         $billList = unserialize($arrInfo[0]['bill_list']);
-        $info = unserialize($arrInfo[0]['info']);
-        
-        $newInfo = array(
-			'channel_info' => $info['channel_info'],
-			'company_info' => $info['company_info'],
-			'mail' => $info['mail'],
-            'invoice_info' => $params,
-		);
         
 		switch($action){
             case '1':
 				/* 审核通过操作 */
-				$Res = $this->adopt($accId,$orderNumber,$newInfo);
+				$Res = $this->adopt($accId,$orderNumber);
 				break;
 			case '0':
 				/* 审核失败操作 */
-				$Res = $this->reject($accId,$orderNumber,$billList,$newInfo,$remark);
+				$Res = $this->reject($accId,$orderNumber,$billList,$remark);
 				break;
 		}
 
@@ -127,14 +134,13 @@ class TakeMoneyManager extends CI_Model{
 	 * 审核通过
 	 * 修改提现单状态,月账单状态
 	 */	
-	private function adopt($accId,$orderNumber,$params){
+	private function adopt($accId,$orderNumber){
         $udpWhere = array(
 			0 => array(
 				'type' => 'update',
 				'tabName' => 'tmr',
 				'where' => 'number = '.$orderNumber.' AND status = "0"',
 				'data' => array(
-					'info' => serialize($params),
 					'status' => '1',
 					'update_time' => time(),
 				),
@@ -158,7 +164,7 @@ class TakeMoneyManager extends CI_Model{
 	 * 审核失败
 	 * 回滚账户余额、月账单余额和状态
 	 */
-	private function reject($accId,$orderNumber,$billList,$params,$remark){
+	private function reject($accId,$orderNumber,$billList,$remark){
         $idSql = '';
         foreach($billList as $key => $value){
             if($key == 0){
@@ -176,7 +182,6 @@ class TakeMoneyManager extends CI_Model{
 				'tabName' => 'tmr',
 				'where' => 'number = '.$orderNumber.' AND status = "0"',
 				'data' => array(
-					'info' => serialize($params),
 					'status' => '2',
 					'remark' => $remark,
 					'update_time' => time(),

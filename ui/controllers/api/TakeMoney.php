@@ -72,7 +72,6 @@ class TakeMoney extends BG_Controller{
 
 	/**
 	 * 审核提现订单
-	 * 发票可能为多张,存为数组
 	 */
 
 	public function examine(){
@@ -82,26 +81,9 @@ class TakeMoney extends BG_Controller{
         
         $arrPostParams = json_decode(file_get_contents('php://input'), true);
         $orderNumber = $arrPostParams['order_number'];
-        $data['money'] = $arrPostParams['money'];
-		$data['code'] = $arrPostParams['code'];
-		$data['number'] = $arrPostParams['number'];
 		$status = $arrPostParams['status'];
         $remark = $arrPostParams['remark'];
         $action = $arrPostParams['action'];
-
-		//$data['photo'][0] = $this->input->post('photo',true);
-		//$data['fillInMoney'] = $this->input->post('fill_in_money',true);
-		//$data['shouldFillInMoney'] = $this->input->post('should_fill_in_money',true);
-
-		foreach($data as $k => $v){
-		    if($action == 0){
-                break;
-            }
-
-            if(empty($v)){
-				return $this->outJson('', ErrCode::ERR_INVALID_PARAMS);
-			}
-		}
 
 		if($action == 0 && empty($remark)){
 			return $this->outJson('', ErrCode::ERR_INVALID_PARAMS,'未填写审核失败原因');
@@ -110,7 +92,7 @@ class TakeMoney extends BG_Controller{
 		$this->config->load('company_invoice_info');
 		$company_invoice_info = $this->config->item('invoice');
 		
-		$res = $this->TakeMoneyManager->modifyInfo($orderNumber,$data,$action,$status,$remark);
+		$res = $this->TakeMoneyManager->modifyInfo($orderNumber,$action,$status,$remark);
 
         if($res == 2){
 			return $this->outJson('', ErrCode::OK,'审核已完成,请勿重复操作');
