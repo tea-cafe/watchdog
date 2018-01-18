@@ -115,17 +115,26 @@ class TakeMoneyManager extends CI_Model{
         }
 
         $billList = unserialize($arrInfo[0]['bill_list']);
-        
-		switch($action){
+
+        $info = unserialize($arrInfo[0]['info']);
+
+        $newInfo = array(
+            'channel_info' => $info['channel_info'],
+            'company_info' => $info['company_info'],
+            'mail' => $info['mail'],
+            'invoice_info' => $info['invoice_info'],
+        );
+
+        switch($action){
             case '1':
-				/* ÉóºËÍ¨¹ý²Ù×÷ */
-				$Res = $this->adopt($accId,$orderNumber);
-				break;
-			case '0':
-				/* ÉóºËÊ§°Ü²Ù×÷ */
-				$Res = $this->reject($accId,$orderNumber,$billList,$remark);
-				break;
-		}
+                /* ÉóºËÍ¨¹ý²Ù×÷ */
+                $Res = $this->adopt($accId,$orderNumber,$newInfo);
+                break;
+            case '0':
+                /* ÉóºËÊ§°Ü²Ù×÷ */
+                $Res = $this->reject($accId,$orderNumber,$billList,$newInfo,$remark);
+                break;
+        }
 
 		return $Res;
 	}
@@ -134,13 +143,14 @@ class TakeMoneyManager extends CI_Model{
 	 * ÉóºËÍ¨¹ý
 	 * ÐÞ¸ÄÌáÏÖµ¥×´Ì¬,ÔÂÕËµ¥×´Ì¬
 	 */	
-	private function adopt($accId,$orderNumber){
+	private function adopt($accId,$orderNumber,$params){
         $udpWhere = array(
 			0 => array(
 				'type' => 'update',
 				'tabName' => 'tmr',
 				'where' => 'number = '.$orderNumber.' AND status = "0"',
-				'data' => array(
+                'data' => array(
+                    'info' => serialize($params),
 					'status' => '1',
 					'update_time' => time(),
 				),
@@ -164,7 +174,7 @@ class TakeMoneyManager extends CI_Model{
 	 * ÉóºËÊ§°Ü
 	 * »Ø¹öÕË»§Óà¶î¡¢ÔÂÕËµ¥Óà¶îºÍ×´Ì¬
 	 */
-	private function reject($accId,$orderNumber,$billList,$remark){
+	private function reject($accId,$orderNumber,$billList,$params,$remark){
         $idSql = '';
         foreach($billList as $key => $value){
             if($key == 0){
@@ -177,25 +187,26 @@ class TakeMoneyManager extends CI_Model{
         }
         
         $udpWhere = array(
-			0 => array(
-				'type' => 'update',
-				'tabName' => 'tmr',
-				'where' => 'number = '.$orderNumber.' AND status = "0"',
-				'data' => array(
-					'status' => '2',
-					'remark' => $remark,
-					'update_time' => time(),
-				),
-			),
-			1 => array(
-				'type' => 'update',
-				'tabName' => 'accbalance',
-				'where' => 'account_id = "'.$accId.'"',
-				'data' => array(
-					'money' => $params['channel_info']['money'],
-					'update_time' => time(),
-				),
-			),
+            0 => array(
+                'type' => 'update',
+                'tabName' => 'tmr',
+                'where' => 'number = '.$orderNumber.' AND status = "0"',
+                'data' => array(
+                    'info' => serialize($params),
+                    'status' => '2',
+                    'remark' => $remark,
+                    'update_time' => time(),
+                ),
+            ),
+            1 => array(
+                'type' => 'update',
+                'tabName' => 'accbalance',
+                'where' => 'account_id = "'.$accId.'"',
+                'data' => array(
+                    'money' => $params['channel_info']['money'],
+                    'update_time' => time(),
+                ),
+            ),
 			2 => array(
 				'type' => 'update',
 				'tabName' => 'monthly',
