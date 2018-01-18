@@ -74,22 +74,30 @@ class TakeMoneyManager extends CI_Model{
 	
 		$res[0]['bill_list'] = unserialize($res[0]['bill_list']);
 		$res[0]['info'] = unserialize($res[0]['info']);
-        
-        $res[0]['info']['invoice_total_money'] = array_sum($res[0]['info']['invoice_info']);
+        unset($res[0]['info']['invoice_info']['code']);
+        unset($res[0]['info']['invoice_info']['number']);
+        unset($res[0]['info']['invoice_info']['money']);
+
         $res[0]['info']['invoice_total_page'] = count($res[0]['info']['invoice_info']);
+        $res[0]['info']['invoice_total_money'] = '0.00';
 
         if(empty($res[0]['info']['invoice_info'])){
             return $res[0];
         }
-
         $i = 0;
+        $invoice_total_money = 0;
         foreach($res[0]['info']['invoice_info'] as $k => $v){
-            $tmpInvoiceArr[$i]['number'] = strval($k);
-            $tmpInvoiceArr[$i]['money'] = strval($v);
-            $i++; 
+            $tmpInvoiceArr[$i]['number'] = $k;
+            $tmpInvoiceArr[$i]['money'] = $v['money'];
+            $tmpInvoiceArr[$i]['tax'] = floatval($v['tax']);
+            $tmpInvoiceArr[$i]['total_amount'] = $v['total_amount'];
+            $i++;
+
+            $invoice_total_money = $invoice_total_money + $v['total_amount'];
         }
         $res[0]['info']['invoice_info'] = $tmpInvoiceArr;
-   
+        $res[0]['info']['invoice_total_money'] = $invoice_total_money;
+
         return $res[0];
 	}
 
