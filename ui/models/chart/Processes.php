@@ -34,7 +34,7 @@ class Processes extends CI_Model {
             if($arrMarkRet && $boolSum) {
                 $arrStateWhere = [
                     'btn_load' => 0,
-                    'btn_load_cancel' => 1,
+                    'btn_load_cancel' => 0,
                     'btn_select' => 0,
                     'btn_sum' => 0,
                     'where' => "date='".$arrParams['date']."' AND platform_en='".$arrParams['source']."'",
