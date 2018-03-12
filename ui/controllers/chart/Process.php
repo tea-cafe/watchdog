@@ -17,10 +17,10 @@ class Process extends BG_Controller {
             || empty($arrParams['source'])) {
             return $this->outJson([], ErrCode::ERR_INVALID_PARAMS);
         }
+        $arrParams['account_id'] = $this->arrUser['account_id'];
         $boolRet = $this->Processes->doConfirmLoad($arrParams);
 
         //get btn state
-        $arrParams['account_id'] = $this->arrUser['account_id'];
         $arrStateRet['state'] = $this->Processes->getBtnState($arrParams);
         return $boolRet?$this->outJson($arrStateRet, ErrCode::OK) : $this->outJson($arrStateRet, ErrCode::ERR_SYSTEM);
     }//}}}//

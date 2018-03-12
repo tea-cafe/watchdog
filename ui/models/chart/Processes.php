@@ -28,13 +28,15 @@ class Processes extends CI_Model {
             $arrOriData = $this->formatOriData($arrParams, $strMethod);
             $boolSum = $this->UsrSlotSumOrNot($arrParams, $arrOriData, "+");
 
+            $rrrr = $this->doSummary($arrParams);
+
             //更新btn & 置已汇总标记//TODO 加字段 
             if($arrMarkRet && $boolSum) {
                 $arrStateWhere = [
                     'btn_load' => 0,
                     'btn_load_cancel' => 1,
                     'btn_select' => 0,
-                    'btn_sum' => 1,
+                    'btn_sum' => 0,
                     'where' => "date='".$arrParams['date']."' AND platform_en='".$arrParams['source']."'",
                 ];
                 $arrBtnState = $this->BtnState->updateBtnState($arrStateWhere);
@@ -78,6 +80,7 @@ class Processes extends CI_Model {
     public function doSummary($arrParams) {//{{{//
         //check btn_sum state
         $boolBtnRet = $this->checkBtnSumState($arrParams);
+        $boolBtnRet = true;
         if(!$boolBtnRet) {
             return false;
         }
@@ -93,7 +96,16 @@ class Processes extends CI_Model {
             `ecpm` = IF(pre_exposure_num=0,0,pre_profit/pre_exposure_num*1000),
             `update_time` = $intTime WHERE `date` = '".$arrParams['date']."'";
         $arrSlotRet = $this->dbutil->query($strSql);
-        //do media sum
+
+        //first del Acct daily. 3.21-start
+        $arrParams['method'] = 'delUsrAcctSum';
+        $boolAcct = $this->delAcctDaily($arrParams);
+
+        //del media daily.
+        $arrParams['method'] = 'delUsrMediaSum';
+        $boolMedia = $this->delMediaDaily($arrParams);
+
+        //then do media sum.
         $strMethod = 'getallUsrSlotSum';
         $arrSlotData = $this->formatSlotData($arrParams, $strMethod);
         $boolMediaSum = $this->UsrMediaSumOrNot($arrParams, $arrSlotData, "+");
