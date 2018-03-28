@@ -88,7 +88,8 @@ class MediaManager extends CI_Model {
         if (!empty($account_id)) {
             $arrSelect['where'] = "account_id='" . $account_id . "'"; 
         }
-        if ($strStatus !== '') {
+        if ($strStatus !== null 
+            && $strStatus !== '') {
             $arrStatus = explode(',', $strStatus);
             if (empty($arrSelect['where'])) {
                 $arrSelect['where'] = "(";
