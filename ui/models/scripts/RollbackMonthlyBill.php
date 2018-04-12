@@ -30,13 +30,13 @@ class RollbackMonthlyBill extends CI_Model {
                 'message' => 'ERROR: 月账单' . date('Y-m', $date) . '还未生成,禁止回滚',
             ];
         }
+        // 生成余额以后不能回滚月账单， 未生成余额时可以回滚月账单
         if (!empty($arrRes)
             && $arrRes[0]['action'] != 1) {
             return [
                 'code' => 1,
                 'message' => 'ERROR: 月账单' . date('Y-m', $date) . '禁止回滚,如果要回滚月账单，请先确保账户余额已回滚完成',
             ];
-            return;
         }
 
         $timeNow = time();

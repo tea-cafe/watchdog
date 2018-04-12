@@ -40,7 +40,7 @@ class RollbackChannelBalance extends CI_Model {
         $timeStart = mktime(0,0,0,date("m",$timeNow)-1,1,date("Y",$timeNow));
         $timeEnd = mktime(0,0,0,date("m",$timeNow),1,date("Y",$timeNow));
 
-        $sqlMonthlyBill = 'SELECT account_id,create_time,SUM(money) as money From monthly_bill WHERE create_time>=0 group by account_id';
+        $sqlMonthlyBill = 'SELECT account_id,create_time,SUM(money) as money From monthly_bill WHERE create_time>=' . $timeStart . ' and create_time<' . $timeEnd . ' group by account_id';
         $arrRes = $this->db->query($sqlMonthlyBill);
         if ($this->db->error()['code'] !== 0) {
             return [

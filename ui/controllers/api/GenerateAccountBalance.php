@@ -22,6 +22,9 @@ class GenerateAccountBalance extends BG_Controller {
         $this->outJson('', ErrCode::ERR_SYSTEM, $arrRes['message']);
     }
 
+    /**
+     * 获取月账单列表  
+     */
     public function getPreAccountBalanceList() {
         if (empty($this->arrUser)) {
             return $this->outJson('', ErrCode::ERR_NOT_LOGIN);
