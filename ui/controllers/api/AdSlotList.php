@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 /**
- * 媒体列表
+ * 媒体广告位列表
  */
 
 class AdSlotList extends BG_Controller {
