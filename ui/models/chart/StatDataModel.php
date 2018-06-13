@@ -13,13 +13,23 @@ class StatDataModel extends CI_Model {
 
         $rn = $arrParams['rn'];
         $pn = $arrParams['pn'];
-        
+
+		if(!isset($arrParams['sorter'])){
+			$arrParams['sorter'] = 'pre_exposure_num_descend';
+		}
+		
+		if(strpos($arrParams['sorter'],'descend')){
+			$orderBy = str_replace('_descend','',$arrParams['sorter']).' desc';
+		}elseif(strpos($arrParams['sorter'],'ascend')){
+			$orderBy = str_replace('_ascend','',$arrParams['sorter']).' asc';
+		}
         // get last day
         $arrDailySelect = [
             'select' => '*',
             'where' => "date='" .$arrParams['lastday']. "'",
             'limit' => $rn*($pn-1) . ',' . $rn,
-        ];
+			'order_by' => $orderBy,
+		];
         if($arrParams['type'] == 'Media') {
             $arrDailySelect['where'] = "date='" .$arrParams['lastday']. "'
                 AND account_id='". $arrParams['statId']."'";
@@ -31,11 +41,11 @@ class StatDataModel extends CI_Model {
         }
 
         $method = $arrParams['method'];
-        $arrDaily = $this->dbutil->$method($arrDailySelect);
+		$arrDaily = $this->dbutil->$method($arrDailySelect);
         if(empty($arrDaily[0])) {
             $arrDaily = [];
         }
-
+		
         // get curve
         $arrSelect = [
             'select' => '*',
@@ -45,13 +55,18 @@ class StatDataModel extends CI_Model {
         ];
         $method = $arrParams['method'];
         $arrRes = $this->dbutil->$method($arrSelect);
+
         if(empty($arrRes[0])) {
             return [
                 'list' => [],
                 'pagination' => [
                     'total' => $intCount,
-                    'pageSize' => $rn,
-                    'current' => $pn,
+                    'pageSize' => (int)$rn,
+                    'current' => (int)$pn,
+					'startDate' => $arrParams['startDate'],
+					'endDate' => $arrParams['endDate'],
+					'type' => $arrParams['type'],
+					'statId' => $arrParams['statId'],
                 ],
                 'curve' => [],
             ];
@@ -65,8 +80,13 @@ class StatDataModel extends CI_Model {
             'list' => $arrDaily,
             'pagination' => [
                 'total' => $intCount,
-                'pageSize' => $rn,
-                'current' => $pn,
+                'pageSize' => (int)$rn,
+                'current' => (int)$pn,
+				'sorter' => $arrParams['sorter'],
+				'startDate' => $arrParams['startDate'],
+				'endDate' => $arrParams['endDate'],
+				'type' => $arrParams['type'],
+				'statId' => $arrParams['statId'],
             ],
             'curve' => $arrCurve,
         ];
@@ -105,8 +125,8 @@ class StatDataModel extends CI_Model {
                 'list' => [],
                 'pagination' => [
                     'total' => $intCount,
-                    'pageSize' => $rn,
-                    'current' => $pn,
+                    'pageSize' => (int)$rn,
+                    'current' => (int)$pn,
                 ],
                 'curve' => [],
             ];
@@ -119,8 +139,8 @@ class StatDataModel extends CI_Model {
             'list' => $arrRes,
             'pagination' => [
                 'total' => $intCount,
-                'pageSize' => $rn,
-                'current' => $pn,
+                'pageSize' => (int)$rn,
+                'current' => (int)$pn,
             ],
             'curve' => $arrCurve,
         ];
