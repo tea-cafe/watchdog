@@ -14,33 +14,63 @@ class Reports extends CI_Model {
         }
         $rn = $arrParams['rn'];
         $pn = $arrParams['pn'];
-        $arrSelect = [
+		if(!isset($arrParams['sorter'])){
+			$arrParams['sorter'] = 'pre_exposure_num_descend';
+		}
+		
+		if(strpos($arrParams['sorter'],'descend')){
+			$orderBy = str_replace('_descend','',$arrParams['sorter']).' desc';
+		}elseif(strpos($arrParams['sorter'],'ascend')){
+			$orderBy = str_replace('_ascend','',$arrParams['sorter']).' asc';
+		}
+
+		$arrSelect = [
             'select' => '*',
             'where' => " date='" .$arrParams['date']. "'",
-            'order_by' => 'create_time DESC',
+            'order_by' => $orderBy,
             'limit' => $rn*($pn-1) . ',' . $rn,
-        ];
-        $method = $arrParams['method'];
+		];
+		
+		$method = $arrParams['method'];
         $arrRes = $this->dbutil->$method($arrSelect);
-        if(empty($arrRes[0])) {
-            return [
+		if(empty($arrRes[0])) {
+			$result = [
                 'list' => [],
                 'pagination' => [
                     'total' => $intCount,
-                    'pageSize' => $rn,
-                    'current' => $pn,
+                    'pageSize' => (int)$rn,
+					'current' => (int)$pn,
+					'date' => $arrParams['date'],
+					'sorter' => $arrParams['sorter'],
                 ],
-            ];
+			];
+
+			if(isset($arrParams['source'])){
+				$result['pagination']['source'] = $arrParams['source'];
+			}else{
+				$result['pagination']['type'] = $arrParams['type'];
+			}
+			return $result;
         }
 
-        return [
+		$result = [
             'list' => $arrRes,
             'pagination' => [
                 'total' => $intCount,
-                'pageSize' => $rn,
-                'current' => $pn,
-            ],
-        ];
+                'pageSize' => (int)$rn,
+				'current' => (int)$pn,
+				'date' => $arrParams['date'],
+				'sorter' => $arrParams['sorter'],
+			],
+		];
+		
+		if(isset($arrParams['source'])){
+			$result['pagination']['source'] = $arrParams['source'];
+		}else{
+			$result['pagination']['type'] = $arrParams['type'];
+		}
+
+		return $result;
     }//}}}//
 
     private function getTotalCount($arrParams) {//{{{//
