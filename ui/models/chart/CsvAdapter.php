@@ -29,6 +29,20 @@ class CsvAdapter extends CI_Model {
         return $boolDataRet ? $boolDataRet : false;
 	}//}}}//
 
+	private function getChargingNameMaster($chargingName){
+		$where = array(
+			'select' => 'account_id',
+			'where' => 'charging_name="'.$chargingName.'"',
+		);
+
+		$res = this->dbutil->getChargingList($where);
+		if(empty($res)){
+			return false;
+		}
+
+		return $res[0]['account_id'];
+	}
+
 	private function processChargingContent($arrContent, $arrParams){
 		$chunkData = array_chunk($arrContent, 5000);
 		$count = count($chunkData[0]);
@@ -42,13 +56,21 @@ class CsvAdapter extends CI_Model {
 			$string = mb_convert_encoding(trim(strip_tags($value)), 'utf-8', 'gbk');
 			$v = explode(',', trim($string));
 			$row = array();
-			$row['account_id'] = '7ec92a12c3';
+			$date = date("Y-m-d",strtotime($v[0]));
+			if(!$date || empty($date)){
+				continue;
+			}
+			$accountId = $this->getChargingNameMaster($v['1']);
+			if($accountId == false){
+				continue;
+			}
+			$row['date'] = $date;
+			$row['account_id'] = $accountId;
 			$row['charging_name'] = $v['1'];
 			$row['search_num'] = $v['2'];
 			$row['click_num'] = $v['3'];
 			$row['click_rate'] = (intval($v[2]) == 0) ? 0 : round($v[3]/$v[2]*100, 3);
 			$row['money'] = $v['4'];
-			$row['date'] = $v['0'];
 			$row['create_time'] = time();
 			$row['update_time'] = time();
 			$sqlString = '('."'".implode( "','", $row ) . "'".')'; //批量
