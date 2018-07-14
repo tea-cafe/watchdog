@@ -5,9 +5,9 @@ class UploadChart extends BG_Controller {
         parent::__construct();
         $this->load->helper(['form', 'url']);
         $this->load->model('chart/CsvAdapter');
-        if (empty($this->arrUser)) {
+		if (empty($this->arrUser)) {
             return $this->outJson([], ErrCode::ERR_NOT_LOGIN);
-        }
+		}
     }
 
     public function index() {
@@ -25,6 +25,20 @@ class UploadChart extends BG_Controller {
 		}
         return $this->index();
     }
+
+	/**
+	 * @param void
+	 * @return void
+	 */
+	public function Charging($arrParams){
+		$arrParams = $this->input->get(NULL,TRUE);
+		if(empty($arrParams['date']) || empty($arrParams['source'])) {
+			return $this->outJson([], ErrCode::ERR_INVALID_PARAMS);
+		}
+		$arrData = $this->CsvAdapter->process($arrParams);
+
+		return $arrData ? $this->outJson($arrData, ErrCode::OK) : $this->outJson($arrData, ErrCode::ERR_UPLOAD);
+	}
 
     /**
      * @param void

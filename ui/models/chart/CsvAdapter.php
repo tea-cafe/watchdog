@@ -29,6 +29,42 @@ class CsvAdapter extends CI_Model {
         return $boolDataRet ? $boolDataRet : false;
 	}//}}}//
 
+	private function processChargingContent($arrContent, $arrParams){
+		$chunkData = array_chunk($arrContent, 5000);
+		$count = count($chunkData[0]);
+
+		$insertRows = array();
+		foreach($chunkData[0] as $k => $value){
+			if($k == 0) {
+				continue;
+			}
+
+			$string = mb_convert_encoding(trim(strip_tags($value)), 'utf-8', 'gbk');
+			$v = explode(',', trim($string));
+			$row = array();
+			$row['account_id'] = '7ec92a12c3';
+			$row['charging_name'] = $v['1'];
+			$row['search_num'] = $v['2'];
+			$row['click_num'] = $v['3'];
+			$row['click_rate'] = (intval($v[2]) == 0) ? 0 : round($v[3]/$v[2]*100, 3);
+			$row['money'] = $v['4'];
+			$row['date'] = $v['0'];
+			$row['create_time'] = time();
+			$row['update_time'] = time();
+			$sqlString = '('."'".implode( "','", $row ) . "'".')'; //批量
+			$insertRows[] = $sqlString;
+		}
+
+
+		$strValues = implode(',', $insertRows);
+
+		$sql = "INSERT IGNORE INTO charging_data_daily(account_id,charging_name,search_num,click_num,click_rate,money,date,create_time,update_time) VALUES {$strValues}";
+		$boolRes = $this->dbutil->query($sql);
+		unset($insertRows);
+
+		return $boolRes;
+	}
+
     /**
      * processBAIDUContent
      */
