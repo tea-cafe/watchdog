@@ -35,7 +35,7 @@ class CsvAdapter extends CI_Model {
 			'where' => 'charging_name="'.$chargingName.'"',
 		);
 
-		$res = this->dbutil->getChargingList($where);
+		$res = $this->dbutil->getChargingList($where);
 		if(empty($res)){
 			return false;
 		}
