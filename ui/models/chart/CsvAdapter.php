@@ -71,6 +71,7 @@ class CsvAdapter extends CI_Model {
 			$row['click_num'] = $v['3'];
 			$row['click_rate'] = (intval($v[2]) == 0) ? 0 : round($v[3]/$v[2]*100, 3);
 			$row['money'] = $v['4'];
+			$row['mark'] = '1';
 			$row['create_time'] = time();
 			$row['update_time'] = time();
 			$sqlString = '('."'".implode( "','", $row ) . "'".')'; //批量

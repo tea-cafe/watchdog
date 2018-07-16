@@ -143,6 +143,7 @@ class ChargingManager extends CI_Model{
 		if(!$total[0]['count(*)']){
 			return [
 				'list' => [],
+				'mark' => 0,
 				'pagination' => [
 					'total' => 0,
 					'current' => (int)$arrParams['current'],
