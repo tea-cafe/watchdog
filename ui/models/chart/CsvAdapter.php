@@ -64,13 +64,13 @@ class CsvAdapter extends CI_Model {
 			if($accountId == false){
 				continue;
 			}
-			$row['date'] = $date;
 			$row['account_id'] = $accountId;
 			$row['charging_name'] = $v['1'];
 			$row['search_num'] = $v['2'];
 			$row['click_num'] = $v['3'];
 			$row['click_rate'] = (intval($v[2]) == 0) ? 0 : round($v[3]/$v[2]*100, 3);
 			$row['money'] = $v['4'];
+			$row['date'] = $date;
 			$row['mark'] = '1';
 			$row['create_time'] = time();
 			$row['update_time'] = time();
@@ -81,7 +81,7 @@ class CsvAdapter extends CI_Model {
 
 		$strValues = implode(',', $insertRows);
 
-		$sql = "INSERT IGNORE INTO charging_data_daily(account_id,charging_name,search_num,click_num,click_rate,money,date,create_time,update_time) VALUES {$strValues}";
+		$sql = "INSERT IGNORE INTO charging_data_daily(account_id,charging_name,search_num,click_num,click_rate,money,date,mark,create_time,update_time) VALUES {$strValues}";
 		$boolRes = $this->dbutil->query($sql);
 		unset($insertRows);
 
