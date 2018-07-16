@@ -308,14 +308,14 @@ class ChargingManager extends CI_Model{
 	function modifyImportDataMark($arrParams){
 		if($arrParams['mark'] == 1){
 			$where = array(
-				'mark' => '1',
-				'where' => 'date="'.$arrParams['date'].'" AND mark="0"',
+				'mark' => '2',
+				'where' => 'date="'.$arrParams['date'].'" AND mark="1"',
 			);
 
 			$res = $this->dbutil->udpChargingDataDaily($where);
 		}elseif($arrParams['mark'] == 2){
 			$where = array(
-				'where' => 'date="'.$arrParams['date'].'" AND mark="1"',
+				'where' => 'date="'.$arrParams['date'].'"',
 			);
 			$res = $this->dbutil->delChargingDataDaily($where);
 		}
