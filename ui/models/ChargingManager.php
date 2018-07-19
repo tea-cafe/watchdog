@@ -162,6 +162,7 @@ class ChargingManager extends CI_Model{
 		$res = $this->dbutil->getChargingDataDaily($where);
 		foreach($res as $key => $value){
 			$mark[$value['mark']] = $value['mark'];
+			$res[$key]['click_rate'] = $value['click_rate'].'%';
 		}
 
 		return [
@@ -272,7 +273,7 @@ class ChargingManager extends CI_Model{
 
 				foreach($res as $key => $value){
 					$res[$key]['channelName'] = $this->getChannelInfo($key)[0]['company'];
-					$res[$key]['click_rate'] = (intval($value['search_num']) == 0) ? 0 : round($value['click_num']/$value['search_num']*100, 3);;
+					$res[$key]['click_rate'] = (intval($value['search_num']) == 0) ? 0 : round($value['click_num']/$value['search_num']*100, 2).'%';
 				}
 				$res = array_values($res);
 				break;
@@ -289,13 +290,13 @@ class ChargingManager extends CI_Model{
 				
 				foreach($res as $key => $value){
 					$res[$key]['channelName'] = $this->getChannelInfo($value['account_id'])[0]['company'];
-					$res[$key]['click_rate'] = (intval($value['search_num']) == 0) ? 0 : round($value['click_num']/$value['search_num']*100, 3);
+					$res[$key]['click_rate'] = (intval($value['search_num']) == 0) ? 0 : round($value['click_num']/$value['search_num']*100, 2).'%';
 				}
 				$res = array_values($res);
 				break;
 			case "days":
 				foreach($data as $key => $value){
-					$data[$key]['click_rate'] = (intval($value['search_num']) == 0) ? 0 : round($value['click_num']/$value['search_num']*100, 3);
+					$data[$key]['click_rate'] = (intval($value['search_num']) == 0) ? 0 : round($value['click_num']/$value['search_num']*100, 2).'%';
 					$data[$key]['channelName'] = $this->getChannelInfo($value['account_id'])[0]['company'];
 				}
 				$res = $data;
